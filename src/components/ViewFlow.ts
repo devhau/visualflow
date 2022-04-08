@@ -1,10 +1,13 @@
 import { WorkerFlow } from "../WorkerFlow";
+import { NodeFlow } from "./NodeFlow";
 
 export class ViewFlow {
   private elView: HTMLElement | undefined | null;
-  private elCanvas: HTMLElement | null = null;
+  public elCanvas: HTMLElement | null = null;
   private parent: WorkerFlow;
+  private nodes: NodeFlow[] = [];
   private flgDrap: boolean = false;
+  private flgDrapMove: boolean = false;
   private zoom: number = 1;
   private zoom_max: number = 1.6;
   private zoom_min: number = 0.5;
@@ -18,6 +21,7 @@ export class ViewFlow {
   private pos_y_start: number = 0;
   private mouse_x: number = 0;
   private mouse_y: number = 0;
+  private nodeSelected: NodeFlow | null = null;
   public constructor(parent: WorkerFlow) {
     this.parent = parent;
     this.elView = this.parent.container?.querySelector('.workerflow-desgin .workerflow-view');
@@ -27,12 +31,30 @@ export class ViewFlow {
       this.elView.appendChild(this.elCanvas);
       this.elView.tabIndex = 0;
       this.addEvent();
+      this.AddNode();
+      this.AddNode();
+      this.AddNode();
     }
+  }
+  public UnSelectNode() {
+    if (this.nodeSelected) {
+      this.nodeSelected.elNode?.classList.remove('active');
+    }
+    this.nodeSelected = null;
+  }
+  public SelectNode(node: NodeFlow) {
+    this.UnSelectNode();
+    this.nodeSelected = node;
+    this.nodeSelected.elNode?.classList.add('active');
+  }
+  public AddNode() {
+    this.nodes = [...this.nodes, new NodeFlow(this, this.parent.getUuid())];
   }
   public addEvent() {
     if (!this.elView) return;
     /* Mouse and Touch Actions */
     this.elView.addEventListener('mouseup', this.EndMove.bind(this));
+    this.elView.addEventListener('mouseleave', this.EndMove.bind(this));
     this.elView.addEventListener('mousemove', this.Move.bind(this));
     this.elView.addEventListener('mousedown', this.StartMove.bind(this));
 
@@ -42,9 +64,13 @@ export class ViewFlow {
     /* Context Menu */
     this.elView.addEventListener('contextmenu', this.contextmenu.bind(this));
   }
+
   public StartMove(e: any) {
     this.flgDrap = true;
-    console.log("StartMove");
+    this.flgDrapMove = false;
+    if (this.nodeSelected && this.nodeSelected.elNode !== e.target) {
+      this.UnSelectNode();
+    }
     if (e.type === "touchstart") {
       this.pos_x = e.touches[0].clientX;
       this.pos_x_start = e.touches[0].clientX;
@@ -59,7 +85,7 @@ export class ViewFlow {
   }
   public Move(e: any) {
     if (!this.flgDrap || !this.elCanvas) return;
-
+    this.flgDrapMove = true;
     let e_pos_x = 0;
     let e_pos_y = 0;
     if (e.type === "touchmove") {
@@ -69,11 +95,17 @@ export class ViewFlow {
       e_pos_x = e.clientX;
       e_pos_y = e.clientY;
     }
-    console.log("Move");
-    let x = this.canvas_x + (-(this.pos_x - e_pos_x))
-    let y = this.canvas_y + (-(this.pos_y - e_pos_y))
-    // this.dispatch('translate', { x: x, y: y });
-    this.elCanvas.style.transform = "translate(" + x + "px, " + y + "px) scale(" + this.zoom + ")";
+    if (!this.nodeSelected) {
+      let x = this.canvas_x + (-(this.pos_x - e_pos_x))
+      let y = this.canvas_y + (-(this.pos_y - e_pos_y))
+      this.elCanvas.style.transform = "translate(" + x + "px, " + y + "px) scale(" + this.zoom + ")";
+    } else {
+      var x = (this.pos_x - e_pos_x) * this.elCanvas.clientWidth / (this.elCanvas.clientWidth * this.zoom);
+      var y = (this.pos_y - e_pos_y) * this.elCanvas.clientHeight / (this.elCanvas.clientHeight * this.zoom);
+      this.pos_x = e_pos_x;
+      this.pos_y = e_pos_y;
+      this.nodeSelected.updatePosition(x, y);
+    }
     if (e.type === "touchmove") {
       this.mouse_x = e_pos_x;
       this.mouse_y = e_pos_y;
@@ -93,6 +125,11 @@ export class ViewFlow {
 
     this.canvas_x = this.canvas_x + (-(this.pos_x - e_pos_x));
     this.canvas_y = this.canvas_y + (-(this.pos_y - e_pos_y));
+    this.pos_x = e_pos_x;
+    this.pos_y = e_pos_y;
+    if (this.flgDrapMove) {
+      this.UnSelectNode();
+    }
   }
   public contextmenu(e: any) {
     e.preventDefault();
