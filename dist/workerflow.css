@@ -82,6 +82,19 @@ body {
 .workerflow .workerflow-desgin .workerflow-view .workerflow-canvas .workerflow-node .workerflow-node_outputs {
   width: 0;
 }
+.workerflow .workerflow-desgin .workerflow-view .workerflow-canvas .workerflow-node .workerflow-node_inputs .dot,
+.workerflow .workerflow-desgin .workerflow-view .workerflow-canvas .workerflow-node .workerflow-node_outputs .dot {
+  position: relative;
+  height: 15px;
+  width: 15px;
+  background: #fff;
+  border-radius: 50%;
+  border: 2px solid var(--border-color);
+  cursor: crosshair;
+  z-index: 1;
+  margin-bottom: 5px;
+  right: 10px;
+}
 .workerflow .workerflow-desgin .workerflow-view .workerflow-canvas .workerflow-node .workerflow-node_content {
   width: 100%;
   display: block;

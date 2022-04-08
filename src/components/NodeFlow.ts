@@ -18,11 +18,12 @@ export class NodeFlow {
     this.elNode.id = `node-${id}`;
     this.elNodeInputs = document.createElement('div');
     this.elNodeInputs.classList.add('workerflow-node_inputs');
+    this.elNodeInputs.innerHTML = `<div class="dot"></div>`;
     this.elNodeContent = document.createElement('div');
     this.elNodeContent.classList.add('workerflow-node_content');
     this.elNodeOutputs = document.createElement('div');
     this.elNodeOutputs.classList.add('workerflow-node_outputs');
-
+    this.elNodeOutputs.innerHTML = `<div class="dot"></div>`;
     this.elNode.setAttribute('data-node', id);
     this.elNode.setAttribute('style', `top: ${this.pos_y}px; left: ${this.pos_x}px;`);
     this.elNode.addEventListener('mousedown', this.StartSelected.bind(this));
