@@ -1,14 +1,19 @@
+import { LineFlow } from "./LineFlow";
 import { ViewFlow } from "./ViewFlow";
 
 export class NodeFlow {
-  private parent: ViewFlow;
-  public elNode: HTMLElement | null | null;
+  public parent: ViewFlow;
+  public elNode: HTMLElement;
   public elNodeInputs: HTMLElement | null | null;
   public elNodeOutputs: HTMLElement | null | null;
   public elNodeContent: HTMLElement | null | null;
   public nodeId: string;
   public pos_x: number = 0;
   public pos_y: number = 0;
+  public arrLine: LineFlow[] = [];
+  public AddLine(line: LineFlow) {
+    this.arrLine = [...this.arrLine, line];
+  }
   public constructor(parent: ViewFlow, id: string, option: any = null) {
     this.parent = parent;
     this.nodeId = id;
@@ -41,6 +46,9 @@ export class NodeFlow {
       this.pos_x = (this.elNode.offsetLeft - x);
       this.pos_y = (this.elNode.offsetTop - y);
       this.elNode.setAttribute('style', `top: ${this.pos_y}px; left: ${this.pos_x}px;`);
+      this.arrLine.forEach((item) => {
+        item.update();
+      })
     }
   }
 }

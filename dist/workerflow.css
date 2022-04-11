@@ -60,6 +60,21 @@ body {
   height: 100%;
   user-select: none;
 }
+.workerflow .workerflow-desgin .workerflow-view .workerflow-canvas .connection {
+  position: absolute;
+  pointer-events: none;
+}
+.workerflow .workerflow-desgin .workerflow-view .workerflow-canvas .connection .main-path {
+  fill: none;
+  stroke: #4ea9ff;
+  stroke-width: 3px;
+  pointer-events: all;
+}
+.workerflow .workerflow-desgin .workerflow-view .workerflow-canvas svg {
+  z-index: 0;
+  position: absolute;
+  overflow: visible !important;
+}
 .workerflow .workerflow-desgin .workerflow-view .workerflow-canvas .workerflow-node {
   display: flex;
   align-items: center;

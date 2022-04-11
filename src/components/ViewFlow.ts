@@ -1,4 +1,5 @@
 import { WorkerFlow } from "../WorkerFlow";
+import { LineFlow } from "./LineFlow";
 import { NodeFlow } from "./NodeFlow";
 
 export class ViewFlow {
@@ -22,6 +23,7 @@ export class ViewFlow {
   private mouse_x: number = 0;
   private mouse_y: number = 0;
   private nodeSelected: NodeFlow | null = null;
+  private dotSelected: NodeFlow | null = null;
   public constructor(parent: WorkerFlow) {
     this.parent = parent;
     this.elView = this.parent.container?.querySelector('.workerflow-desgin .workerflow-view');
@@ -34,6 +36,8 @@ export class ViewFlow {
       this.AddNode();
       this.AddNode();
       this.AddNode();
+      new LineFlow(this.nodes[0], this.nodes[1]);
+      new LineFlow(this.nodes[1], this.nodes[2]);
     }
   }
   public UnSelectNode() {
@@ -46,6 +50,17 @@ export class ViewFlow {
     this.UnSelectNode();
     this.nodeSelected = node;
     this.nodeSelected.elNode?.classList.add('active');
+  }
+  public UnSelectDot() {
+    if (this.dotSelected) {
+      this.dotSelected.elNode?.classList.remove('active');
+    }
+    this.dotSelected = null;
+  }
+  public SelectDot(node: NodeFlow) {
+    this.UnSelectDot();
+    this.dotSelected = node;
+    this.dotSelected.elNode?.classList.add('active');
   }
   public AddNode() {
     this.nodes = [...this.nodes, new NodeFlow(this, this.parent.getUuid())];
@@ -68,9 +83,10 @@ export class ViewFlow {
   public StartMove(e: any) {
     this.flgDrap = true;
     this.flgDrapMove = false;
-    if (this.nodeSelected && this.nodeSelected.elNode !== e.target) {
+    if (this.nodeSelected && (this.nodeSelected.elNode !== e.target && this.nodeSelected.elNode !== e.target.parents('.workerflow-node'))) {
       this.UnSelectNode();
     }
+    console.log(this.nodeSelected);
     if (e.type === "touchstart") {
       this.pos_x = e.touches[0].clientX;
       this.pos_x_start = e.touches[0].clientX;
@@ -95,16 +111,17 @@ export class ViewFlow {
       e_pos_x = e.clientX;
       e_pos_y = e.clientY;
     }
-    if (!this.nodeSelected) {
-      let x = this.canvas_x + (-(this.pos_x - e_pos_x))
-      let y = this.canvas_y + (-(this.pos_y - e_pos_y))
-      this.elCanvas.style.transform = "translate(" + x + "px, " + y + "px) scale(" + this.zoom + ")";
-    } else {
-      var x = (this.pos_x - e_pos_x) * this.elCanvas.clientWidth / (this.elCanvas.clientWidth * this.zoom);
-      var y = (this.pos_y - e_pos_y) * this.elCanvas.clientHeight / (this.elCanvas.clientHeight * this.zoom);
+    if (this.nodeSelected) {
+      let x = (this.pos_x - e_pos_x) * this.elCanvas.clientWidth / (this.elCanvas.clientWidth * this.zoom);
+      let y = (this.pos_y - e_pos_y) * this.elCanvas.clientHeight / (this.elCanvas.clientHeight * this.zoom);
       this.pos_x = e_pos_x;
       this.pos_y = e_pos_y;
       this.nodeSelected.updatePosition(x, y);
+    } else {
+      let x = this.canvas_x + (-(this.pos_x - e_pos_x))
+      let y = this.canvas_y + (-(this.pos_y - e_pos_y))
+      this.elCanvas.style.transform = "translate(" + x + "px, " + y + "px) scale(" + this.zoom + ")";
+
     }
     if (e.type === "touchmove") {
       this.mouse_x = e_pos_x;
