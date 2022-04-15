@@ -33,12 +33,35 @@ export class ViewFlow {
       this.elView.appendChild(this.elCanvas);
       this.elView.tabIndex = 0;
       this.addEvent();
-      this.AddNode();
-      this.AddNode();
-      this.AddNode();
-      new LineFlow(this.nodes[0], this.nodes[1]);
-      new LineFlow(this.nodes[1], this.nodes[2]);
+      this.elView.addEventListener('drop', this.dropEnd.bind(this));
+      this.elView.addEventListener('dragover', this.dragover.bind(this))
     }
+  }
+  private dropEnd(ev: any) {
+    if (!this.elCanvas || !this.elView) return;
+    if (ev.type === "touchend") {
+    } else {
+      ev.preventDefault();
+      var data = ev.dataTransfer.getData("node");
+    }
+    let node = this.AddNode();
+    let e_pos_x = 0;
+    let e_pos_y = 0;
+    if (ev.type === "touchmove") {
+      e_pos_x = ev.touches[0].clientX;
+      e_pos_y = ev.touches[0].clientY;
+    } else {
+      e_pos_x = ev.clientX;
+      e_pos_y = ev.clientY;
+    }
+    e_pos_x = e_pos_x * (this.elView.clientWidth / (this.elView.clientWidth * this.zoom)) - (this.elView.getBoundingClientRect().x * (this.elView.clientWidth / (this.elView.clientWidth * this.zoom)));
+    e_pos_y = e_pos_y * (this.elView.clientHeight / (this.elView.clientHeight * this.zoom)) - (this.elView.getBoundingClientRect().y * (this.elView.clientHeight / (this.elView.clientHeight * this.zoom)));
+
+    node.updatePosition(e_pos_x, e_pos_y);
+    console.log(ev);
+  }
+  private dragover(e: any) {
+    e.preventDefault();
   }
   public UnSelectNode() {
     if (this.nodeSelected) {
@@ -62,8 +85,10 @@ export class ViewFlow {
     this.dotSelected = node;
     this.dotSelected.elNode?.classList.add('active');
   }
-  public AddNode() {
-    this.nodes = [...this.nodes, new NodeFlow(this, this.parent.getUuid())];
+  public AddNode(): NodeFlow {
+    let node = new NodeFlow(this, this.parent.getUuid());
+    this.nodes = [...this.nodes, node];
+    return node;
   }
   public addEvent() {
     if (!this.elView) return;
@@ -81,12 +106,10 @@ export class ViewFlow {
   }
 
   public StartMove(e: any) {
-    this.flgDrap = true;
-    this.flgDrapMove = false;
+    console.log(e);
     if (this.nodeSelected && (this.nodeSelected.elNode !== e.target && this.nodeSelected.elNode !== e.target.parents('.workerflow-node'))) {
       this.UnSelectNode();
     }
-    console.log(this.nodeSelected);
     if (e.type === "touchstart") {
       this.pos_x = e.touches[0].clientX;
       this.pos_x_start = e.touches[0].clientX;
@@ -98,9 +121,12 @@ export class ViewFlow {
       this.pos_y = e.clientY;
       this.pos_y_start = e.clientY;
     }
+    this.flgDrap = true;
+    this.flgDrapMove = false;
   }
   public Move(e: any) {
-    if (!this.flgDrap || !this.elCanvas) return;
+    if (!this.flgDrap) return;
+    if (!this.elCanvas || !this.elView) return;
     this.flgDrapMove = true;
     let e_pos_x = 0;
     let e_pos_y = 0;
@@ -121,7 +147,6 @@ export class ViewFlow {
       let x = this.canvas_x + (-(this.pos_x - e_pos_x))
       let y = this.canvas_y + (-(this.pos_y - e_pos_y))
       this.elCanvas.style.transform = "translate(" + x + "px, " + y + "px) scale(" + this.zoom + ")";
-
     }
     if (e.type === "touchmove") {
       this.mouse_x = e_pos_x;
@@ -129,6 +154,10 @@ export class ViewFlow {
     }
   }
   public EndMove(e: any) {
+    if (this.flgDrapMove) {
+      this.UnSelectNode();
+    }
+    this.flgDrapMove = false;
     this.flgDrap = false;
     let e_pos_x = 0;
     let e_pos_y = 0;
@@ -144,9 +173,6 @@ export class ViewFlow {
     this.canvas_y = this.canvas_y + (-(this.pos_y - e_pos_y));
     this.pos_x = e_pos_x;
     this.pos_y = e_pos_y;
-    if (this.flgDrapMove) {
-      this.UnSelectNode();
-    }
   }
   public contextmenu(e: any) {
     e.preventDefault();

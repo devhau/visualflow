@@ -17,7 +17,6 @@ export class NodeFlow {
   public constructor(parent: ViewFlow, id: string, option: any = null) {
     this.parent = parent;
     this.nodeId = id;
-    console.log(this.nodeId);
     this.elNode = document.createElement('div');
     this.elNode.classList.add("workerflow-node");
     this.elNode.id = `node-${id}`;

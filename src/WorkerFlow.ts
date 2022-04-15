@@ -1,16 +1,43 @@
+import { ControlFlow } from "./components/ControlFlow";
 import { ViewFlow } from "./components/ViewFlow";
 
 export class WorkerFlow {
 
   public container: HTMLElement | null;
   public View: ViewFlow | null;
+  public Control: ControlFlow | null;
+  public dataNodeSelect: string | null = null;
   private events: any = {};
-  public constructor(container: HTMLElement) {
+  public option: any;
+  public constructor(container: HTMLElement, option: any = null) {
     this.container = container;
     this.container.classList.add("workerflow");
+    this.option = option || {
+      control: {
+        Node1: {
+          name: '<i class="fab fa-aws"></i><span> AWS</span>',
+          html: "<div>Xin chào</div>",
+        },
+        Node2: {
+          name: "Node2",
+          html: "<div>Xin chào</div>",
+        },
+        Node3: {
+          name: "Node3",
+          html: "<div>Xin chào</div>",
+        },
+        Node4: {
+          name: "Node4",
+          html: "<div>Xin chào</div>",
+        }
+      }
+    };
     this.container.innerHTML = `
     <div class="workerflow-control">
-      <div class="workerflow-control__item" draggable="true">Node 1</div>
+      <h2 class="workerflow-control__header">Node Control</h2>
+      <div class="workerflow-control__list">
+      <div draggable="true">Node 1</div>
+      </div>
     </div>
     <div class="workerflow-desgin">
       <div class="workerflow-items">
@@ -22,6 +49,7 @@ export class WorkerFlow {
     </div>
     `;
     this.View = new ViewFlow(this);
+    this.Control = new ControlFlow(this);
   }
   public getUuid(): string {
     // http://www.ietf.org/rfc/rfc4122.txt

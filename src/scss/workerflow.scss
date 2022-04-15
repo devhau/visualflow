@@ -23,9 +23,18 @@ body {
     height: 100%;
     background-color: #ffffff;
     border: 1px solid var(--border-color);
-    .workerflow-control__item {
-      padding: 12px 8px;
-      border-bottom: 1px solid var(--border-color);
+    .workerflow-control__header {
+      padding: 7px 5px;
+      margin: 0;
+      border-bottom: 2px solid var(--border-color);
+    }
+    .workerflow-control__list {
+      padding: 0;
+      margin: 0;
+      .workerflow-control__item {
+        padding: 12px 8px;
+        border-bottom: 1px solid var(--border-color);
+      }
     }
   }
   .workerflow-desgin {
