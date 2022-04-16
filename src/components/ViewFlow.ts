@@ -2,13 +2,20 @@ import { WorkerFlow } from "../WorkerFlow";
 import { LineFlow } from "./LineFlow";
 import { NodeFlow } from "./NodeFlow";
 
+export enum MoveType {
+  None = 0,
+  Node = 1,
+  Canvas = 2,
+  Line = 3,
+}
 export class ViewFlow {
-  private elView: HTMLElement | undefined | null;
-  public elCanvas: HTMLElement | null = null;
+  private elView: HTMLElement;
+  public elCanvas: HTMLElement;
   private parent: WorkerFlow;
   private nodes: NodeFlow[] = [];
-  private flgDrap: boolean = false;
-  private flgDrapMove: boolean = false;
+  public flgDrap: boolean = false;
+  public flgMove: boolean = false;
+  private moveType: MoveType = MoveType.None;
   private zoom: number = 1;
   private zoom_max: number = 1.6;
   private zoom_min: number = 0.5;
@@ -17,34 +24,35 @@ export class ViewFlow {
   private canvas_x: number = 0;
   private canvas_y: number = 0;
   private pos_x: number = 0;
-  private pos_x_start: number = 0;
   private pos_y: number = 0;
-  private pos_y_start: number = 0;
   private mouse_x: number = 0;
   private mouse_y: number = 0;
+  private lineSelected: LineFlow | null = null;
   private nodeSelected: NodeFlow | null = null;
+  public nodeOver: NodeFlow | null = null;
   private dotSelected: NodeFlow | null = null;
+  private tempLine: LineFlow | null = null;
+  private timeFastClick: number = 0;
   public constructor(parent: WorkerFlow) {
     this.parent = parent;
-    this.elView = this.parent.container?.querySelector('.workerflow-desgin .workerflow-view');
-    if (this.elView) {
-      this.elCanvas = document.createElement('div');
-      this.elCanvas.classList.add("workerflow-canvas");
-      this.elView.appendChild(this.elCanvas);
-      this.elView.tabIndex = 0;
-      this.addEvent();
-      this.elView.addEventListener('drop', this.dropEnd.bind(this));
-      this.elView.addEventListener('dragover', this.dragover.bind(this))
-    }
+    this.elView = this.parent.container?.querySelector('.workerflow-desgin .workerflow-view') || document.createElement('div');
+    this.elCanvas = document.createElement('div');
+    this.elCanvas.classList.add("workerflow-canvas");
+    this.elView.appendChild(this.elCanvas);
+    this.elView.tabIndex = 0;
+    this.addEvent();
+    this.updateView();
   }
   private dropEnd(ev: any) {
-    if (!this.elCanvas || !this.elView) return;
+    let keyNode: string | null = '';
     if (ev.type === "touchend") {
+      keyNode = this.parent.dataNodeSelect;
     } else {
       ev.preventDefault();
-      var data = ev.dataTransfer.getData("node");
+      keyNode = ev.dataTransfer.getData("node");
     }
-    let node = this.AddNode();
+    if (!keyNode) return;
+    let node = this.AddNode(this.parent.option.control[keyNode]);
     let e_pos_x = 0;
     let e_pos_y = 0;
     if (ev.type === "touchmove") {
@@ -54,44 +62,78 @@ export class ViewFlow {
       e_pos_x = ev.clientX;
       e_pos_y = ev.clientY;
     }
-    e_pos_x = e_pos_x * (this.elView.clientWidth / (this.elView.clientWidth * this.zoom)) - (this.elView.getBoundingClientRect().x * (this.elView.clientWidth / (this.elView.clientWidth * this.zoom)));
-    e_pos_y = e_pos_y * (this.elView.clientHeight / (this.elView.clientHeight * this.zoom)) - (this.elView.getBoundingClientRect().y * (this.elView.clientHeight / (this.elView.clientHeight * this.zoom)));
+    let x = this.CalcX(this.elCanvas.getBoundingClientRect().x - e_pos_x);
+    let y = this.CalcY(this.elCanvas.getBoundingClientRect().y - e_pos_y);
 
-    node.updatePosition(e_pos_x, e_pos_y);
-    console.log(ev);
+    node.updatePosition(x, y);
+  }
+  public updateView() {
+    this.elCanvas.style.transform = "translate(" + this.canvas_x + "px, " + this.canvas_y + "px) scale(" + this.zoom + ")";
+  }
+  private CalcX(number: any) {
+    return number * (this.elCanvas.clientWidth / (this.elView.clientWidth * this.zoom));
+  }
+  private CalcY(number: any) {
+    return number * (this.elCanvas.clientHeight / (this.elView.clientHeight * this.zoom));
   }
   private dragover(e: any) {
     e.preventDefault();
   }
-  public UnSelectNode() {
-    if (this.nodeSelected) {
-      this.nodeSelected.elNode?.classList.remove('active');
+  public UnSelectLine() {
+    if (this.lineSelected) {
+      this.lineSelected.elPath?.classList.remove('active');
+      this.lineSelected = null;
     }
-    this.nodeSelected = null;
-  }
-  public SelectNode(node: NodeFlow) {
-    this.UnSelectNode();
-    this.nodeSelected = node;
-    this.nodeSelected.elNode?.classList.add('active');
   }
   public UnSelectDot() {
     if (this.dotSelected) {
       this.dotSelected.elNode?.classList.remove('active');
+      this.dotSelected = null;
     }
-    this.dotSelected = null;
+  }
+  public UnSelectNode() {
+    if (this.nodeSelected) {
+      this.nodeSelected.elNode?.classList.remove('active');
+      this.nodeSelected = null;
+    }
+  }
+  public UnSelect() {
+    this.UnSelectLine();
+    this.UnSelectNode();
+    this.UnSelectDot();
+  }
+  public SelectLine(node: LineFlow) {
+    this.UnSelect();
+    this.lineSelected = node;
+    this.lineSelected.elPath.classList.add('active');
+  }
+  public SelectNode(node: NodeFlow) {
+    this.UnSelect();
+    this.nodeSelected = node;
+    this.nodeSelected.elNode?.classList.add('active');
   }
   public SelectDot(node: NodeFlow) {
-    this.UnSelectDot();
+    this.UnSelect();
     this.dotSelected = node;
     this.dotSelected.elNode?.classList.add('active');
   }
-  public AddNode(): NodeFlow {
-    let node = new NodeFlow(this, this.parent.getUuid());
+  public RemoveNode(node: NodeFlow) {
+    var index = this.nodes.indexOf(node);
+    if (index > -1) {
+      this.nodes.splice(index, 1);
+    }
+    return this.nodes;
+  }
+  public AddNode(option: any = null): NodeFlow {
+    let NodeId = option ? option.id : this.parent.getUuid();
+    let node = new NodeFlow(this, NodeId ?? this.parent.getUuid(), option);
     this.nodes = [...this.nodes, node];
     return node;
   }
+  public AddLine(fromNode: NodeFlow, toNode: NodeFlow, outputIndex: number = 0) {
+    return new LineFlow(fromNode, toNode, outputIndex);
+  }
   public addEvent() {
-    if (!this.elView) return;
     /* Mouse and Touch Actions */
     this.elView.addEventListener('mouseup', this.EndMove.bind(this));
     this.elView.addEventListener('mouseleave', this.EndMove.bind(this));
@@ -103,31 +145,96 @@ export class ViewFlow {
     this.elView.addEventListener('touchstart', this.StartMove.bind(this));
     /* Context Menu */
     this.elView.addEventListener('contextmenu', this.contextmenu.bind(this));
+
+    /* Drop Drap */
+    this.elView.addEventListener('drop', this.dropEnd.bind(this));
+    this.elView.addEventListener('dragover', this.dragover.bind(this));
+    /* Zoom Mouse */
+    this.elView.addEventListener('wheel', this.zoom_enter.bind(this));
+    /* Delete */
+    this.elView.addEventListener('keydown', this.keydown.bind(this));
+  }
+  public keydown(e: any) {
+    if (e.key === 'Delete' || (e.key === 'Backspace' && e.metaKey)) {
+      e.preventDefault()
+      if (this.nodeSelected != null) {
+        this.nodeSelected.delete();
+        this.nodeSelected = null;
+      }
+      if (this.lineSelected != null) {
+        this.lineSelected.delete();
+        this.lineSelected = null;
+      }
+    }
+  }
+  public zoom_enter(event: any) {
+    if (event.ctrlKey) {
+      event.preventDefault()
+      if (event.deltaY > 0) {
+        // Zoom Out
+        this.zoom_out();
+      } else {
+        // Zoom In
+        this.zoom_in();
+      }
+    }
+  }
+  public zoom_refresh() {
+    this.canvas_x = (this.canvas_x / this.zoom_last_value) * this.zoom;
+    this.canvas_y = (this.canvas_y / this.zoom_last_value) * this.zoom;
+    this.zoom_last_value = this.zoom;
+    this.updateView();
+  }
+  public zoom_in() {
+    if (this.zoom < this.zoom_max) {
+      this.zoom += this.zoom_value;
+      this.zoom_refresh();
+    }
+  }
+  public zoom_out() {
+    if (this.zoom > this.zoom_min) {
+      this.zoom -= this.zoom_value;
+      this.zoom_refresh();
+    }
+  }
+  public zoom_reset() {
+    if (this.zoom != 1) {
+      this.zoom = 1;
+      this.zoom_refresh();
+    }
   }
 
   public StartMove(e: any) {
-    console.log(e);
-    if (this.nodeSelected && (this.nodeSelected.elNode !== e.target && this.nodeSelected.elNode !== e.target.parents('.workerflow-node'))) {
-      this.UnSelectNode();
+    this.timeFastClick = this.parent.getTime();
+    if (this.moveType == MoveType.None) {
+      if (this.nodeSelected && this.parent.checkParent(e.target, this.nodeSelected.elNode)) {
+        if (e.target.classList.contains('dot')) {
+          if (this.parent.checkParent(e.target, this.nodeSelected.elNodeInputs)) {
+            return;
+          }
+          this.moveType = MoveType.Line;
+          this.tempLine = new LineFlow(this.nodeSelected, null);
+          this.tempLine.outputIndex = +(e.target.getAttribute('node'));
+        } else {
+          this.moveType = MoveType.Node;
+        }
+      } else {
+        this.moveType = MoveType.Canvas;
+      }
     }
     if (e.type === "touchstart") {
       this.pos_x = e.touches[0].clientX;
-      this.pos_x_start = e.touches[0].clientX;
       this.pos_y = e.touches[0].clientY;
-      this.pos_y_start = e.touches[0].clientY;
     } else {
       this.pos_x = e.clientX;
-      this.pos_x_start = e.clientX;
       this.pos_y = e.clientY;
-      this.pos_y_start = e.clientY;
     }
     this.flgDrap = true;
-    this.flgDrapMove = false;
+    this.flgMove = false;
   }
   public Move(e: any) {
     if (!this.flgDrap) return;
-    if (!this.elCanvas || !this.elView) return;
-    this.flgDrapMove = true;
+    this.flgMove = true;
     let e_pos_x = 0;
     let e_pos_y = 0;
     if (e.type === "touchmove") {
@@ -137,28 +244,57 @@ export class ViewFlow {
       e_pos_x = e.clientX;
       e_pos_y = e.clientY;
     }
-    if (this.nodeSelected) {
-      let x = (this.pos_x - e_pos_x) * this.elCanvas.clientWidth / (this.elCanvas.clientWidth * this.zoom);
-      let y = (this.pos_y - e_pos_y) * this.elCanvas.clientHeight / (this.elCanvas.clientHeight * this.zoom);
-      this.pos_x = e_pos_x;
-      this.pos_y = e_pos_y;
-      this.nodeSelected.updatePosition(x, y);
-    } else {
-      let x = this.canvas_x + (-(this.pos_x - e_pos_x))
-      let y = this.canvas_y + (-(this.pos_y - e_pos_y))
-      this.elCanvas.style.transform = "translate(" + x + "px, " + y + "px) scale(" + this.zoom + ")";
+    switch (this.moveType) {
+      case MoveType.Canvas:
+        {
+          let x = this.canvas_x + this.CalcX(-(this.pos_x - e_pos_x))
+          let y = this.canvas_y + this.CalcY(-(this.pos_y - e_pos_y))
+          this.elCanvas.style.transform = "translate(" + x + "px, " + y + "px) scale(" + this.zoom + ")";
+          break;
+        }
+      case MoveType.Node:
+        {
+          let x = this.CalcX(this.pos_x - e_pos_x);
+          let y = this.CalcY(this.pos_y - e_pos_y);
+          this.pos_x = e_pos_x;
+          this.pos_y = e_pos_y;
+          this.nodeSelected?.updatePosition(x, y);
+          break;
+        }
+      case MoveType.Line:
+        {
+          if (this.tempLine) {
+            let x = this.CalcX(this.elCanvas.getBoundingClientRect().x - e_pos_x);
+            let y = this.CalcY(this.elCanvas.getBoundingClientRect().y - e_pos_y);
+            this.tempLine.updateTo(this.elCanvas.offsetLeft - x, this.elCanvas.offsetTop - y);
+            this.tempLine.toNode = this.nodeOver;
+          }
+          break;
+        }
     }
+
     if (e.type === "touchmove") {
       this.mouse_x = e_pos_x;
       this.mouse_y = e_pos_y;
     }
   }
   public EndMove(e: any) {
-    if (this.flgDrapMove) {
-      this.UnSelectNode();
+    //fix Fast Click
+    if (((this.parent.getTime() - this.timeFastClick) < 300) || !this.flgDrap && !this.flgMove) {
+      this.moveType = MoveType.None;
+      this.flgDrap = false;
+      this.flgMove = false;
+      return;
     }
-    this.flgDrapMove = false;
-    this.flgDrap = false;
+
+    this.UnSelect();
+    if (this.tempLine && this.moveType == MoveType.Line) {
+      if (this.tempLine.toNode) {
+        this.AddLine(this.tempLine.fromNode, this.tempLine.toNode, this.tempLine.outputIndex);
+      }
+      this.tempLine.delete();
+      this.tempLine = null;
+    }
     let e_pos_x = 0;
     let e_pos_y = 0;
     if (e.type === "touchend") {
@@ -168,11 +304,15 @@ export class ViewFlow {
       e_pos_x = e.clientX;
       e_pos_y = e.clientY;
     }
-
-    this.canvas_x = this.canvas_x + (-(this.pos_x - e_pos_x));
-    this.canvas_y = this.canvas_y + (-(this.pos_y - e_pos_y));
+    if (this.moveType === MoveType.Canvas) {
+      this.canvas_x = this.canvas_x + this.CalcX(-(this.pos_x - e_pos_x));
+      this.canvas_y = this.canvas_y + this.CalcY(-(this.pos_y - e_pos_y));
+    }
     this.pos_x = e_pos_x;
     this.pos_y = e_pos_y;
+    this.moveType = MoveType.None;
+    this.flgDrap = false;
+    this.flgMove = false;
   }
   public contextmenu(e: any) {
     e.preventDefault();

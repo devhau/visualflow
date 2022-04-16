@@ -73,6 +73,10 @@ body {
             stroke: #4ea9ff;
             stroke-width: 3px;
             pointer-events: all;
+            &.active {
+              stroke-width: 5px;
+              stroke: #3e88ce;
+            }
           }
         }
         svg {
@@ -100,20 +104,22 @@ body {
           .workerflow-node_inputs,
           .workerflow-node_outputs {
             width: 0;
+            padding: 5px 0px 0px 0px;
             .dot {
               position: relative;
-              height: 15px;
-              width: 15px;
+              height: 12px;
+              width: 12px;
               background: #fff;
               border-radius: 50%;
               border: 2px solid var(--border-color);
               cursor: crosshair;
               z-index: 1;
               margin-bottom: 5px;
-              right: 10px;
+              right: 8px;
             }
           }
           .workerflow-node_content {
+            padding: 10px;
             width: 100%;
             display: block;
           }
