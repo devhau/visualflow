@@ -34,6 +34,9 @@ body {
       .workerflow-control__item {
         padding: 12px 8px;
         border-bottom: 1px solid var(--border-color);
+        &:hover {
+          background-color: #cacaca;
+        }
       }
     }
   }
@@ -50,6 +53,16 @@ body {
         padding: 12px 8px;
         display: inline-block;
         border-right: 1px solid #cc3;
+        background-color: #64abee;
+        &.active {
+          background-color: #5b7e9f;
+        }
+        &:hover {
+          background-color: #383a3c;
+          color: #fff;
+          font-weight: 500;
+          cursor: pointer;
+        }
       }
     }
     .workerflow-view {

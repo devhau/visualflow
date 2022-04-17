@@ -1,4 +1,5 @@
 import { ControlFlow } from "./components/ControlFlow";
+import { TabFlow } from "./components/TabFlow";
 import { ViewFlow } from "./components/ViewFlow";
 
 export class WorkerFlow {
@@ -6,6 +7,7 @@ export class WorkerFlow {
   public container: HTMLElement | null;
   public View: ViewFlow | null;
   public Control: ControlFlow | null;
+  public tab: TabFlow | null;
   public dataNodeSelect: string | null = null;
   private events: any = {};
   public option: any;
@@ -46,10 +48,15 @@ export class WorkerFlow {
     </div>
     `;
     this.View = new ViewFlow(this);
+    this.tab = new TabFlow(this, []);
     this.Control = new ControlFlow(this);
+    this.new();
+  }
+  public new() {
+    this.tab?.NewProject();
   }
   public load(data: any) {
-    this.View?.load(data);
+    this.tab?.LoadProject(data);
   }
   public toJson() {
     return this.View?.toJson();

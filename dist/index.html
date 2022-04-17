@@ -22,7 +22,7 @@
       Node1: {
         key: "Node1",
         name: '<i class="fab fa-aws"></i><span> AWS</span>',
-        html: "<div>Xin chào 1</div>",
+        html: "<div>Xin chào 1 <input type='text' node:model='name'/></div>",
         script: `console.log(node)`,
         output: 1,
         input: 0
@@ -50,18 +50,17 @@
   }
   let flow = (new workerflow(document.getElementById("flow"), optionFlow));
   let text = document.getElementById('text');
+  flow.new();
+  flow.new();
 
   function onLoad() {
     let data = JSON.parse(text.value);
     flow.load(data);
-    console.log(data)
-    console.log(flow);
   }
 
   function onExport() {
     let data = flow.toJson();
     text.value = JSON.stringify(data);
-    console.log(data);
   }
 
 </script>

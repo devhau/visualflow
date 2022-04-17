@@ -37,14 +37,15 @@ export class ViewFlow {
   private projectName: string = "";
   public constructor(parent: WorkerFlow) {
     this.parent = parent;
-    this.projectId = parent.getUuid();
     this.elView = this.parent.container?.querySelector('.workerflow-desgin .workerflow-view') || document.createElement('div');
     this.elCanvas = document.createElement('div');
     this.elCanvas.classList.add("workerflow-canvas");
     this.elView.appendChild(this.elCanvas);
     this.elView.tabIndex = 0;
     this.addEvent();
+    this.Reset();
     this.updateView();
+
   }
   public getOption(keyNode: any) {
     if (!keyNode) return;
@@ -91,6 +92,7 @@ export class ViewFlow {
     }
   }
   public load(data: any) {
+    this.Reset();
     this.projectId = data?.id ?? this.parent.getUuid();
     this.projectName = data?.name ?? `project-${this.parent.getTime()}`;
     this.canvas_x = data?.x ?? 0;
@@ -108,7 +110,18 @@ export class ViewFlow {
           this.AddLine(fromNode, toNode, ouputIndex);
         }
       })
-    })
+    });
+    this.updateView();
+  }
+  public Reset() {
+    this.nodes.forEach((item) => item.delete(false));
+    this.nodes = [];
+    this.projectId = this.parent.getUuid();
+    this.projectName = `project-${this.parent.getTime()}`;
+    this.canvas_x = 0;
+    this.canvas_y = 0;
+    this.zoom = 1;
+    this.updateView();
   }
   public getNodeById(nodeId: string) {
     return this.nodes?.filter((item) => item.nodeId == nodeId)[0];

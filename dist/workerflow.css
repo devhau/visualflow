@@ -39,6 +39,9 @@ body {
   padding: 12px 8px;
   border-bottom: 1px solid var(--border-color);
 }
+.workerflow .workerflow-control .workerflow-control__list .workerflow-control__item:hover {
+  background-color: #cacaca;
+}
 .workerflow .workerflow-desgin {
   height: 100%;
   background-color: aliceblue;
@@ -54,6 +57,16 @@ body {
   padding: 12px 8px;
   display: inline-block;
   border-right: 1px solid #cc3;
+  background-color: #64abee;
+}
+.workerflow .workerflow-desgin .workerflow-items .workerflow-item.active {
+  background-color: #5b7e9f;
+}
+.workerflow .workerflow-desgin .workerflow-items .workerflow-item:hover {
+  background-color: #383a3c;
+  color: #fff;
+  font-weight: 500;
+  cursor: pointer;
 }
 .workerflow .workerflow-desgin .workerflow-view {
   flex: auto;

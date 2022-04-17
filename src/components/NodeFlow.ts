@@ -1,3 +1,4 @@
+import { DataFlow } from "./DataFlow";
 import { LineFlow } from "./LineFlow";
 import { ViewFlow } from "./ViewFlow";
 const geval = eval;
@@ -12,9 +13,9 @@ export class NodeFlow {
   public pos_y: number = 0;
   public arrLine: LineFlow[] = [];
   private option: any;
-  public data: any = {};
+  public data: DataFlow | null;
   public toJson() {
-    let LineJson = this.arrLine.map((item) => ({
+    let LineJson = this.arrLine.filter((item) => item.fromNode === this).map((item) => ({
       fromNode: item.fromNode.nodeId,
       toNode: item.toNode?.nodeId,
       ouputIndex: item.outputIndex
@@ -23,7 +24,7 @@ export class NodeFlow {
       id: this.nodeId,
       node: this.option.key,
       line: LineJson,
-      data: this.data,
+      data: this.data?.toJson(),
       x: this.pos_x,
       y: this.pos_y
     }
@@ -31,7 +32,7 @@ export class NodeFlow {
   public load(data: any) {
     this.nodeId = data?.id ?? this.nodeId;
     this.option = this.parent.getOption(data?.node);
-    this.data = data?.data;
+    this.data?.load(data?.data);
     this.updatePosition(data?.x, data?.y, true);
     this.initOption();
     return this;
@@ -39,7 +40,7 @@ export class NodeFlow {
   public output() {
     return this.option?.output ?? 0;
   }
-  public delete() {
+  public delete(isRemoveParent = true) {
     this.arrLine.forEach((item) => item.delete(this));
     this.elNode.removeEventListener('mouseover', this.NodeOver.bind(this));
     this.elNode.removeEventListener('mouseleave', this.NodeLeave.bind(this));
@@ -47,7 +48,8 @@ export class NodeFlow {
     this.elNode.removeEventListener('touchstart', this.StartSelected.bind(this));
     this.elNode.remove();
     this.arrLine = [];
-    this.parent.RemoveNode(this);
+    if (isRemoveParent)
+      this.parent.RemoveNode(this);
   }
   public AddLine(line: LineFlow) {
     this.arrLine = [...this.arrLine, line];
@@ -85,6 +87,7 @@ export class NodeFlow {
     this.elNode.appendChild(this.elNodeOutputs);
 
     this.parent.elCanvas?.appendChild(this.elNode);
+    this.data = new DataFlow(this);
     this.initOption();
   }
   private initOption() {
