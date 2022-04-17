@@ -11,12 +11,14 @@
 </head>
 
 <body>
+  <button onclick="onExport()">Export</button>
   <div id="flow"></div>
 </body>
 <script>
   let optionFlow = {
     control: {
       Node1: {
+        key: "Node1",
         name: '<i class="fab fa-aws"></i><span> AWS</span>',
         html: "<div>Xin chào 1</div>",
         script: `console.log(node)`,
@@ -24,17 +26,20 @@
         input: 0
       },
       Node2: {
+        key: "Node2",
         name: "Node2",
         html: "<div>Xin chào 2</div>",
         output: 1
       },
       Node3: {
+        key: "Node3",
         name: "Node3",
         html: "<div>Xin chào 3</div>",
 
         output: 3
       },
       Node4: {
+        key: "Node4",
         name: "Node4",
         html: "<div>Xin chào 4</div>",
         output: 10
@@ -42,6 +47,11 @@
     }
   }
   let flow = (new workerflow(document.getElementById("flow"), optionFlow));
+
+  function onExport() {
+    let data = flow.toJson();
+    console.log(data);
+  }
 
 </script>
 

@@ -13,6 +13,21 @@ export class NodeFlow {
   public arrLine: LineFlow[] = [];
   private option: any;
   public data: any = {};
+  public toJson() {
+    let LineJson = this.arrLine.map((item) => ({
+      fromNode: item.fromNode.nodeId,
+      toNode: item.toNode?.nodeId,
+      ouputIndex: item.outputIndex
+    }));
+    return {
+      id: this.nodeId,
+      node: this.option.key,
+      line: LineJson,
+      data: this.data,
+      x: this.pos_x,
+      y: this.pos_y
+    }
+  }
   public output() {
     return this.option?.output ?? 0;
   }

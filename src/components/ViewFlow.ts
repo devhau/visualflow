@@ -33,8 +33,11 @@ export class ViewFlow {
   private dotSelected: NodeFlow | null = null;
   private tempLine: LineFlow | null = null;
   private timeFastClick: number = 0;
+  private projectId: string = "";
+  private projectName: string = "";
   public constructor(parent: WorkerFlow) {
     this.parent = parent;
+    this.projectId = parent.getUuid();
     this.elView = this.parent.container?.querySelector('.workerflow-desgin .workerflow-view') || document.createElement('div');
     this.elCanvas = document.createElement('div');
     this.elCanvas.classList.add("workerflow-canvas");
@@ -66,6 +69,17 @@ export class ViewFlow {
     let y = this.CalcY(this.elCanvas.getBoundingClientRect().y - e_pos_y);
 
     node.updatePosition(x, y);
+  }
+  public toJson() {
+    let nodes = this.nodes.map((item) => item.toJson());
+    return {
+      id: this.projectId,
+      name: this.projectName,
+      x: this.canvas_x,
+      y: this.canvas_y,
+      zoom: this.zoom,
+      nodes
+    }
   }
   public updateView() {
     this.elCanvas.style.transform = "translate(" + this.canvas_x + "px, " + this.canvas_y + "px) scale(" + this.zoom + ")";

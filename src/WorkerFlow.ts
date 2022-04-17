@@ -48,6 +48,9 @@ export class WorkerFlow {
     this.View = new ViewFlow(this);
     this.Control = new ControlFlow(this);
   }
+  public toJson() {
+    return this.View?.toJson();
+  }
   public getTime(): number {
     return (new Date()).getTime();
   }
