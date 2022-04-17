@@ -12,6 +12,8 @@
 
 <body>
   <button onclick="onExport()">Export</button>
+  <button onclick="onLoad()">Load</button>
+  <textarea id="text"></textarea>
   <div id="flow"></div>
 </body>
 <script>
@@ -47,9 +49,18 @@
     }
   }
   let flow = (new workerflow(document.getElementById("flow"), optionFlow));
+  let text = document.getElementById('text');
+
+  function onLoad() {
+    let data = JSON.parse(text.value);
+    flow.load(data);
+    console.log(data)
+    console.log(flow);
+  }
 
   function onExport() {
     let data = flow.toJson();
+    text.value = JSON.stringify(data);
     console.log(data);
   }
 

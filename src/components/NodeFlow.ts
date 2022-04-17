@@ -28,6 +28,14 @@ export class NodeFlow {
       y: this.pos_y
     }
   }
+  public load(data: any) {
+    this.nodeId = data?.id ?? this.nodeId;
+    this.option = this.parent.getOption(data?.node);
+    this.data = data?.data;
+    this.updatePosition(data?.x, data?.y, true);
+    this.initOption();
+    return this;
+  }
   public output() {
     return this.option?.output ?? 0;
   }
@@ -76,7 +84,12 @@ export class NodeFlow {
     this.elNode.appendChild(this.elNodeContent);
     this.elNode.appendChild(this.elNodeOutputs);
 
-    if (this.option) {
+    this.parent.elCanvas?.appendChild(this.elNode);
+    this.initOption();
+  }
+  private initOption() {
+
+    if (this.elNodeContent && this.option && this.elNodeOutputs) {
       this.elNodeContent.innerHTML = this.option.html;
       this.elNodeOutputs.innerHTML = '';
       if (this.option.output) {
@@ -89,7 +102,6 @@ export class NodeFlow {
         }
       }
     }
-    this.parent.elCanvas?.appendChild(this.elNode);
     setTimeout(() => {
       this.RunScript(this, this.elNode);
     }, 100);

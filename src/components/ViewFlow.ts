@@ -46,6 +46,15 @@ export class ViewFlow {
     this.addEvent();
     this.updateView();
   }
+  public getOption(keyNode: any) {
+    if (!keyNode) return;
+    let control = this.parent.option.control[keyNode];
+    if (!control) {
+      control = Object.values(this.parent.option.control)[0];
+    }
+    control.key = keyNode;
+    return control;
+  }
   private dropEnd(ev: any) {
     let keyNode: string | null = '';
     if (ev.type === "touchend") {
@@ -54,8 +63,8 @@ export class ViewFlow {
       ev.preventDefault();
       keyNode = ev.dataTransfer.getData("node");
     }
-    if (!keyNode) return;
-    let node = this.AddNode(this.parent.option.control[keyNode]);
+
+    let node = this.AddNode(this.getOption(keyNode));
     let e_pos_x = 0;
     let e_pos_y = 0;
     if (ev.type === "touchmove") {
@@ -80,6 +89,29 @@ export class ViewFlow {
       zoom: this.zoom,
       nodes
     }
+  }
+  public load(data: any) {
+    this.projectId = data?.id ?? this.parent.getUuid();
+    this.projectName = data?.name ?? `project-${this.parent.getTime()}`;
+    this.canvas_x = data?.x ?? 0;
+    this.canvas_y = data?.y ?? 0;
+    this.zoom = data?.zoom ?? 1;
+    this.nodes = (data?.nodes ?? []).map((item: any) => {
+      return (new NodeFlow(this, "")).load(item);
+    });
+    (data?.nodes ?? []).forEach((item: any) => {
+      (item.line ?? []).forEach((line: any) => {
+        let fromNode = this.getNodeById(line.fromNode);
+        let toNode = this.getNodeById(line.toNode);
+        let ouputIndex = line.ouputIndex ?? 0;
+        if (fromNode && toNode) {
+          this.AddLine(fromNode, toNode, ouputIndex);
+        }
+      })
+    })
+  }
+  public getNodeById(nodeId: string) {
+    return this.nodes?.filter((item) => item.nodeId == nodeId)[0];
   }
   public updateView() {
     this.elCanvas.style.transform = "translate(" + this.canvas_x + "px, " + this.canvas_y + "px) scale(" + this.zoom + ")";

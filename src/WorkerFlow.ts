@@ -48,6 +48,9 @@ export class WorkerFlow {
     this.View = new ViewFlow(this);
     this.Control = new ControlFlow(this);
   }
+  public load(data: any) {
+    this.View?.load(data);
+  }
   public toJson() {
     return this.View?.toJson();
   }
