@@ -1,10 +1,11 @@
 import { NodeFlow } from "./NodeFlow";
+import { ViewFlow } from "./ViewFlow";
 
 export class LineFlow {
   public elConnection: SVGElement | null;
   public elPath: SVGPathElement;
   private curvature: number = 0.5;
-  public constructor(public fromNode: NodeFlow, public toNode: NodeFlow | null = null, public outputIndex: number = 0) {
+  public constructor(private parent: ViewFlow, public fromNode: NodeFlow, public toNode: NodeFlow | null = null, public outputIndex: number = 0) {
     this.elConnection = document.createElementNS('http://www.w3.org/2000/svg', "svg");
     this.elPath = document.createElementNS('http://www.w3.org/2000/svg', "path");
     this.elPath.classList.add("main-path");
@@ -13,13 +14,13 @@ export class LineFlow {
     this.elPath.setAttributeNS(null, 'd', '');
     this.elConnection.classList.add("connection");
     this.elConnection.appendChild(this.elPath);
-    this.fromNode.parent.elCanvas?.appendChild(this.elConnection);
+    this.parent.elCanvas?.appendChild(this.elConnection);
     this.fromNode.AddLine(this);
     this.toNode?.AddLine(this);
     this.update();
   }
   public StartSelected(e: any) {
-    this.fromNode.parent.SelectLine(this);
+    this.parent.SelectLine(this);
   }
   private createCurvature(start_pos_x: number, start_pos_y: number, end_pos_x: number, end_pos_y: number, curvature_value: number, type: string) {
     let line_x = start_pos_x;
@@ -80,7 +81,7 @@ export class LineFlow {
   }
   public updateTo(to_x: number, to_y: number) {
     let from_x = this.fromNode.pos_x + this.fromNode.elNode.clientWidth + 5;
-    let from_y = this.fromNode.pos_y + (this.outputIndex > 0 ? (((this.outputIndex - 1) * 21) + 15) : (this.fromNode.elNode.clientHeight / 2));
+    let from_y = this.fromNode.pos_y + (this.fromNode.output() > 1 ? (((this.outputIndex - 1) * 21) + 15) : (2 + this.fromNode.elNode.clientHeight / 2));
     var lineCurve = this.createCurvature(from_x, from_y, to_x, to_y, this.curvature, 'openclose');
     this.elPath.setAttributeNS(null, 'd', lineCurve);
   }

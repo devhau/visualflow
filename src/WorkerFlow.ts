@@ -27,27 +27,6 @@ export class WorkerFlow {
     this.container.classList.add("workerflow");
     this.option = option || {
       control: {
-        Node1: {
-          name: '<i class="fab fa-aws"></i><span> AWS</span>',
-          html: "<div>Xin chào 1</div>",
-          output: 0
-        },
-        Node2: {
-          name: "Node2",
-          html: "<div>Xin chào 2</div>",
-          output: 1
-        },
-        Node3: {
-          name: "Node3",
-          html: "<div>Xin chào 3</div>",
-
-          output: 3
-        },
-        Node4: {
-          name: "Node4",
-          html: "<div>Xin chào 4</div>",
-          output: 10
-        }
       }
     };
     this.container.innerHTML = `

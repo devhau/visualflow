@@ -131,7 +131,13 @@ export class ViewFlow {
     return node;
   }
   public AddLine(fromNode: NodeFlow, toNode: NodeFlow, outputIndex: number = 0) {
-    return new LineFlow(fromNode, toNode, outputIndex);
+    if (fromNode == toNode) return;
+    if (fromNode.arrLine.filter((item) => {
+      return item.toNode === toNode && item.outputIndex == outputIndex && item != this.tempLine;
+    }).length > 0) {
+      return;
+    }
+    return new LineFlow(this, fromNode, toNode, outputIndex);
   }
   public addEvent() {
     /* Mouse and Touch Actions */
@@ -213,7 +219,7 @@ export class ViewFlow {
             return;
           }
           this.moveType = MoveType.Line;
-          this.tempLine = new LineFlow(this.nodeSelected, null);
+          this.tempLine = new LineFlow(this, this.nodeSelected, null);
           this.tempLine.outputIndex = +(e.target.getAttribute('node'));
         } else {
           this.moveType = MoveType.Node;

@@ -1,8 +1,8 @@
 import { LineFlow } from "./LineFlow";
 import { ViewFlow } from "./ViewFlow";
-
+const geval = eval;
 export class NodeFlow {
-  public parent: ViewFlow;
+  private parent: ViewFlow;
   public elNode: HTMLElement;
   public elNodeInputs: HTMLElement | null | null;
   public elNodeOutputs: HTMLElement | null | null;
@@ -12,6 +12,10 @@ export class NodeFlow {
   public pos_y: number = 0;
   public arrLine: LineFlow[] = [];
   private option: any;
+  public data: any = {};
+  public output() {
+    return this.option?.output ?? 0;
+  }
   public delete() {
     this.arrLine.forEach((item) => item.delete(this));
     this.elNode.removeEventListener('mouseover', this.NodeOver.bind(this));
@@ -55,7 +59,8 @@ export class NodeFlow {
     this.elNode.addEventListener('touchstart', this.StartSelected.bind(this));
     this.elNode.appendChild(this.elNodeInputs);
     this.elNode.appendChild(this.elNodeContent);
-    this.elNode.appendChild(this.elNodeOutputs)
+    this.elNode.appendChild(this.elNodeOutputs);
+
     if (this.option) {
       this.elNodeContent.innerHTML = this.option.html;
       this.elNodeOutputs.innerHTML = '';
@@ -70,6 +75,14 @@ export class NodeFlow {
       }
     }
     this.parent.elCanvas?.appendChild(this.elNode);
+    setTimeout(() => {
+      this.RunScript(this, this.elNode);
+    }, 100);
+  }
+  public RunScript(selfNode: NodeFlow, el: HTMLElement) {
+    if (this.option && this.option.script) {
+      geval('(node,el)=>{' + this.option.script.toString() + '}')(selfNode, el);
+    }
   }
   public NodeOver(e: any) {
     this.parent.nodeOver = this;
