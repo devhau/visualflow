@@ -50,7 +50,6 @@ export class WorkerFlow {
     this.View = new ViewFlow(this);
     this.tab = new TabFlow(this, []);
     this.Control = new ControlFlow(this);
-    this.new();
   }
   public new() {
     this.tab?.NewProject();

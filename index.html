@@ -21,7 +21,7 @@
 <script>
   let optionFlow = {
     control: {
-      Node1: {
+      node_begin: {
         key: "node_begin",
         name: '<i class="fas fa-play"></i> Begin</span>',
         html: '<div><i class="fas fa-play"></i> Node Begin</div>',
@@ -30,20 +30,20 @@
         input: 0,
         onlyNode: true
       },
-      Node2: {
+      node_end: {
         key: "node_end",
         name: '<i class="fas fa-stop"></i> End',
         html: '<div><i class="fas fa-stop"></i> Node End</div>',
         output: 0,
         onlyNode: true
       },
-      Node3: {
+      node_if: {
         key: "node_if",
         name: '<i class="fas fa-equals"></i> If',
         html: '<div>condition:<br/><input node:model="condition"/></div>',
         output: 2
       },
-      Node4: {
+      node_note: {
         key: "node_note",
         name: '<i class="fal fa-comment-alt"></i> Note',
         html: '<div><textarea node:model="note"></textarea></div>',
