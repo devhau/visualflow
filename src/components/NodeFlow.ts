@@ -15,6 +15,7 @@ export class NodeFlow {
   public arrLine: LineFlow[] = [];
   private option: any;
   public data: DataFlow | null = null;
+  private flgScript: boolean = false;
   public readonly Event = {
     ReUI: "ReUI",
     change: "change",
@@ -25,7 +26,6 @@ export class NodeFlow {
 
   private events: EventFlow;
   on(event: string, callback: any) {
-    console.log(event);
     this.events.on(event, callback);
   }
   removeListener(event: string, callback: any) {
@@ -97,8 +97,17 @@ export class NodeFlow {
     })
     this.ReUI();
   }
+  public ReUIT() {
+    let self = this;
+    setTimeout(() => {
+      self.ReUI();
+    });
+  }
   public ReUI() {
     if (this.elNode) this.elNode.remove();
+    if (this.data) {
+      this.data.RemoveEvent();
+    }
     this.elNode = document.createElement('div');
     this.elNode.classList.add("workerflow-node");
     this.elNode.id = `node-${this.nodeId}`;
@@ -122,7 +131,9 @@ export class NodeFlow {
 
     this.parent.elCanvas?.appendChild(this.elNode);
     if (this.data) {
-      this.data.load(this.data.toJson());
+      let dataTemp = this.data.toJson();
+      this.data = new DataFlow(this);
+      this.data.load(dataTemp);
     } else {
       this.data = new DataFlow(this);
     }
@@ -143,21 +154,25 @@ export class NodeFlow {
           output.setAttribute('node', (index).toString());
           output.classList.add("dot");
           output.classList.add("output_" + (index));
-          this.elNodeOutputs.appendChild(output);
+          this.elNodeOutputs?.appendChild(output);
         }
+
       }
       if (this.option.input === 0 && this.elNodeInputs) {
         this.elNodeInputs.innerHTML = '';
       }
 
     }
+    let self = this;
     setTimeout(() => {
-      this.RunScript(this, this.elNode);
+      self.RunScript(self, self.elNode);
     }, 100);
   }
   public RunScript(selfNode: NodeFlow, el: HTMLElement | null) {
-    if (this.option && this.option.script) {
+    if (this.option && this.option.script && !this.flgScript) {
+      this.flgScript = true;
       geval('(node,el)=>{' + this.option.script.toString() + '}')(selfNode, el);
+      this.flgScript = true;
     }
   }
   public checkKey(key: any) {
