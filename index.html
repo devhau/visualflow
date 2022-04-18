@@ -55,7 +55,7 @@
   let share = document.getElementById('share');
   try {
     flow.load(JSON.parse(atob(window.location.search.substring(1))));
-
+    onExport();
   } catch {
 
   }
