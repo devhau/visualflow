@@ -1,4 +1,5 @@
 import { DataFlow } from "./DataFlow";
+import { EventFlow } from "./EventFlow";
 import { LineFlow } from "./LineFlow";
 import { ViewFlow } from "./ViewFlow";
 const geval = eval;
@@ -14,6 +15,25 @@ export class NodeFlow {
   public arrLine: LineFlow[] = [];
   private option: any;
   public data: DataFlow | null = null;
+  public readonly Event = {
+    ReUI: "ReUI",
+    change: "change",
+    updatePosition: "updatePosition",
+    selected: "Selected",
+    dataChange: "dataChange"
+  };
+
+  private events: EventFlow;
+  on(event: string, callback: any) {
+    console.log(event);
+    this.events.on(event, callback);
+  }
+  removeListener(event: string, callback: any) {
+    this.events.removeListener(event, callback);
+  }
+  dispatch(event: string, details: any) {
+    this.events.dispatch(event, details);
+  }
   public toJson() {
     let LineJson = this.arrLine.filter((item) => item.fromNode === this).map((item) => ({
       fromNode: item.fromNode.nodeId,
@@ -50,21 +70,31 @@ export class NodeFlow {
     this.arrLine = [];
     if (isRemoveParent)
       this.parent.RemoveNode(this);
+    this.dispatch(this.Event.change, {});
   }
   public AddLine(line: LineFlow) {
     this.arrLine = [...this.arrLine, line];
+    this.dispatch(this.Event.change, {});
   }
   public RemoveLine(line: LineFlow) {
     var index = this.arrLine.indexOf(line);
     if (index > -1) {
       this.arrLine.splice(index, 1);
     }
+    this.dispatch(this.Event.change, {});
     return this.arrLine;
   }
   public constructor(parent: ViewFlow, id: string, option: any = null) {
+    this.events = new EventFlow(this);
     this.option = option;
     this.parent = parent;
     this.nodeId = id;
+    this.on(this.Event.change, (e: any, sender: any) => {
+      this.parent.dispatch(this.parent.Event.change, {
+        ...e,
+        targetNode: sender
+      });
+    })
     this.ReUI();
   }
   public ReUI() {
@@ -91,9 +121,13 @@ export class NodeFlow {
     this.elNode.appendChild(this.elNodeOutputs);
 
     this.parent.elCanvas?.appendChild(this.elNode);
-    this.data = new DataFlow(this);
+    if (this.data) {
+      this.data.load(this.data.toJson());
+    } else {
+      this.data = new DataFlow(this);
+    }
     this.initOption();
-
+    this.dispatch(this.Event.ReUI, {});
   }
   public checkInput() {
     return !(this.option?.input === 0);
@@ -137,6 +171,7 @@ export class NodeFlow {
   }
   public StartSelected(e: any) {
     this.parent.SelectNode(this);
+    this.dispatch(this.Event.selected, {});
   }
   public updatePosition(x: any, y: any, iCheck = false) {
     if (this.elNode) {
@@ -151,6 +186,8 @@ export class NodeFlow {
       this.arrLine.forEach((item) => {
         item.update();
       })
+      this.dispatch(this.Event.updatePosition, { x: this.pos_x, y: this.pos_y });
+      this.dispatch(this.Event.change, {});
     }
   }
 }

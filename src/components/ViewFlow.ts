@@ -1,4 +1,5 @@
 import { WorkerFlow } from "../WorkerFlow";
+import { EventFlow } from "./EventFlow";
 import { LineFlow } from "./LineFlow";
 import { NodeFlow } from "./NodeFlow";
 
@@ -36,8 +37,26 @@ export class ViewFlow {
   private projectId: string = "";
   private projectName: string = "";
   private tagIngore = ['input', 'button', 'a', 'textarea'];
+
+  public readonly Event = {
+    change: "change",
+    selected: "Selected",
+    updateView: "updateView"
+  };
+
+  private events: EventFlow;
+  on(event: string, callback: any) {
+    this.events.on(event, callback);
+  }
+  removeListener(event: string, callback: any) {
+    this.events.removeListener(event, callback);
+  }
+  dispatch(event: string, details: any) {
+    this.events.dispatch(event, details);
+  }
   public constructor(parent: WorkerFlow) {
     this.parent = parent;
+    this.events = new EventFlow(this);
     this.elView = this.parent.container?.querySelector('.workerflow-desgin .workerflow-view') || document.createElement('div');
     this.elCanvas = document.createElement('div');
     this.elCanvas.classList.add("workerflow-canvas");
@@ -135,6 +154,7 @@ export class ViewFlow {
   }
   public updateView() {
     this.elCanvas.style.transform = "translate(" + this.canvas_x + "px, " + this.canvas_y + "px) scale(" + this.zoom + ")";
+    this.dispatch(this.Event.updateView, { x: this.canvas_x, y: this.canvas_y, zoom: this.zoom });
   }
   private CalcX(number: any) {
     return number * (this.elCanvas.clientWidth / (this.elView.clientWidth * this.zoom));

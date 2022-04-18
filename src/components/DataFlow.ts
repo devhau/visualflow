@@ -9,13 +9,15 @@ export class DataFlow {
       });
     });
   }
-  public Set(key: string, Value: any, obj = null) {
-    this.data[key] = Value;
+  public Set(key: string, value: any, obj = null) {
+    this.data[key] = value;
     setTimeout(() => {
       this.node.elNode?.querySelectorAll(`[node\\:model="${key}"]`).forEach((item: any) => {
         if (item != obj)
-          item.value = Value;
+          item.value = value;
       });
+      this.node.dispatch(this.node.Event.dataChange, { key, value, obj });
+      this.node.dispatch(this.node.Event.change, { key, value, obj });
     });
   }
   public changeInput(e: any) {

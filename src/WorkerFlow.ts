@@ -1,4 +1,5 @@
 import { ControlFlow } from "./components/ControlFlow";
+import { EventFlow } from "./components/EventFlow";
 import { TabFlow } from "./components/TabFlow";
 import { ViewFlow } from "./components/ViewFlow";
 
@@ -9,8 +10,18 @@ export class WorkerFlow {
   public Control: ControlFlow | null;
   public tab: TabFlow | null;
   public dataNodeSelect: string | null = null;
-  private events: any = {};
   public option: any;
+
+  private events: EventFlow;
+  on(event: string, callback: any) {
+    this.events.on(event, callback);
+  }
+  removeListener(event: string, callback: any) {
+    this.events.removeListener(event, callback);
+  }
+  dispatch(event: string, details: any) {
+    this.events.dispatch(event, details);
+  }
 
   public checkParent(node: any, nodeCheck: any) {
     if (node && nodeCheck) {
@@ -50,6 +61,7 @@ export class WorkerFlow {
     this.View = new ViewFlow(this);
     this.tab = new TabFlow(this, []);
     this.Control = new ControlFlow(this);
+    this.events = new EventFlow(this);
   }
   public new() {
     this.tab?.NewProject();
@@ -76,48 +88,5 @@ export class WorkerFlow {
 
     let uuid = s.join("");
     return uuid;
-  }
-  /* Events */
-  on(event: string, callback: any) {
-    // Check if the callback is not a function
-    if (typeof callback !== 'function') {
-      console.error(`The listener callback must be a function, the given type is ${typeof callback}`);
-      return false;
-    }
-    // Check if the event is not a string
-    if (typeof event !== 'string') {
-      console.error(`The event name must be a string, the given type is ${typeof event}`);
-      return false;
-    }
-    // Check if this event not exists
-    if (this.events[event] === undefined) {
-      this.events[event] = {
-        listeners: []
-      }
-    }
-    this.events[event].listeners.push(callback);
-  }
-
-  removeListener(event: string, callback: any) {
-    // Check if this event not exists
-
-    if (!this.events[event]) return false
-
-    const listeners = this.events[event].listeners
-    const listenerIndex = listeners.indexOf(callback)
-    const hasListener = listenerIndex > -1
-    if (hasListener) listeners.splice(listenerIndex, 1)
-  }
-
-  dispatch(event: string, details: any) {
-    let self = this;
-    // Check if this event not exists
-    if (this.events[event] === undefined) {
-      // console.error(`This event: ${event} does not exist`);
-      return false;
-    }
-    this.events[event].listeners.forEach((listener: any) => {
-      listener(details, self);
-    });
   }
 }

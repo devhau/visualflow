@@ -25,7 +25,7 @@
         key: "node_begin",
         name: '<i class="fas fa-play"></i> Begin</span>',
         html: '<div><i class="fas fa-play"></i> Node Begin</div>',
-        script: `console.log(node)`,
+
         output: 1,
         input: 0,
         onlyNode: true
@@ -41,11 +41,18 @@
         key: "node_if",
         name: '<i class="fas fa-equals"></i> If',
         html: '<div>condition:<br/><input node:model="condition"/></div>',
+        script: `node.on('dataChange',function(e,sender){
+          if(e.value>4){
+            node.option.output=10;
+            node.ReUI();
+          }
+          console.log(e)
+        })`,
         output: 2
       },
       node_note: {
         key: "node_note",
-        name: '<i class="fal fa-comment-alt"></i> Note',
+        name: '<i class="fas fa-comment-alt"></i> Note',
         html: '<div><textarea node:model="note"></textarea></div>',
       }
     }
