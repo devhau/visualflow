@@ -12,46 +12,57 @@
 
 <body>
   <button onclick="onExport()">Export</button>
+  <button onclick="onNew()">New</button>
   <button onclick="onLoad()">Load</button>
   <textarea id="text"></textarea>
+  <textarea id="share"></textarea>
   <div id="flow"></div>
 </body>
 <script>
   let optionFlow = {
     control: {
       Node1: {
-        key: "Node1",
-        name: '<i class="fab fa-aws"></i><span> AWS</span>',
-        html: "<div>Xin chào 1 <input type='text' node:model='name'/></div>",
+        key: "node_begin",
+        name: '<i class="fas fa-play"></i> Begin</span>',
+        html: '<div><i class="fas fa-play"></i> Node Begin</div>',
         script: `console.log(node)`,
         output: 1,
-        input: 0
+        input: 0,
+        onlyNode: true
       },
       Node2: {
-        key: "Node2",
-        name: "Node2",
-        html: "<div>Xin chào 2</div>",
-        output: 1
+        key: "node_end",
+        name: '<i class="fas fa-stop"></i> End',
+        html: '<div><i class="fas fa-stop"></i> Node End</div>',
+        output: 0,
+        onlyNode: true
       },
       Node3: {
-        key: "Node3",
-        name: "Node3",
-        html: "<div>Xin chào 3</div>",
-
-        output: 3
+        key: "node_if",
+        name: '<i class="fas fa-equals"></i> If',
+        html: '<div>condition:<br/><input node:model="condition"/></div>',
+        output: 2
       },
       Node4: {
-        key: "Node4",
-        name: "Node4",
-        html: "<div>Xin chào 4</div>",
-        output: 10
+        key: "node_note",
+        name: '<i class="fal fa-comment-alt"></i> Note',
+        html: '<div><textarea node:model="note"></textarea></div>',
       }
     }
   }
   let flow = (new workerflow(document.getElementById("flow"), optionFlow));
   let text = document.getElementById('text');
-  flow.new();
-  flow.new();
+  let share = document.getElementById('share');
+  try {
+    flow.load(JSON.parse(atob(window.location.search.substring(1))));
+
+  } catch {
+
+  }
+
+  function onNew() {
+    flow.new();
+  }
 
   function onLoad() {
     let data = JSON.parse(text.value);
@@ -61,6 +72,7 @@
   function onExport() {
     let data = flow.toJson();
     text.value = JSON.stringify(data);
+    share.value = window.location.href.split('?')[0] + `?` + btoa(text.value);
   }
 
 </script>

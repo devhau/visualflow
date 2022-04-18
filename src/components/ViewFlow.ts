@@ -35,6 +35,7 @@ export class ViewFlow {
   private timeFastClick: number = 0;
   private projectId: string = "";
   private projectName: string = "";
+  private tagIngore = ['input', 'button', 'a', 'textarea'];
   public constructor(parent: WorkerFlow) {
     this.parent = parent;
     this.elView = this.parent.container?.querySelector('.workerflow-desgin .workerflow-view') || document.createElement('div');
@@ -64,8 +65,14 @@ export class ViewFlow {
       ev.preventDefault();
       keyNode = ev.dataTransfer.getData("node");
     }
+    let option = this.getOption(keyNode);
+    if (option && option.onlyNode) {
+      if (this.nodes.filter((item) => item.checkKey(keyNode)).length > 0) {
+        return;
+      }
+    }
+    let node = this.AddNode(option);
 
-    let node = this.AddNode(this.getOption(keyNode));
     let e_pos_x = 0;
     let e_pos_y = 0;
     if (ev.type === "touchmove") {
@@ -270,6 +277,9 @@ export class ViewFlow {
   }
 
   public StartMove(e: any) {
+    if (this.tagIngore.includes(e.target.tagName.toLowerCase())) {
+      return;
+    }
     this.timeFastClick = this.parent.getTime();
     if (this.moveType == MoveType.None) {
       if (this.nodeSelected && this.parent.checkParent(e.target, this.nodeSelected.elNode)) {
@@ -354,7 +364,7 @@ export class ViewFlow {
 
     this.UnSelect();
     if (this.tempLine && this.moveType == MoveType.Line) {
-      if (this.tempLine.toNode) {
+      if (this.tempLine.toNode && this.tempLine.toNode.checkInput()) {
         this.AddLine(this.tempLine.fromNode, this.tempLine.toNode, this.tempLine.outputIndex);
       }
       this.tempLine.delete();

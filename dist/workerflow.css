@@ -76,6 +76,9 @@ body {
   overflow: hidden;
   position: relative;
 }
+.workerflow .workerflow-desgin .workerflow-view:focus-visible {
+  outline: none;
+}
 .workerflow .workerflow-desgin .workerflow-view .workerflow-canvas {
   position: relative;
   width: 100%;
@@ -112,7 +115,8 @@ body {
   -webkit-box-shadow: 0 2px 15px 2px var(--border-color);
   box-shadow: 0 2px 15px 2px var(--border-color);
   padding: 0px;
-  width: 200px;
+  min-width: 150px;
+  max-width: 300px;
   color: #000;
   z-index: 2;
 }

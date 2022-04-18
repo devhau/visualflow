@@ -4,16 +4,16 @@ import { ViewFlow } from "./ViewFlow";
 const geval = eval;
 export class NodeFlow {
   private parent: ViewFlow;
-  public elNode: HTMLElement;
-  public elNodeInputs: HTMLElement | null | null;
-  public elNodeOutputs: HTMLElement | null | null;
-  public elNodeContent: HTMLElement | null | null;
+  public elNode: HTMLElement | null = null;
+  public elNodeInputs: HTMLElement | null = null;
+  public elNodeOutputs: HTMLElement | null = null;
+  public elNodeContent: HTMLElement | null = null;
   public nodeId: string;
   public pos_x: number = 0;
   public pos_y: number = 0;
   public arrLine: LineFlow[] = [];
   private option: any;
-  public data: DataFlow | null;
+  public data: DataFlow | null = null;
   public toJson() {
     let LineJson = this.arrLine.filter((item) => item.fromNode === this).map((item) => ({
       fromNode: item.fromNode.nodeId,
@@ -42,11 +42,11 @@ export class NodeFlow {
   }
   public delete(isRemoveParent = true) {
     this.arrLine.forEach((item) => item.delete(this));
-    this.elNode.removeEventListener('mouseover', this.NodeOver.bind(this));
-    this.elNode.removeEventListener('mouseleave', this.NodeLeave.bind(this));
-    this.elNode.removeEventListener('mousedown', this.StartSelected.bind(this));
-    this.elNode.removeEventListener('touchstart', this.StartSelected.bind(this));
-    this.elNode.remove();
+    this.elNode?.removeEventListener('mouseover', this.NodeOver.bind(this));
+    this.elNode?.removeEventListener('mouseleave', this.NodeLeave.bind(this));
+    this.elNode?.removeEventListener('mousedown', this.StartSelected.bind(this));
+    this.elNode?.removeEventListener('touchstart', this.StartSelected.bind(this));
+    this.elNode?.remove();
     this.arrLine = [];
     if (isRemoveParent)
       this.parent.RemoveNode(this);
@@ -65,9 +65,13 @@ export class NodeFlow {
     this.option = option;
     this.parent = parent;
     this.nodeId = id;
+    this.ReUI();
+  }
+  public ReUI() {
+    if (this.elNode) this.elNode.remove();
     this.elNode = document.createElement('div');
     this.elNode.classList.add("workerflow-node");
-    this.elNode.id = `node-${id}`;
+    this.elNode.id = `node-${this.nodeId}`;
     this.elNodeInputs = document.createElement('div');
     this.elNodeInputs.classList.add('workerflow-node_inputs');
     this.elNodeInputs.innerHTML = `<div class="inputs dot"></div>`;
@@ -75,8 +79,8 @@ export class NodeFlow {
     this.elNodeContent.classList.add('workerflow-node_content');
     this.elNodeOutputs = document.createElement('div');
     this.elNodeOutputs.classList.add('workerflow-node_outputs');
-    this.elNodeOutputs.innerHTML = ``;
-    this.elNode.setAttribute('data-node', id);
+    this.elNodeOutputs.innerHTML = `<div class="outputs dot"></div>`;
+    this.elNode.setAttribute('data-node', this.nodeId);
     this.elNode.setAttribute('style', `top: ${this.pos_y}px; left: ${this.pos_x}px;`);
     this.elNode.addEventListener('mouseover', this.NodeOver.bind(this));
     this.elNode.addEventListener('mouseleave', this.NodeLeave.bind(this));
@@ -89,13 +93,17 @@ export class NodeFlow {
     this.parent.elCanvas?.appendChild(this.elNode);
     this.data = new DataFlow(this);
     this.initOption();
+
+  }
+  public checkInput() {
+    return !(this.option?.input === 0);
   }
   private initOption() {
 
     if (this.elNodeContent && this.option && this.elNodeOutputs) {
       this.elNodeContent.innerHTML = this.option.html;
-      this.elNodeOutputs.innerHTML = '';
-      if (this.option.output) {
+      if (this.option.output !== undefined) {
+        this.elNodeOutputs.innerHTML = '';
         for (let index: number = 1; index <= this.option.output; index++) {
           let output = document.createElement('div');
           output.setAttribute('node', (index).toString());
@@ -104,15 +112,22 @@ export class NodeFlow {
           this.elNodeOutputs.appendChild(output);
         }
       }
+      if (this.option.input === 0 && this.elNodeInputs) {
+        this.elNodeInputs.innerHTML = '';
+      }
+
     }
     setTimeout(() => {
       this.RunScript(this, this.elNode);
     }, 100);
   }
-  public RunScript(selfNode: NodeFlow, el: HTMLElement) {
+  public RunScript(selfNode: NodeFlow, el: HTMLElement | null) {
     if (this.option && this.option.script) {
       geval('(node,el)=>{' + this.option.script.toString() + '}')(selfNode, el);
     }
+  }
+  public checkKey(key: any) {
+    return this.option && this.option.key == key;
   }
   public NodeOver(e: any) {
     this.parent.nodeOver = this;
