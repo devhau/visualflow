@@ -42,6 +42,28 @@ body {
 .workerflow .workerflow-control .workerflow-control__list .workerflow-control__item:hover {
   background-color: #cacaca;
 }
+.workerflow .workerflow-property {
+  width: 250px;
+  height: 100%;
+  background-color: #ffffff;
+  border: 1px solid var(--border-color);
+}
+.workerflow .workerflow-property .workerflow-property__header {
+  padding: 7px 5px;
+  margin: 0;
+  border-bottom: 2px solid var(--border-color);
+}
+.workerflow .workerflow-property .workerflow-property__list {
+  padding: 0;
+  margin: 0;
+}
+.workerflow .workerflow-property .workerflow-property__list .workerflow-property__item {
+  padding: 12px 8px;
+  border-bottom: 1px solid var(--border-color);
+}
+.workerflow .workerflow-property .workerflow-property__list .workerflow-property__item:hover {
+  background-color: #cacaca;
+}
 .workerflow .workerflow-desgin {
   height: 100%;
   background-color: aliceblue;

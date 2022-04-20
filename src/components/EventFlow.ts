@@ -1,6 +1,8 @@
+import { FlowCore } from "./BaseFlow";
+
 export class EventFlow {
   private events: any = {};
-  public constructor(private parent: any) {
+  public constructor(private parent: FlowCore) {
 
   }
   /* Events */

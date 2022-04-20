@@ -1,4 +1,6 @@
 import { WorkerFlow } from "../WorkerFlow";
+import { BaseFlow } from "./BaseFlow";
+import { DataFlow } from "./DataFlow";
 import { EventFlow } from "./EventFlow";
 import { LineFlow } from "./LineFlow";
 import { NodeFlow } from "./NodeFlow";
@@ -9,79 +11,75 @@ export enum MoveType {
   Canvas = 2,
   Line = 3,
 }
-export class ViewFlow {
-  private elView: HTMLElement;
+export class ViewFlow extends BaseFlow<WorkerFlow> {
   public elCanvas: HTMLElement;
-  private parent: WorkerFlow;
-  private nodes: NodeFlow[] = [];
   public flgDrap: boolean = false;
   public flgMove: boolean = false;
   private moveType: MoveType = MoveType.None;
-  private zoom: number = 1;
   private zoom_max: number = 1.6;
   private zoom_min: number = 0.5;
   private zoom_value: number = 0.1;
   private zoom_last_value: number = 1;
-  private canvas_x: number = 0;
-  private canvas_y: number = 0;
   private pos_x: number = 0;
   private pos_y: number = 0;
   private mouse_x: number = 0;
   private mouse_y: number = 0;
+  private nodes: NodeFlow[] = [];
   private lineSelected: LineFlow | null = null;
   private nodeSelected: NodeFlow | null = null;
   public nodeOver: NodeFlow | null = null;
   private dotSelected: NodeFlow | null = null;
   private tempLine: LineFlow | null = null;
   private timeFastClick: number = 0;
-  private projectId: string = "";
-  private projectName: string = "";
+  public readonly data: DataFlow = new DataFlow(this);
   private tagIngore = ['input', 'button', 'a', 'textarea'];
 
+  public readonly Properties: any = {
+    id: {
+      key: "id",
+    },
+    name: {
+      key: "name",
+    },
+    zoom: {
+      key: "zoom",
+      default: 1,
+    },
+    canvas_x: {
+      key: "canvas_x",
+      default: 0
+    },
+    canvas_y: {
+      key: "canvas_y",
+      default: 0
+    }
+  };
   public readonly Event = {
     change: "change",
     selected: "Selected",
     updateView: "updateView"
   };
-
-  private events: EventFlow;
-  on(event: string, callback: any) {
-    this.events.on(event, callback);
-  }
-  removeListener(event: string, callback: any) {
-    this.events.removeListener(event, callback);
-  }
-  dispatch(event: string, details: any) {
-    this.events.dispatch(event, details);
-  }
   public constructor(parent: WorkerFlow) {
-    this.parent = parent;
-    this.events = new EventFlow(this);
-    this.elView = this.parent.container?.querySelector('.workerflow-desgin .workerflow-view') || document.createElement('div');
+    super(parent);
+    this.elNode = this.parent.elNode.querySelector('.workerflow-desgin .workerflow-view') || this.elNode;
     this.elCanvas = document.createElement('div');
     this.elCanvas.classList.add("workerflow-canvas");
-    this.elView.appendChild(this.elCanvas);
-    this.elView.tabIndex = 0;
+    this.elNode.appendChild(this.elCanvas);
+    this.elNode.tabIndex = 0;
     this.addEvent();
     this.Reset();
     this.updateView();
 
   }
   public getOption(keyNode: any) {
-    if (!keyNode) return;
-    let control = this.parent.option.control[keyNode];
-    if (!control) {
-      control = Object.values(this.parent.option.control)[0];
-    }
-    control.key = keyNode;
-    return control;
+    return this.parent.getOption(keyNode);
   }
   private dropEnd(ev: any) {
+    ev.preventDefault();
     let keyNode: string | null = '';
     if (ev.type === "touchend") {
       keyNode = this.parent.dataNodeSelect;
     } else {
-      ev.preventDefault();
       keyNode = ev.dataTransfer.getData("node");
     }
     let option = this.getOption(keyNode);
@@ -108,26 +106,33 @@ export class ViewFlow {
   }
   public toJson() {
     let nodes = this.nodes.map((item) => item.toJson());
+    let rs: any = {};
+    for (let key of Object.keys(this.Properties)) {
+      rs[key] = this.data.Get(key);
+    }
     return {
-      id: this.projectId,
-      name: this.projectName,
-      x: this.canvas_x,
-      y: this.canvas_y,
-      zoom: this.zoom,
+      ...rs,
       nodes
     }
   }
   public load(data: any) {
     this.Reset();
-    this.projectId = data?.id ?? this.parent.getUuid();
-    this.projectName = data?.name ?? `project-${this.parent.getTime()}`;
-    this.canvas_x = data?.x ?? 0;
-    this.canvas_y = data?.y ?? 0;
-    this.zoom = data?.zoom ?? 1;
-    this.nodes = (data?.nodes ?? []).map((item: any) => {
+    if (!data) {
+      data = {};
+    }
+    if (!data[this.Properties.id.key]) {
+      data[this.Properties.id.key] = this.parent.getUuid();
+    }
+    if (!data[this.Properties.name.key]) {
+      data[this.Properties.name.key] = `project-${data[this.Properties.id.key]}`;
+    }
+    for (let key of Object.keys(this.Properties)) {
+      this.data.Set(key, data[key] ?? this.Properties[key].default);
+    }
+    this.nodes = (data.nodes ?? []).map((item: any) => {
       return (new NodeFlow(this, "")).load(item);
     });
-    (data?.nodes ?? []).forEach((item: any) => {
+    (data.nodes ?? []).forEach((item: any) => {
       (item.line ?? []).forEach((line: any) => {
         let fromNode = this.getNodeById(line.fromNode);
         let toNode = this.getNodeById(line.toNode);
@@ -142,25 +147,22 @@ export class ViewFlow {
   public Reset() {
     this.nodes.forEach((item) => item.delete(false));
     this.nodes = [];
-    this.projectId = this.parent.getUuid();
-    this.projectName = `project-${this.parent.getTime()}`;
-    this.canvas_x = 0;
-    this.canvas_y = 0;
-    this.zoom = 1;
+    this.data.Set(this.Properties.canvas_x.key, 0);
+    this.data.Set(this.Properties.canvas_y.key, 0);
     this.updateView();
   }
   public getNodeById(nodeId: string) {
     return this.nodes?.filter((item) => item.nodeId == nodeId)[0];
   }
   public updateView() {
-    this.elCanvas.style.transform = "translate(" + this.canvas_x + "px, " + this.canvas_y + "px) scale(" + this.zoom + ")";
-    this.dispatch(this.Event.updateView, { x: this.canvas_x, y: this.canvas_y, zoom: this.zoom });
+    this.elCanvas.style.transform = "translate(" + this.data.Get(this.Properties.canvas_x.key) + "px, " + this.data.Get(this.Properties.canvas_y.key) + "px) scale(" + this.data.Get(this.Properties.zoom.key) + ")";
+    this.dispatch(this.Event.updateView, { x: this.data.Get(this.Properties.canvas_x.key), y: this.data.Get(this.Properties.canvas_y.key), zoom: this.data.Get(this.Properties.zoom.key) });
   }
   private CalcX(number: any) {
-    return number * (this.elCanvas.clientWidth / (this.elView.clientWidth * this.zoom));
+    return number * (this.elCanvas.clientWidth / (this.elNode?.clientWidth * this.data.Get(this.Properties.zoom.key)));
   }
   private CalcY(number: any) {
-    return number * (this.elCanvas.clientHeight / (this.elView.clientHeight * this.zoom));
+    return number * (this.elCanvas.clientHeight / (this.elNode?.clientHeight * this.data.Get(this.Properties.zoom.key)));
   }
   private dragover(e: any) {
     e.preventDefault();
@@ -227,24 +229,24 @@ export class ViewFlow {
   }
   public addEvent() {
     /* Mouse and Touch Actions */
-    this.elView.addEventListener('mouseup', this.EndMove.bind(this));
-    this.elView.addEventListener('mouseleave', this.EndMove.bind(this));
-    this.elView.addEventListener('mousemove', this.Move.bind(this));
-    this.elView.addEventListener('mousedown', this.StartMove.bind(this));
+    this.elNode?.addEventListener('mouseup', this.EndMove.bind(this));
+    this.elNode?.addEventListener('mouseleave', this.EndMove.bind(this));
+    this.elNode?.addEventListener('mousemove', this.Move.bind(this));
+    this.elNode?.addEventListener('mousedown', this.StartMove.bind(this));
 
-    this.elView.addEventListener('touchend', this.EndMove.bind(this));
-    this.elView.addEventListener('touchmove', this.Move.bind(this));
-    this.elView.addEventListener('touchstart', this.StartMove.bind(this));
+    this.elNode?.addEventListener('touchend', this.EndMove.bind(this));
+    this.elNode?.addEventListener('touchmove', this.Move.bind(this));
+    this.elNode?.addEventListener('touchstart', this.StartMove.bind(this));
     /* Context Menu */
-    this.elView.addEventListener('contextmenu', this.contextmenu.bind(this));
+    this.elNode?.addEventListener('contextmenu', this.contextmenu.bind(this));
 
     /* Drop Drap */
-    this.elView.addEventListener('drop', this.dropEnd.bind(this));
-    this.elView.addEventListener('dragover', this.dragover.bind(this));
+    this.elNode?.addEventListener('drop', this.dropEnd.bind(this));
+    this.elNode?.addEventListener('dragover', this.dragover.bind(this));
     /* Zoom Mouse */
-    this.elView.addEventListener('wheel', this.zoom_enter.bind(this));
+    this.elNode?.addEventListener('wheel', this.zoom_enter.bind(this));
     /* Delete */
-    this.elView.addEventListener('keydown', this.keydown.bind(this));
+    this.elNode?.addEventListener('keydown', this.keydown.bind(this));
   }
   public keydown(e: any) {
     if (e.key === 'Delete' || (e.key === 'Backspace' && e.metaKey)) {
@@ -272,26 +274,26 @@ export class ViewFlow {
     }
   }
   public zoom_refresh() {
-    this.canvas_x = (this.canvas_x / this.zoom_last_value) * this.zoom;
-    this.canvas_y = (this.canvas_y / this.zoom_last_value) * this.zoom;
-    this.zoom_last_value = this.zoom;
+    this.data.Set(this.Properties.canvas_x.key, (this.data.Get(this.Properties.canvas_x.key) / this.zoom_last_value) * this.data.Get(this.Properties.zoom.key));
+    this.data.Set(this.Properties.canvas_y.key, (this.data.Get(this.Properties.canvas_y.key) / this.zoom_last_value) * this.data.Get(this.Properties.zoom.key));
+    this.zoom_last_value = this.data.Get(this.Properties.zoom.key);
     this.updateView();
   }
   public zoom_in() {
-    if (this.zoom < this.zoom_max) {
-      this.zoom += this.zoom_value;
+    if (this.data.Get(this.Properties.zoom.key) < this.zoom_max) {
+      this.data.Set(this.Properties.zoom.key, (this.data.Get(this.Properties.zoom.key) + this.zoom_value));
       this.zoom_refresh();
     }
   }
   public zoom_out() {
-    if (this.zoom > this.zoom_min) {
-      this.zoom -= this.zoom_value;
+    if (this.data.Get(this.Properties.zoom.key) > this.zoom_min) {
+      this.data.Set(this.Properties.zoom.key, (this.data.Get(this.Properties.zoom.key) - this.zoom_value));
       this.zoom_refresh();
     }
   }
   public zoom_reset() {
-    if (this.zoom != 1) {
-      this.zoom = 1;
+    if (this.data.Get(this.Properties.zoom.key) != 1) {
+      this.data.Set(this.Properties.zoom.key, this.Properties.zoom.default);
       this.zoom_refresh();
     }
   }
@@ -342,9 +344,9 @@ export class ViewFlow {
     switch (this.moveType) {
       case MoveType.Canvas:
         {
-          let x = this.canvas_x + this.CalcX(-(this.pos_x - e_pos_x))
-          let y = this.canvas_y + this.CalcY(-(this.pos_y - e_pos_y))
-          this.elCanvas.style.transform = "translate(" + x + "px, " + y + "px) scale(" + this.zoom + ")";
+          let x = this.data.Get(this.Properties.canvas_x.key) + this.CalcX(-(this.pos_x - e_pos_x))
+          let y = this.data.Get(this.Properties.canvas_y.key) + this.CalcY(-(this.pos_y - e_pos_y))
+          this.elCanvas.style.transform = "translate(" + x + "px, " + y + "px) scale(" + this.data.Get(this.Properties.zoom.key) + ")";
           break;
         }
       case MoveType.Node:
@@ -400,8 +402,8 @@ export class ViewFlow {
       e_pos_y = e.clientY;
     }
     if (this.moveType === MoveType.Canvas) {
-      this.canvas_x = this.canvas_x + this.CalcX(-(this.pos_x - e_pos_x));
-      this.canvas_y = this.canvas_y + this.CalcY(-(this.pos_y - e_pos_y));
+      this.data.Set(this.Properties.canvas_x.key, (this.data.Get(this.Properties.canvas_x.key) + this.CalcX(-(this.pos_x - e_pos_x))));
+      this.data.Set(this.Properties.canvas_y.key, (this.data.Get(this.Properties.canvas_y.key) + this.CalcY(-(this.pos_y - e_pos_y))));
     }
     this.pos_x = e_pos_x;
     this.pos_y = e_pos_y;

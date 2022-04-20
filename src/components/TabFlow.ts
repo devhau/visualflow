@@ -1,14 +1,14 @@
 import { WorkerFlow } from "../WorkerFlow";
+import { BaseFlow } from "./BaseFlow";
 
-export class TabFlow {
-  private elTab: HTMLElement | undefined | null;
-  public constructor(private parent: WorkerFlow, private modules: any = {}) {
-    if (!this.modules) this.modules = {};
-    this.elTab = parent.container?.querySelector('.workerflow-items');
-    if (this.elTab) {
-      this.elTab.innerHTML = '';
+export class TabFlow extends BaseFlow<WorkerFlow>  {
+  public constructor(parent: WorkerFlow, private modules: any = {}) {
+    super(parent);
+    this.elNode = this.parent.elNode.querySelector('.workerflow-items') || this.elNode;
+    if (this.elNode) {
+      this.elNode.innerHTML = '';
     }
-    this.elTab?.addEventListener('mousedown', this.ClickTab.bind(this));
+    this.elNode.addEventListener('mousedown', this.ClickTab.bind(this));
   }
   private ClickTab(e: any) {
     if (e.target.classList.contains('workerflow-item')) {
@@ -17,11 +17,11 @@ export class TabFlow {
     }
   }
   public LoadProjectById(projectId: any) {
-    this.elTab?.querySelectorAll('.active').forEach((item) => {
+    this.elNode.querySelectorAll('.active').forEach((item) => {
       this.modules[item.getAttribute('data-project')?.toString() || ''] = this.parent.View?.toJson();
       item.classList.remove('active');
     })
-    this.elTab?.querySelector(`[data-project="${projectId}"]`)?.classList.add('active');
+    this.elNode.querySelector(`[data-project="${projectId}"]`)?.classList.add('active');
     this.parent.View?.load(this.modules[projectId]);
   }
   public NewProject() {
@@ -36,19 +36,19 @@ export class TabFlow {
     this.LoadProject(data);
   }
   public LoadProject(data: any) {
-    this.elTab?.querySelectorAll('.active').forEach((item) => {
+    this.elNode.querySelectorAll('.active').forEach((item) => {
       this.modules[item.getAttribute('data-project')?.toString() || ''] = this.parent.View?.toJson();
       item.classList.remove('active');
     })
-    if (this.elTab?.querySelector(`[data-project="${data.id}"]`)) {
-      this.elTab?.querySelector(`[data-project="${data.id}"]`)?.classList.add('active');
+    if (this.elNode.querySelector(`[data-project="${data.id}"]`)) {
+      this.elNode.querySelector(`[data-project="${data.id}"]`)?.classList.add('active');
     } else {
       let item = document.createElement('div');
       item.classList.add("workerflow-item");
       item.classList.add('active');
       item.innerHTML = data.name;
       item.setAttribute('data-project', data.id);
-      this.elTab?.appendChild(item);
+      this.elNode.appendChild(item);
     }
     this.modules[data.id] = data;
     this.parent.View?.load(this.modules[data.id]);

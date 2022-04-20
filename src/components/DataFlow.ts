@@ -1,28 +1,32 @@
-import { NodeFlow } from "./NodeFlow";
+import { FlowCore } from "./BaseFlow";
 
 export class DataFlow {
   private data: any = {};
-  public constructor(private node: NodeFlow) {
+  public readonly Event: any = {
+    dataChange: "dataChange",
+    change: "change"
+  }
+  public constructor(private node: FlowCore) {
     setTimeout(() => {
-      this.node.elNode?.querySelectorAll(`[node\\:model]`).forEach((item) => {
+      this.node.elNode.querySelectorAll(`[node\\:model]`).forEach((item) => {
         item.addEventListener('keyup', this.changeInput.bind(this));
       });
     }, 300);
   }
   public RemoveEvent() {
-    this.node.elNode?.querySelectorAll(`[node\\:model]`).forEach((item) => {
+    this.node.elNode.querySelectorAll(`[node\\:model]`).forEach((item) => {
       item.removeEventListener('keyup', this.changeInput.bind(this));
     });
   }
   public Set(key: string, value: any, obj = null) {
     this.data[key] = value;
     setTimeout(() => {
-      this.node.elNode?.querySelectorAll(`[node\\:model="${key}"]`).forEach((item: any) => {
+      this.node.elNode.querySelectorAll(`[node\\:model="${key}"]`).forEach((item: any) => {
         if (item != obj)
           item.value = value;
       }, 300);
-      this.node.dispatch(this.node.Event.dataChange, { key, value, obj });
-      this.node.dispatch(this.node.Event.change, { key, value, obj });
+      this.node.dispatch(this.Event.dataChange, { key, value, obj });
+      this.node.dispatch(this.Event.change, { key, value, obj });
     });
   }
   public Get(key: string) {
@@ -34,7 +38,7 @@ export class DataFlow {
   public load(data: any) {
     this.data = data || {};
     setTimeout(() => {
-      this.node.elNode?.querySelectorAll(`[node\\:model]`).forEach((item: any) => {
+      this.node.elNode.querySelectorAll(`[node\\:model]`).forEach((item: any) => {
         item.value = this.data[item.getAttribute(`node:model`)] ?? null;
       }, 300);
     });

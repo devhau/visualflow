@@ -1,11 +1,10 @@
+import { BaseFlow } from "./BaseFlow";
 import { DataFlow } from "./DataFlow";
 import { EventFlow } from "./EventFlow";
 import { LineFlow } from "./LineFlow";
 import { ViewFlow } from "./ViewFlow";
 const geval = eval;
-export class NodeFlow {
-  private parent: ViewFlow;
-  public elNode: HTMLElement | null = null;
+export class NodeFlow extends BaseFlow<ViewFlow> {
   public elNodeInputs: HTMLElement | null = null;
   public elNodeOutputs: HTMLElement | null = null;
   public elNodeContent: HTMLElement | null = null;
@@ -24,16 +23,6 @@ export class NodeFlow {
     dataChange: "dataChange"
   };
 
-  private events: EventFlow;
-  on(event: string, callback: any) {
-    this.events.on(event, callback);
-  }
-  removeListener(event: string, callback: any) {
-    this.events.removeListener(event, callback);
-  }
-  dispatch(event: string, details: any) {
-    this.events.dispatch(event, details);
-  }
   public toJson() {
     let LineJson = this.arrLine.filter((item) => item.fromNode === this).map((item) => ({
       fromNode: item.fromNode.nodeId,
@@ -85,9 +74,8 @@ export class NodeFlow {
     return this.arrLine;
   }
   public constructor(parent: ViewFlow, id: string, option: any = null) {
-    this.events = new EventFlow(this);
+    super(parent);
     this.option = option;
-    this.parent = parent;
     this.nodeId = id;
     this.on(this.Event.change, (e: any, sender: any) => {
       this.parent.dispatch(this.parent.Event.change, {

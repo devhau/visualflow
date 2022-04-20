@@ -1,27 +1,18 @@
+import { FlowCore } from "./components/BaseFlow";
 import { ControlFlow } from "./components/ControlFlow";
-import { EventFlow } from "./components/EventFlow";
+import { PropertyFlow } from "./components/PropertyFlow";
 import { TabFlow } from "./components/TabFlow";
 import { ViewFlow } from "./components/ViewFlow";
 
-export class WorkerFlow {
+export class WorkerFlow extends FlowCore {
 
-  public container: HTMLElement | null;
   public View: ViewFlow | null;
   public Control: ControlFlow | null;
-  public tab: TabFlow | null;
+  public Property: PropertyFlow | null;
+  public Tab: TabFlow | null;
+  public modules: any = {};
   public dataNodeSelect: string | null = null;
   public option: any;
-
-  private events: EventFlow;
-  on(event: string, callback: any) {
-    this.events.on(event, callback);
-  }
-  removeListener(event: string, callback: any) {
-    this.events.removeListener(event, callback);
-  }
-  dispatch(event: string, details: any) {
-    this.events.dispatch(event, details);
-  }
 
   public checkParent(node: any, nodeCheck: any) {
     if (node && nodeCheck) {
@@ -36,38 +27,53 @@ export class WorkerFlow {
     return false;
   }
   public constructor(container: HTMLElement, option: any = null) {
-    this.container = container;
-    this.container.classList.add("workerflow");
+    super();
+    this.elNode = container;
+    this.elNode.classList.add("workerflow");
     this.option = option || {
-      control: {
-      }
+      control: {}
     };
-    this.container.innerHTML = `
+    this.elNode.innerHTML = `
     <div class="workerflow-control">
       <h2 class="workerflow-control__header">Node Control</h2>
       <div class="workerflow-control__list">
-      <div draggable="true">Node 1</div>
       </div>
     </div>
     <div class="workerflow-desgin">
       <div class="workerflow-items">
-        <div class="workerflow-item">Thông tin mới</div>
-        <div class="workerflow-item">Thông tin mới123</div>
       </div>
       <div class="workerflow-view">
       </div>
     </div>
+    <div class="workerflow-property">
+      <h2 class="workerflow-property__header">Properties</h2>
+      <div class="workerflow-property__list">
+      </div>
+    </div>
     `;
     this.View = new ViewFlow(this);
-    this.tab = new TabFlow(this, []);
+    this.Tab = new TabFlow(this);
     this.Control = new ControlFlow(this);
-    this.events = new EventFlow(this);
+    this.Property = new PropertyFlow(this);
+    if (Object.keys(this.modules).length == 0) {
+      this.new();
+    }
   }
   public new() {
     this.tab?.NewProject();
   }
   public load(data: any) {
     this.tab?.LoadProject(data);
+  }
+
+  public getOption(keyNode: any) {
+    if (!keyNode) return;
+    let control = this.option.control[keyNode];
+    if (!control) {
+      control = Object.values(this.option.control)[0];
+    }
+    control.key = keyNode;
+    return control;
   }
   public toJson() {
     return this.View?.toJson();

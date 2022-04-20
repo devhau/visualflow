@@ -1,13 +1,12 @@
 import { WorkerFlow } from "../WorkerFlow";
+import { BaseFlow } from "./BaseFlow";
 
-export class ControlFlow {
-  private elControl: HTMLElement | null | undefined;
-  private parent: WorkerFlow;
+export class ControlFlow extends BaseFlow<WorkerFlow>  {
   public constructor(parent: WorkerFlow) {
-    this.parent = parent;
-    this.elControl = parent.container?.querySelector('.workerflow-control__list');
-    if (this.elControl) {
-      this.elControl.innerHTML = "";
+    super(parent);
+    this.elNode = this.parent.elNode.querySelector('.workerflow-control__list') || this.elNode;
+    if (this.elNode) {
+      this.elNode.innerHTML = "";
       let keys = Object.keys(parent.option.control);
       keys.forEach(key => {
         let Node = document.createElement('div');
@@ -17,7 +16,7 @@ export class ControlFlow {
         Node.innerHTML = parent.option.control[key].name;
         Node.addEventListener('dragstart', this.dragStart.bind(this))
         Node.addEventListener('dragend', this.dragend.bind(this))
-        this.elControl?.appendChild(Node);
+        this.elNode.appendChild(Node);
       });
     }
   }
