@@ -1,5 +1,6 @@
 import { FlowCore } from "./components/BaseFlow";
 import { ControlFlow } from "./components/ControlFlow";
+import { DataFlow } from "./components/DataFlow";
 import { PropertyFlow } from "./components/PropertyFlow";
 import { TabFlow } from "./components/TabFlow";
 import { ViewFlow } from "./components/ViewFlow";
@@ -60,12 +61,15 @@ export class WorkerFlow extends FlowCore {
     }
   }
   public new() {
-    this.tab?.NewProject();
+    this.Tab?.NewProject();
   }
   public load(data: any) {
-    this.tab?.LoadProject(data);
+    this.Tab?.LoadProject(data);
   }
 
+  public PropertyInfo(data: DataFlow) {
+    this.Property?.PropertyInfo(data);
+  }
   public getOption(keyNode: any) {
     if (!keyNode) return;
     let control = this.option.control[keyNode];

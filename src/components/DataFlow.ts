@@ -2,31 +2,73 @@ import { FlowCore } from "./BaseFlow";
 
 export class DataFlow {
   private data: any = {};
-  public readonly Event: any = {
+  public nodes: FlowCore[] = [];
+  public readonly Event = {
     dataChange: "dataChange",
     change: "change"
   }
-  public constructor(private node: FlowCore) {
-    setTimeout(() => {
-      this.node.elNode.querySelectorAll(`[node\\:model]`).forEach((item) => {
-        item.addEventListener('keyup', this.changeInput.bind(this));
-      });
-    }, 300);
+  public constructor(public node: FlowCore) {
   }
-  public RemoveEvent() {
-    this.node.elNode.querySelectorAll(`[node\\:model]`).forEach((item) => {
-      item.removeEventListener('keyup', this.changeInput.bind(this));
+  public InitData(data: any = null, properties: any = -1) {
+    if (properties !== -1) {
+      this.node.properties = properties;
+    }
+    this.load(data);
+    this.BindEvent(this.node);
+    this.UpdateUI();
+  }
+  public RemoveEventAll() {
+    for (let node of this.nodes) {
+      node.elNode.querySelectorAll(`[node\\:model]`).forEach((item) => {
+        item.removeEventListener('keyup', this.changeInput.bind(this));
+      });
+    }
+    this.nodes = [];
+  }
+  public RemoveEvent(node: FlowCore) {
+    let index = this.nodes.indexOf(node);
+    if (index > -1) {
+      node.elNode.querySelectorAll(`[node\\:model]`).forEach((item) => {
+        item.removeEventListener('keyup', this.changeInput.bind(this));
+      });
+      this.nodes.slice(index, 1);
+    }
+  }
+  public BindEvent(node: FlowCore) {
+    this.RemoveEvent(node);
+    this.nodes = [... this.nodes, node];
+    node.elNode.querySelectorAll(`[node\\:model]`).forEach((item: any) => {
+      if (item.tagName == 'SPAN' || item.tagName == 'DIV') {
+        item.innerHTML = `${this.data[item.getAttribute(`node:model`)]}`;
+      } else {
+        item.value = this.data[item.getAttribute(`node:model`)];
+      }
+    });
+    setTimeout(() => {
+      node.elNode.querySelectorAll(`[node\\:model]`).forEach((item) => {
+        item.addEventListener('keyup', this.changeInput.bind(this));
+      }, 300);
     });
   }
-  public Set(key: string, value: any, obj = null) {
+  private SetValue(key: string, value: any, elUpdate = null) {
+    for (let node of this.nodes) {
+      node.elNode.querySelectorAll(`[node\\:model="${key}"]`).forEach((item: any) => {
+        if (item != elUpdate) {
+          if (item.tagName == 'SPAN' || item.tagName == 'DIV') {
+            item.innerHTML = `${value}`;
+          } else {
+            item.value = value;
+          }
+        }
+      });
+      node.dispatch(this.Event.dataChange, { key, value, elUpdate });
+      node.dispatch(this.Event.change, { key, value, elUpdate });
+    }
+  }
+  public Set(key: string, value: any, elUpdate = null) {
     this.data[key] = value;
     setTimeout(() => {
-      this.node.elNode.querySelectorAll(`[node\\:model="${key}"]`).forEach((item: any) => {
-        if (item != obj)
-          item.value = value;
-      }, 300);
-      this.node.dispatch(this.Event.dataChange, { key, value, obj });
-      this.node.dispatch(this.Event.change, { key, value, obj });
+      this.SetValue(key, value, elUpdate);
     });
   }
   public Get(key: string) {
@@ -35,15 +77,31 @@ export class DataFlow {
   public changeInput(e: any) {
     this.Set(e.target.getAttribute(`node:model`), e.target.value, e.target);
   }
-  public load(data: any) {
-    this.data = data || {};
+  public UpdateUI() {
     setTimeout(() => {
-      this.node.elNode.querySelectorAll(`[node\\:model]`).forEach((item: any) => {
-        item.value = this.data[item.getAttribute(`node:model`)] ?? null;
-      }, 300);
-    });
+      for (let node of this.nodes) {
+        node.elNode.querySelectorAll(`[node\\:model]`).forEach((item: any) => {
+          if (item.tagName == 'SPAN' || item.tagName == 'DIV') {
+            item.innerHTML = `${this.data[item.getAttribute(`node:model`)]}`;
+          } else {
+            item.value = this.data[item.getAttribute(`node:model`)];
+          }
+        });
+      }
+    }, 300);
+  }
+  public load(data: any) {
+    this.data = {};
+
+    for (let key of Object.keys(this.node.properties)) {
+      this.data[key] = (data?.[key] ?? (this.node.properties[key]?.default ?? ""));
+    }
   }
   public toJson() {
-    return this.data;
+    let rs: any = {};
+    for (let key of Object.keys(this.node.properties)) {
+      rs[key] = this.Get(key);
+    }
+    return rs;
   }
 }

@@ -1,7 +1,11 @@
+import { DataFlow } from "./DataFlow";
 import { EventFlow } from "./EventFlow";
 
 export class FlowCore {
   private events: EventFlow;
+  public Id: any;
+  public properties: any = {};
+  public readonly data: DataFlow = new DataFlow(this);
   public elNode: HTMLElement = document.createElement('div');
   on(event: string, callback: any) {
     this.events.on(event, callback);

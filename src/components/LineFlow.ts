@@ -81,16 +81,16 @@ export class LineFlow {
   }
   public updateTo(to_x: number, to_y: number) {
     if (this.fromNode.elNode == null) return;
-    let from_x = this.fromNode.pos_x + this.fromNode.elNode.clientWidth + 5;
-    let from_y = this.fromNode.pos_y + (this.fromNode.output() > 1 ? (((this.outputIndex - 1) * 21) + 15) : (2 + this.fromNode.elNode.clientHeight / 2));
+    let from_x = this.fromNode.getX() + this.fromNode.elNode.clientWidth + 5;
+    let from_y = this.fromNode.getY() + (this.fromNode.output() > 1 ? (((this.outputIndex - 1) * 21) + 15) : (2 + this.fromNode.elNode.clientHeight / 2));
     var lineCurve = this.createCurvature(from_x, from_y, to_x, to_y, this.curvature, 'openclose');
     this.elPath.setAttributeNS(null, 'd', lineCurve);
   }
   public update() {
     //Postion output
     if (this.toNode && this.toNode.elNode) {
-      let to_x = this.toNode.pos_x - 5;
-      let to_y = this.toNode.pos_y + this.toNode.elNode.clientHeight / 2;
+      let to_x = this.toNode.getX() - 5;
+      let to_y = this.toNode.getY() + this.toNode.elNode.clientHeight / 2;
       this.updateTo(to_x, to_y);
     }
 

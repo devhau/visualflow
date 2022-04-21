@@ -1,6 +1,4 @@
 import { BaseFlow } from "./BaseFlow";
-import { DataFlow } from "./DataFlow";
-import { EventFlow } from "./EventFlow";
 import { LineFlow } from "./LineFlow";
 import { ViewFlow } from "./ViewFlow";
 const geval = eval;
@@ -8,12 +6,25 @@ export class NodeFlow extends BaseFlow<ViewFlow> {
   public elNodeInputs: HTMLElement | null = null;
   public elNodeOutputs: HTMLElement | null = null;
   public elNodeContent: HTMLElement | null = null;
-  public nodeId: string;
-  public pos_x: number = 0;
-  public pos_y: number = 0;
+  public getY() {
+    return +this.data.Get(this.properties.y.key);
+  }
+  public getX() {
+    return +this.data.Get(this.properties.x.key);
+  }
   public arrLine: LineFlow[] = [];
   private option: any;
-  public data: DataFlow | null = null;
+  private node: any;
+  public properties: any = {
+    x: {
+      key: "x",
+      default: 0
+    },
+    y: {
+      key: "y",
+      default: 0
+    }
+  }
   private flgScript: boolean = false;
   public readonly Event = {
     ReUI: "ReUI",
@@ -25,24 +36,24 @@ export class NodeFlow extends BaseFlow<ViewFlow> {
 
   public toJson() {
     let LineJson = this.arrLine.filter((item) => item.fromNode === this).map((item) => ({
-      fromNode: item.fromNode.nodeId,
-      toNode: item.toNode?.nodeId,
+      fromNode: item.fromNode.Id,
+      toNode: item.toNode?.Id,
       ouputIndex: item.outputIndex
     }));
     return {
-      id: this.nodeId,
-      node: this.option.key,
       line: LineJson,
-      data: this.data?.toJson(),
-      x: this.pos_x,
-      y: this.pos_y
+      data: this.data.toJson(),
     }
   }
   public load(data: any) {
-    this.nodeId = data?.id ?? this.nodeId;
-    this.option = this.parent.getOption(data?.node);
-    this.data?.load(data?.data);
-    this.updatePosition(data?.x, data?.y, true);
+    this.data.RemoveEventAll();
+    this.data.BindEvent(this);
+
+    this.Id = data?.id ?? this.parent.parent.getUuid();
+    this.node = data?.node;
+    this.option = this.parent.getOption(this.node);
+    this.data.load(data?.data);
+    this.updatePosition(this.data.Get(this.properties.x.key), data?.y, true);
     this.initOption();
     return this;
   }
@@ -73,10 +84,9 @@ export class NodeFlow extends BaseFlow<ViewFlow> {
     this.dispatch(this.Event.change, {});
     return this.arrLine;
   }
-  public constructor(parent: ViewFlow, id: string, option: any = null) {
+  public constructor(parent: ViewFlow, option: any = null) {
     super(parent);
     this.option = option;
-    this.nodeId = id;
     this.on(this.Event.change, (e: any, sender: any) => {
       this.parent.dispatch(this.parent.Event.change, {
         ...e,
@@ -93,12 +103,10 @@ export class NodeFlow extends BaseFlow<ViewFlow> {
   }
   public ReUI() {
     if (this.elNode) this.elNode.remove();
-    if (this.data) {
-      this.data.RemoveEvent();
-    }
+    this.data.RemoveEvent(this);
     this.elNode = document.createElement('div');
     this.elNode.classList.add("workerflow-node");
-    this.elNode.id = `node-${this.nodeId}`;
+    this.elNode.id = `node-${this.Id}`;
     this.elNodeInputs = document.createElement('div');
     this.elNodeInputs.classList.add('workerflow-node_inputs');
     this.elNodeInputs.innerHTML = `<div class="inputs dot"></div>`;
@@ -107,8 +115,8 @@ export class NodeFlow extends BaseFlow<ViewFlow> {
     this.elNodeOutputs = document.createElement('div');
     this.elNodeOutputs.classList.add('workerflow-node_outputs');
     this.elNodeOutputs.innerHTML = `<div class="outputs dot"></div>`;
-    this.elNode.setAttribute('data-node', this.nodeId);
-    this.elNode.setAttribute('style', `top: ${this.pos_y}px; left: ${this.pos_x}px;`);
+    this.elNode.setAttribute('data-node', this.Id);
+    this.elNode.setAttribute('style', `top: ${this.getY()}px; left: ${this.getX()}px;`);
     this.elNode.addEventListener('mouseover', this.NodeOver.bind(this));
     this.elNode.addEventListener('mouseleave', this.NodeLeave.bind(this));
     this.elNode.addEventListener('mousedown', this.StartSelected.bind(this));
@@ -120,10 +128,8 @@ export class NodeFlow extends BaseFlow<ViewFlow> {
     this.parent.elCanvas?.appendChild(this.elNode);
     if (this.data) {
       let dataTemp = this.data.toJson();
-      this.data = new DataFlow(this);
       this.data.load(dataTemp);
-    } else {
-      this.data = new DataFlow(this);
+      this.data.UpdateUI();
     }
     this.initOption();
     this.dispatch(this.Event.ReUI, {});
@@ -178,18 +184,23 @@ export class NodeFlow extends BaseFlow<ViewFlow> {
   }
   public updatePosition(x: any, y: any, iCheck = false) {
     if (this.elNode) {
+
       if (iCheck) {
-        this.pos_x = x;
-        this.pos_y = y;
+        if (x !== this.getX()) {
+          this.data.Set(this.properties.x.key, x);
+        }
+        if (y !== this.getY()) {
+          this.data.Set(this.properties.y.key, y);
+        }
       } else {
-        this.pos_x = (this.elNode.offsetLeft - x);
-        this.pos_y = (this.elNode.offsetTop - y);
+        this.data.Set(this.properties.y.key, (this.elNode.offsetTop - y));
+        this.data.Set(this.properties.x.key, (this.elNode.offsetLeft - x));
       }
-      this.elNode.setAttribute('style', `top: ${this.pos_y}px; left: ${this.pos_x}px;`);
+      this.elNode.setAttribute('style', `top: ${this.getY()}px; left: ${this.getX()}px;`);
       this.arrLine.forEach((item) => {
         item.update();
       })
-      this.dispatch(this.Event.updatePosition, { x: this.pos_x, y: this.pos_y });
+      this.dispatch(this.Event.updatePosition, { x: this.getX(), y: this.getY() });
       this.dispatch(this.Event.change, {});
     }
   }
