@@ -41,34 +41,25 @@
         key: "node_if",
         name: '<i class="fas fa-equals"></i> If',
         html: '<div>condition:<br/><input node:model="condition"/></div>',
-        script: `
-        if(node.data.Get('condition')){
-          node.option.output = parseInt(node.data.Get('condition'));
-          if(node.option.output>4){
-            node.option.html='<div>condition:<br/><input node:model="condition1"/><input node:model="condition2"/><input node:model="condition"/></div>'
-          }else{
-            node.option.html='<div>condition:<br/><input node:model="condition"/></div>';
+        script: ``,
+        properties: {
+          condition: {
+            key: "condition",
+            defautl: ""
           }
-          node.ReUIT();
-        }
-
-        node.on('dataChange',function(e,sender){
-          if(node.key='condition'){
-            node.option.output = parseInt(e.value);
-            if(node.option.output>4){
-              node.option.html='<div>condition:<br/><input node:model="condition1"/><input node:model="condition2"/><input node:model="condition"/></div>'
-            }else{
-              node.option.html='<div>condition:<br/><input node:model="condition"/></div>';
-            }
-            node.ReUIT();
-          }
-        })`,
+        },
         output: 2
       },
       node_note: {
         key: "node_note",
         name: '<i class="fas fa-comment-alt"></i> Note',
         html: '<div><textarea node:model="note"></textarea></div>',
+        properties: {
+          note: {
+            key: "note",
+            defautl: ""
+          }
+        }
       }
     }
   }

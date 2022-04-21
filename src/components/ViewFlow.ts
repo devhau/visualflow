@@ -30,22 +30,33 @@ export class ViewFlow extends BaseFlow<WorkerFlow> {
   private tempLine: LineFlow | null = null;
   private timeFastClick: number = 0;
   private tagIngore = ['input', 'button', 'a', 'textarea'];
-
-  public properties: any = {
+  private getX() {
+    return +this.data.Get(this.properties.canvas_x.key)
+  }
+  private getY() {
+    return +this.data.Get(this.properties.canvas_y.key)
+  }
+  private getZoom() {
+    return this.data.Get(this.properties.zoom.key);
+  }
+  public properties = {
     name: {
       key: "name",
     },
     zoom: {
       key: "zoom",
       default: 1,
+      type: "number"
     },
     canvas_x: {
       key: "canvas_x",
-      default: 0
+      default: 0,
+      type: "number"
     },
     canvas_y: {
       key: "canvas_y",
-      default: 0
+      default: 0,
+      type: "number"
     }
   };
   public readonly Event = {
@@ -118,8 +129,11 @@ export class ViewFlow extends BaseFlow<WorkerFlow> {
     if (!data.Id) {
       data.Id = this.parent.getUuid();
     }
-    if (!data[this.properties.name.key]) {
-      data[this.properties.name.key] = `project-${data.Id}`;
+    if (!data.data) {
+      data.data = {};
+    }
+    if (!data.data[this.properties.name.key]) {
+      data.data[this.properties.name.key] = `project-${data.Id}`;
     }
     this.Id = data.Id;
     this.data.load(data.data);
@@ -150,14 +164,14 @@ export class ViewFlow extends BaseFlow<WorkerFlow> {
     return this.nodes?.filter((item) => item.Id == nodeId)[0];
   }
   public updateView() {
-    this.elCanvas.style.transform = "translate(" + this.data.Get(this.properties.canvas_x.key) + "px, " + this.data.Get(this.properties.canvas_y.key) + "px) scale(" + this.data.Get(this.properties.zoom.key) + ")";
-    this.dispatch(this.Event.updateView, { x: this.data.Get(this.properties.canvas_x.key), y: this.data.Get(this.properties.canvas_y.key), zoom: this.data.Get(this.properties.zoom.key) });
+    this.elCanvas.style.transform = "translate(" + this.getX() + "px, " + this.getY() + "px) scale(" + this.getZoom() + ")";
+    this.dispatch(this.Event.updateView, { x: this.getX(), y: this.getY(), zoom: this.getZoom() });
   }
   private CalcX(number: any) {
-    return number * (this.elCanvas.clientWidth / (this.elNode?.clientWidth * this.data.Get(this.properties.zoom.key)));
+    return number * (this.elCanvas.clientWidth / (this.elNode?.clientWidth * this.getZoom()));
   }
   private CalcY(number: any) {
-    return number * (this.elCanvas.clientHeight / (this.elNode?.clientHeight * this.data.Get(this.properties.zoom.key)));
+    return number * (this.elCanvas.clientHeight / (this.elNode?.clientHeight * this.getZoom()));
   }
   private dragover(e: any) {
     e.preventDefault();
@@ -228,7 +242,6 @@ export class ViewFlow extends BaseFlow<WorkerFlow> {
   }
   public AddNode(option: any = null): NodeFlow {
     let node = new NodeFlow(this, option);
-    node.load({});
     this.nodes = [...this.nodes, node];
     return node;
   }
@@ -288,25 +301,25 @@ export class ViewFlow extends BaseFlow<WorkerFlow> {
     }
   }
   public zoom_refresh() {
-    this.data.Set(this.properties.canvas_x.key, (this.data.Get(this.properties.canvas_x.key) / this.zoom_last_value) * this.data.Get(this.properties.zoom.key));
-    this.data.Set(this.properties.canvas_y.key, (this.data.Get(this.properties.canvas_y.key) / this.zoom_last_value) * this.data.Get(this.properties.zoom.key));
-    this.zoom_last_value = this.data.Get(this.properties.zoom.key);
+    this.data.Set(this.properties.canvas_x.key, (this.getX() / this.zoom_last_value) * this.getZoom());
+    this.data.Set(this.properties.canvas_y.key, (this.getY() / this.zoom_last_value) * this.getZoom());
+    this.zoom_last_value = this.getZoom();
     this.updateView();
   }
   public zoom_in() {
-    if (this.data.Get(this.properties.zoom.key) < this.zoom_max) {
-      this.data.Set(this.properties.zoom.key, (this.data.Get(this.properties.zoom.key) + this.zoom_value));
+    if (this.getZoom() < this.zoom_max) {
+      this.data.Set(this.properties.zoom.key, (this.getZoom() + this.zoom_value));
       this.zoom_refresh();
     }
   }
   public zoom_out() {
-    if (this.data.Get(this.properties.zoom.key) > this.zoom_min) {
-      this.data.Set(this.properties.zoom.key, (this.data.Get(this.properties.zoom.key) - this.zoom_value));
+    if (this.getZoom() > this.zoom_min) {
+      this.data.Set(this.properties.zoom.key, (this.getZoom() - this.zoom_value));
       this.zoom_refresh();
     }
   }
   public zoom_reset() {
-    if (this.data.Get(this.properties.zoom.key) != 1) {
+    if (this.getZoom() != 1) {
       this.data.Set(this.properties.zoom.key, this.properties.zoom.default);
       this.zoom_refresh();
     }
@@ -358,9 +371,9 @@ export class ViewFlow extends BaseFlow<WorkerFlow> {
     switch (this.moveType) {
       case MoveType.Canvas:
         {
-          let x = (+this.data.Get(this.properties.canvas_x.key)) + this.CalcX(-(this.pos_x - e_pos_x))
-          let y = (+this.data.Get(this.properties.canvas_y.key)) + this.CalcY(-(this.pos_y - e_pos_y))
-          this.elCanvas.style.transform = "translate(" + x + "px, " + y + "px) scale(" + this.data.Get(this.properties.zoom.key) + ")";
+          let x = this.getX() + this.CalcX(-(this.pos_x - e_pos_x))
+          let y = this.getY() + this.CalcY(-(this.pos_y - e_pos_y))
+          this.elCanvas.style.transform = "translate(" + x + "px, " + y + "px) scale(" + this.getZoom() + ")";
           break;
         }
       case MoveType.Node:
@@ -392,13 +405,14 @@ export class ViewFlow extends BaseFlow<WorkerFlow> {
   public EndMove(e: any) {
     //fix Fast Click
     if (((this.parent.getTime() - this.timeFastClick) < 300) || !this.flgDrap && !this.flgMove) {
+      if (this.moveType != MoveType.Node && this.flgDrap)
+        this.UnSelect();
       this.moveType = MoveType.None;
       this.flgDrap = false;
       this.flgMove = false;
       return;
     }
-
-    this.UnSelect();
+    //  this.UnSelect();
     if (this.tempLine && this.moveType == MoveType.Line) {
       if (this.tempLine.toNode && this.tempLine.toNode.checkInput()) {
         this.AddLine(this.tempLine.fromNode, this.tempLine.toNode, this.tempLine.outputIndex);
@@ -416,8 +430,8 @@ export class ViewFlow extends BaseFlow<WorkerFlow> {
       e_pos_y = e.clientY;
     }
     if (this.moveType === MoveType.Canvas) {
-      this.data.Set(this.properties.canvas_x.key, (+this.data.Get(this.properties.canvas_x.key) + this.CalcX(-(this.pos_x - e_pos_x))));
-      this.data.Set(this.properties.canvas_y.key, (+this.data.Get(this.properties.canvas_y.key) + this.CalcY(-(this.pos_y - e_pos_y))));
+      this.data.Set(this.properties.canvas_x.key, this.getX() + this.CalcX(-(this.pos_x - e_pos_x)));
+      this.data.Set(this.properties.canvas_y.key, this.getY() + this.CalcY(-(this.pos_y - e_pos_y)));
     }
     this.pos_x = e_pos_x;
     this.pos_y = e_pos_y;
