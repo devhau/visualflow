@@ -82,10 +82,7 @@ export class LineFlow {
   public updateTo(to_x: number, to_y: number) {
     if (this.fromNode.elNode == null) return;
     let { x: from_x, y: from_y }: any = this.fromNode.getDotOutput(this.outputIndex);
-    console.log({ from_x, from_y });
-    /*let from_x = this.fromNode.getX() + this.fromNode.elNode.clientWidth + 5;
-    let from_y = this.fromNode.getY() + (this.fromNode.output() > 1 ? (((this.outputIndex - 1) * 21) + 15) : (2 + this.fromNode.elNode.clientHeight / 2));
-   */ var lineCurve = this.createCurvature(from_x, from_y, to_x, to_y, this.curvature, 'openclose');
+    var lineCurve = this.createCurvature(from_x, from_y, to_x, to_y, this.curvature, 'openclose');
     this.elPath.setAttributeNS(null, 'd', lineCurve);
   }
   public update() {

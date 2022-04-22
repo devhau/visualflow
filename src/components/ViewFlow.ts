@@ -84,6 +84,9 @@ export class ViewFlow extends BaseFlow<WorkerFlow> {
   }
   private dropEnd(ev: any) {
     ev.preventDefault();
+    if (Object.keys(this.parent.modules).length == 0) {
+      this.parent.new();
+    }
     let keyNode: string | null = '';
     if (ev.type === "touchend") {
       keyNode = this.parent.dataNodeSelect;
@@ -92,7 +95,7 @@ export class ViewFlow extends BaseFlow<WorkerFlow> {
     }
     let option = this.getOption(keyNode);
     if (option && option.onlyNode) {
-      if (this.nodes.filter((item) => item.checkKey(keyNode)).length > 0) {
+      if (this.nodes.filter((item) => item.checkNode(keyNode)).length > 0) {
         return;
       }
     }
@@ -116,7 +119,7 @@ export class ViewFlow extends BaseFlow<WorkerFlow> {
   public toJson() {
     let nodes = this.nodes.map((item) => item.toJson());
     return {
-      id: this.Id,
+      Id: this.Id,
       data: this.data.toJson(),
       nodes
     }
@@ -133,7 +136,7 @@ export class ViewFlow extends BaseFlow<WorkerFlow> {
       data.data = {};
     }
     if (!data.data[this.properties.name.key]) {
-      data.data[this.properties.name.key] = `project-${data.Id}`;
+      data.data[this.properties.name.key] = `project-${this.parent.getTime()}`;
     }
     this.Id = data.Id;
     this.data.load(data.data);
@@ -330,6 +333,9 @@ export class ViewFlow extends BaseFlow<WorkerFlow> {
       return;
     }
     this.timeFastClick = this.parent.getTime();
+    if (e.target.classList.contains('main-path')) {
+      return;
+    }
     if (this.moveType == MoveType.None) {
       if (this.nodeSelected && this.parent.checkParent(e.target, this.nodeSelected.elNode)) {
         if (e.target.classList.contains('dot')) {
@@ -403,16 +409,16 @@ export class ViewFlow extends BaseFlow<WorkerFlow> {
     }
   }
   public EndMove(e: any) {
+    if (!this.flgDrap) return;
     //fix Fast Click
-    if (((this.parent.getTime() - this.timeFastClick) < 300) || !this.flgDrap && !this.flgMove) {
-      if (this.moveType != MoveType.Node && this.flgDrap)
+    if (((this.parent.getTime() - this.timeFastClick) < 300) || !this.flgMove) {
+      if (this.moveType === MoveType.Canvas && this.flgDrap)
         this.UnSelect();
       this.moveType = MoveType.None;
       this.flgDrap = false;
       this.flgMove = false;
       return;
     }
-    //  this.UnSelect();
     if (this.tempLine && this.moveType == MoveType.Line) {
       if (this.tempLine.toNode && this.tempLine.toNode.checkInput()) {
         this.AddLine(this.tempLine.fromNode, this.tempLine.toNode, this.tempLine.outputIndex);

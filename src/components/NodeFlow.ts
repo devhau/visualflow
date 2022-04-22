@@ -13,9 +13,8 @@ export class NodeFlow extends BaseFlow<ViewFlow> {
     return +this.data.Get(this.propertieDefault.x.key);
   }
   public getDotInput(index: number = 1) {
-    let elDot: any = this.elNodeInputs?.querySelectorAll(`.dot`)[index];
+    let elDot: any = this.elNodeOutputs?.querySelector(`.dot[node="${index}"]`);
     if (elDot) {
-
       let y = (this.elNode.offsetTop + elDot.offsetTop + 10);
       let x = (this.elNode.offsetLeft + elDot.offsetLeft - 10);
       return { x, y };
@@ -23,9 +22,8 @@ export class NodeFlow extends BaseFlow<ViewFlow> {
     return {};
   }
   public getDotOutput(index: number = 0) {
-    let elDot: any = this.elNodeOutputs?.querySelectorAll(`.dot`)[index];
+    let elDot: any = this.elNodeOutputs?.querySelector(`.dot[node="${index}"]`);
     if (elDot) {
-
       let y = (this.elNode.offsetTop + elDot.offsetTop + 10);
       let x = (this.elNode.offsetLeft + elDot.offsetLeft + 10);
 
@@ -55,7 +53,33 @@ export class NodeFlow extends BaseFlow<ViewFlow> {
     selected: "Selected",
     dataChange: "dataChange"
   };
+  public setOption(option: any = null, data: any = {}) {
+    this.option = option || {};
+    if (!this.option.properties) {
+      this.option.properties = {};
+    }
+    this.node = this.option.node;
+    this.Id = data?.Id ?? this.parent.parent.getUuid();
+    this.properties = { ...this.propertieDefault, ...this.option.properties };
+    this.data.InitData(data, this.properties);
 
+  }
+  public constructor(parent: ViewFlow, option: any = null) {
+    super(parent);
+    this.setOption(option, {});
+    if (option) {
+      this.ReUI();
+      this.on(this.data.Event.dataChange, () => {
+        this.UpdateUI();
+      })
+    }
+    this.on(this.Event.change, (e: any, sender: any) => {
+      this.parent.dispatch(this.parent.Event.change, {
+        ...e,
+        targetNode: sender
+      });
+    })
+  }
   public toJson() {
     let LineJson = this.arrLine.filter((item) => item.fromNode === this).map((item) => ({
       fromNode: item.fromNode.Id,
@@ -63,22 +87,18 @@ export class NodeFlow extends BaseFlow<ViewFlow> {
       ouputIndex: item.outputIndex
     }));
     return {
-      id: this.Id,
+      Id: this.Id,
+      node: this.node,
       line: LineJson,
       data: this.data.toJson(),
     }
   }
   public load(data: any) {
     this.data.RemoveEventAll();
-    this.data.BindEvent(this);
-
-    this.Id = data?.id ?? this.parent.parent.getUuid();
-    this.node = data?.node;
-    this.option = this.parent.getOption(this.node);
-    console.log(this.properties);
+    let option = this.parent.getOption(data?.node);
+    this.setOption(option, data);
     this.data.load(data?.data);
-    this.initOption();
-    this.UpdateUI();
+    this.ReUI();
     return this;
   }
   public output() {
@@ -107,26 +127,6 @@ export class NodeFlow extends BaseFlow<ViewFlow> {
     }
     this.dispatch(this.Event.change, {});
     return this.arrLine;
-  }
-  public constructor(parent: ViewFlow, option: any = null) {
-    super(parent);
-    this.option = option;
-    if (!this.option.properties) {
-      this.option.properties = {};
-    }
-    this.properties = { ...this.propertieDefault, ...this.option.properties };
-    this.on(this.Event.change, (e: any, sender: any) => {
-      this.parent.dispatch(this.parent.Event.change, {
-        ...e,
-        targetNode: sender
-      });
-    })
-    this.ReUI();
-    this.data.InitData({}, this.properties);
-    this.on(this.data.Event.dataChange, () => {
-      //this.ReUI();
-      this.UpdateUI();
-    })
   }
   public ReUI() {
     if (this.elNode) this.elNode.remove();
@@ -172,7 +172,7 @@ export class NodeFlow extends BaseFlow<ViewFlow> {
         this.elNodeOutputs.innerHTML = '';
         for (let index: number = 0; index < this.option.output; index++) {
           let output = document.createElement('div');
-          output.setAttribute('node', (index).toString());
+          output.setAttribute('node', (300 + index).toString());
           output.classList.add("dot");
           output.classList.add("output_" + (index));
           this.elNodeOutputs?.appendChild(output);
@@ -196,8 +196,8 @@ export class NodeFlow extends BaseFlow<ViewFlow> {
       this.flgScript = true;
     }
   }
-  public checkKey(key: any) {
-    return this.option && this.option.key == key;
+  public checkNode(node: any) {
+    return this.option && this.option.node == node;
   }
   public NodeOver(e: any) {
     this.parent.nodeOver = this;

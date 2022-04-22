@@ -28,10 +28,13 @@ export class DataFlow {
   public RemoveEvent(node: FlowCore) {
     let index = this.nodes.indexOf(node);
     if (index > -1) {
+      this.nodes[index].elNode.querySelectorAll(`[node\\:model]`).forEach((item) => {
+        item.removeEventListener('keyup', this.changeInput.bind(this));
+      });
       node.elNode.querySelectorAll(`[node\\:model]`).forEach((item) => {
         item.removeEventListener('keyup', this.changeInput.bind(this));
       });
-      this.nodes.slice(index, 1);
+      this.nodes = this.nodes.filter((item) => item.Id != node.Id);
     }
   }
   public BindEvent(node: FlowCore) {
@@ -44,10 +47,8 @@ export class DataFlow {
         item.value = this.data[item.getAttribute(`node:model`)];
       }
     });
-    setTimeout(() => {
-      node.elNode.querySelectorAll(`[node\\:model]`).forEach((item) => {
-        item.addEventListener('keyup', this.changeInput.bind(this));
-      }, 300);
+    node.elNode.querySelectorAll(`[node\\:model]`).forEach((item) => {
+      item.addEventListener('keyup', this.changeInput.bind(this));
     });
   }
   private SetValue(key: string, value: any, elUpdate = null) {
@@ -69,7 +70,7 @@ export class DataFlow {
     this.data[key] = value;
     setTimeout(() => {
       this.SetValue(key, value, elUpdate);
-    });
+    }, 100);
   }
   public Get(key: string) {
     return this.data[key];
@@ -77,6 +78,7 @@ export class DataFlow {
   public changeInput(e: any) {
     this.Set(e.target.getAttribute(`node:model`), e.target.value, e.target);
   }
+
   public UpdateUI() {
     setTimeout(() => {
       for (let node of this.nodes) {
@@ -88,7 +90,7 @@ export class DataFlow {
           }
         });
       }
-    }, 300);
+    }, 100);
   }
   public load(data: any) {
     this.data = {};

@@ -56,9 +56,6 @@ export class WorkerFlow extends FlowCore {
     this.Tab = new TabFlow(this);
     this.Control = new ControlFlow(this);
     this.Property = new PropertyFlow(this);
-    if (Object.keys(this.modules).length == 0) {
-      this.new();
-    }
   }
   public new() {
     this.Tab?.NewProject();
@@ -76,7 +73,7 @@ export class WorkerFlow extends FlowCore {
     if (!control) {
       control = Object.values(this.option.control)[0];
     }
-    control.key = keyNode;
+    control.node = keyNode;
     return control;
   }
   public toJson() {
