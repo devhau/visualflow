@@ -67,7 +67,7 @@
   let text = document.getElementById('text');
   let share = document.getElementById('share');
   try {
-    flow.load(JSON.parse(atob(window.location.search.substring(1))));
+    flow.openProject(JSON.parse(atob(window.location.search.substring(1))));
     onExport();
   } catch {
 
@@ -78,8 +78,7 @@
   }
 
   function onLoad() {
-    let data = JSON.parse(text.value);
-    flow.load(data);
+    flow.openProject(JSON.parse(text.value));
   }
 
   function onExport() {

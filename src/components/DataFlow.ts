@@ -13,6 +13,7 @@ export class DataFlow {
     if (properties !== -1) {
       this.node.properties = properties;
     }
+    this.nodes = [this.node];
     this.load(data);
     this.BindEvent(this.node);
     this.UpdateUI();
@@ -34,12 +35,12 @@ export class DataFlow {
       node.elNode.querySelectorAll(`[node\\:model]`).forEach((item) => {
         item.removeEventListener('keyup', this.changeInput.bind(this));
       });
-      this.nodes = this.nodes.filter((item) => item.Id != node.Id);
+      this.nodes.splice(index);
     }
   }
   public BindEvent(node: FlowCore) {
     this.RemoveEvent(node);
-    this.nodes = [... this.nodes, node];
+    this.nodes = [...this.nodes, node];
     node.elNode.querySelectorAll(`[node\\:model]`).forEach((item: any) => {
       if (item.tagName == 'SPAN' || item.tagName == 'DIV') {
         item.innerHTML = `${this.data[item.getAttribute(`node:model`)]}`;
@@ -52,6 +53,19 @@ export class DataFlow {
     });
   }
   private SetValue(key: string, value: any, elUpdate = null) {
+    if (this.nodes.indexOf(this.node) == -1) {
+      this.node.elNode.querySelectorAll(`[node\\:model="${key}"]`).forEach((item: any) => {
+        if (item != elUpdate) {
+          if (item.tagName == 'SPAN' || item.tagName == 'DIV') {
+            item.innerHTML = `${value}`;
+          } else {
+            item.value = value;
+          }
+        }
+      });
+      this.node.dispatch(this.Event.dataChange, { key, value, elUpdate });
+      this.node.dispatch(this.Event.change, { key, value, elUpdate });
+    }
     for (let node of this.nodes) {
       node.elNode.querySelectorAll(`[node\\:model="${key}"]`).forEach((item: any) => {
         if (item != elUpdate) {

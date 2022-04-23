@@ -2,7 +2,7 @@ import { FlowCore } from "./components/BaseFlow";
 import { ControlFlow } from "./components/ControlFlow";
 import { DataFlow } from "./components/DataFlow";
 import { PropertyFlow } from "./components/PropertyFlow";
-import { TabFlow } from "./components/TabFlow";
+import { TabFlow, TabItemFlow } from "./components/TabFlow";
 import { ViewFlow } from "./components/ViewFlow";
 
 export class WorkerFlow extends FlowCore {
@@ -60,6 +60,14 @@ export class WorkerFlow extends FlowCore {
   public new() {
     this.Tab?.NewProject();
   }
+  public openProject(moduels: any) {
+    this.modules = moduels;
+    let key = Object.keys(this.modules)[0];
+    if (key) {
+      this.load(this.modules[key]);
+    }
+  }
+
   public load(data: any) {
     this.Tab?.LoadProject(data);
   }
@@ -77,7 +85,8 @@ export class WorkerFlow extends FlowCore {
     return control;
   }
   public toJson() {
-    return this.View?.toJson();
+    this.Tab?.UpdateData();
+    return this.modules;
   }
   public getTime(): number {
     return (new Date()).getTime();

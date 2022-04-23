@@ -61,17 +61,13 @@ export class NodeFlow extends BaseFlow<ViewFlow> {
     this.node = this.option.node;
     this.Id = data?.Id ?? this.parent.parent.getUuid();
     this.properties = { ...this.propertieDefault, ...this.option.properties };
-    this.data.InitData(data, this.properties);
-
+    this.data.InitData(data?.data);
   }
   public constructor(parent: ViewFlow, option: any = null) {
     super(parent);
     this.setOption(option, {});
     if (option) {
       this.ReUI();
-      this.on(this.data.Event.dataChange, () => {
-        this.UpdateUI();
-      })
     }
     this.on(this.Event.change, (e: any, sender: any) => {
       this.parent.dispatch(this.parent.Event.change, {
@@ -97,7 +93,6 @@ export class NodeFlow extends BaseFlow<ViewFlow> {
     this.data.RemoveEventAll();
     let option = this.parent.getOption(data?.node);
     this.setOption(option, data);
-    this.data.load(data?.data);
     this.ReUI();
     return this;
   }
@@ -106,6 +101,7 @@ export class NodeFlow extends BaseFlow<ViewFlow> {
   }
   public delete(isRemoveParent = true) {
     this.arrLine.forEach((item) => item.delete(this));
+    this.data.RemoveEvent(this);
     this.elNode?.removeEventListener('mouseover', this.NodeOver.bind(this));
     this.elNode?.removeEventListener('mouseleave', this.NodeLeave.bind(this));
     this.elNode?.removeEventListener('mousedown', this.StartSelected.bind(this));
@@ -129,11 +125,14 @@ export class NodeFlow extends BaseFlow<ViewFlow> {
     return this.arrLine;
   }
   public ReUI() {
-    if (this.elNode) this.elNode.remove();
-    this.data.RemoveEvent(this);
-    this.elNode = document.createElement('div');
-    this.elNode.classList.add("workerflow-node");
-    this.elNode.id = `node-${this.Id}`;
+    if (this.elNode) {
+      this.data.RemoveEvent(this);
+      this.elNode.removeEventListener('mouseover', this.NodeOver.bind(this));
+      this.elNode.removeEventListener('mouseleave', this.NodeLeave.bind(this));
+      this.elNode.removeEventListener('mousedown', this.StartSelected.bind(this));
+      this.elNode.removeEventListener('touchstart', this.StartSelected.bind(this));
+      this.elNode.remove();
+    }
     this.elNodeInputs = document.createElement('div');
     this.elNodeInputs.classList.add('workerflow-node_inputs');
     this.elNodeInputs.innerHTML = `<div class="inputs dot"></div>`;
@@ -142,6 +141,9 @@ export class NodeFlow extends BaseFlow<ViewFlow> {
     this.elNodeOutputs = document.createElement('div');
     this.elNodeOutputs.classList.add('workerflow-node_outputs');
     this.elNodeOutputs.innerHTML = `<div class="outputs dot" node="0"></div>`;
+    this.elNode = document.createElement('div');
+    this.elNode.classList.add("workerflow-node");
+    this.elNode.id = `node-${this.Id}`;
     this.elNode.setAttribute('data-node', this.Id);
     this.elNode.setAttribute('style', `top: ${this.getY()}px; left: ${this.getX()}px;`);
     this.elNode.addEventListener('mouseover', this.NodeOver.bind(this));
@@ -159,13 +161,15 @@ export class NodeFlow extends BaseFlow<ViewFlow> {
       this.data.UpdateUI();
     }
     this.initOption();
+    this.on(this.data.Event.dataChange, () => {
+      this.UpdateUI();
+    });
     this.dispatch(this.Event.ReUI, {});
   }
   public checkInput() {
     return !(this.option?.input === 0);
   }
   private initOption() {
-
     if (this.elNodeContent && this.option && this.elNodeOutputs) {
       this.elNodeContent.innerHTML = this.option.html;
       if (this.option.output !== undefined) {

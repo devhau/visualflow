@@ -46,7 +46,6 @@ export class TabFlow extends BaseFlow<WorkerFlow>  {
   }
 
   public LoadProjectById(projectId: any) {
-    console.log(projectId);
     if (!projectId) return;
     let ProjectNext = this.tabs?.filter((item) => item.ItemId == projectId)?.[0];
     let dataNext: any = this.parent.modules[projectId];
@@ -58,13 +57,18 @@ export class TabFlow extends BaseFlow<WorkerFlow>  {
 
     if (ProjectNext && this.tabActive) {
       if (this.tabActive == ProjectNext) return;
-      this.parent.modules[this.tabActive.ItemId] = this.parent.View?.toJson();
+      this.UpdateData();
       this.tabActive.Active(false);
       this.tabActive = undefined;
     }
     this.tabActive = ProjectNext;
     this.tabActive.SetData(dataNext);
     this.tabActive.Active(true);
+  }
+  public UpdateData() {
+    if (this.tabActive) {
+      this.parent.modules[this.tabActive.ItemId] = this.parent.View?.toJson();
+    }
   }
   public NewProject() {
     const data = {

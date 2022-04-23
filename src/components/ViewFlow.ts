@@ -31,13 +31,13 @@ export class ViewFlow extends BaseFlow<WorkerFlow> {
   private timeFastClick: number = 0;
   private tagIngore = ['input', 'button', 'a', 'textarea'];
   private getX() {
-    return +this.data.Get(this.properties.canvas_x.key)
+    return +this.data.Get(this.properties.x.key)
   }
   private getY() {
-    return +this.data.Get(this.properties.canvas_y.key)
+    return +this.data.Get(this.properties.y.key)
   }
   private getZoom() {
-    return this.data.Get(this.properties.zoom.key);
+    return +this.data.Get(this.properties.zoom.key);
   }
   public properties = {
     name: {
@@ -48,13 +48,13 @@ export class ViewFlow extends BaseFlow<WorkerFlow> {
       default: 1,
       type: "number"
     },
-    canvas_x: {
-      key: "canvas_x",
+    x: {
+      key: "x",
       default: 0,
       type: "number"
     },
-    canvas_y: {
-      key: "canvas_y",
+    y: {
+      key: "y",
       default: 0,
       type: "number"
     }
@@ -159,8 +159,8 @@ export class ViewFlow extends BaseFlow<WorkerFlow> {
   public Reset() {
     this.nodes.forEach((item) => item.delete(false));
     this.nodes = [];
-    this.data.Set(this.properties.canvas_x.key, 0);
-    this.data.Set(this.properties.canvas_y.key, 0);
+    this.data.Set(this.properties.x.key, 0);
+    this.data.Set(this.properties.y.key, 0);
     this.updateView();
   }
   public getNodeById(nodeId: string) {
@@ -304,8 +304,8 @@ export class ViewFlow extends BaseFlow<WorkerFlow> {
     }
   }
   public zoom_refresh() {
-    this.data.Set(this.properties.canvas_x.key, (this.getX() / this.zoom_last_value) * this.getZoom());
-    this.data.Set(this.properties.canvas_y.key, (this.getY() / this.zoom_last_value) * this.getZoom());
+    this.data.Set(this.properties.x.key, (this.getX() / this.zoom_last_value) * this.getZoom());
+    this.data.Set(this.properties.y.key, (this.getY() / this.zoom_last_value) * this.getZoom());
     this.zoom_last_value = this.getZoom();
     this.updateView();
   }
@@ -436,8 +436,8 @@ export class ViewFlow extends BaseFlow<WorkerFlow> {
       e_pos_y = e.clientY;
     }
     if (this.moveType === MoveType.Canvas) {
-      this.data.Set(this.properties.canvas_x.key, this.getX() + this.CalcX(-(this.pos_x - e_pos_x)));
-      this.data.Set(this.properties.canvas_y.key, this.getY() + this.CalcY(-(this.pos_y - e_pos_y)));
+      this.data.Set(this.properties.x.key, this.getX() + this.CalcX(-(this.pos_x - e_pos_x)));
+      this.data.Set(this.properties.y.key, this.getY() + this.CalcY(-(this.pos_y - e_pos_y)));
     }
     this.pos_x = e_pos_x;
     this.pos_y = e_pos_y;
