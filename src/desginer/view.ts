@@ -28,4 +28,18 @@ export class DesginerView extends FlowCore {
   public setX(value: any) {
     return +this.data.Set('x', value, this);
   }
+  /**
+   * Varibute
+  */
+  public elCanvas: HTMLElement = document.createElement('div');
+  public elNodePath: HTMLElement = document.createElement('div');
+  public constructor(elNode: HTMLElement) {
+    super();
+    this.elNode = elNode;
+    this.elNode.innerHTML = '';
+    this.elNodePath.classList.add("node-path");
+    this.elCanvas.classList.add("node-canvas");
+    this.elNode.appendChild(this.elNodePath);
+    this.elNode.appendChild(this.elCanvas);
+  }
 }
