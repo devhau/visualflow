@@ -1,6 +1,6 @@
 import { WorkerFlow } from "../WorkerFlow";
-import { BaseFlow } from "./BaseFlow";
-import { DataFlow } from "./DataFlow";
+import { BaseFlow } from "../core/BaseFlow";
+import { DataFlow } from "../core/DataFlow";
 
 export class PropertyFlow extends BaseFlow<WorkerFlow> {
   private lastData: DataFlow | undefined;
@@ -12,9 +12,6 @@ export class PropertyFlow extends BaseFlow<WorkerFlow> {
   }
   public PropertyInfo(data: DataFlow) {
     if (this.lastData && this.lastData === data) return;
-    if (this.lastData) {
-      this.lastData.RemoveEvent(this);
-    }
     this.lastData = data;
     this.RenderUI();
   }

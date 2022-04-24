@@ -1,6 +1,6 @@
-import { FlowCore } from "./components/BaseFlow";
+import { FlowCore } from "./core/BaseFlow";
 import { ControlFlow } from "./components/ControlFlow";
-import { DataFlow } from "./components/DataFlow";
+import { DataFlow } from "./core/DataFlow";
 import { PropertyFlow } from "./components/PropertyFlow";
 import { TabFlow, TabItemFlow } from "./components/TabFlow";
 import { ViewFlow } from "./components/ViewFlow";
@@ -48,6 +48,9 @@ export class WorkerFlow extends FlowCore {
     </div>
     <div class="workerflow-property">
       <h2 class="workerflow-property__header">Properties</h2>
+      <div class="workerflow-property__list">
+      </div>
+      <h2 class="workerflow-property__header">Project</h2>
       <div class="workerflow-property__list">
       </div>
     </div>

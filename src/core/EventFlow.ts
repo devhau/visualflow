@@ -2,8 +2,12 @@ import { FlowCore } from "./BaseFlow";
 
 export class EventFlow {
   private events: any = {};
-  public constructor(private parent: FlowCore) {
+  public constructor() {
 
+  }
+  public onSafe(event: string, callback: any) {
+    this.removeListener(event, callback);
+    this.on(event, callback);
   }
   /* Events */
   public on(event: string, callback: any) {
@@ -38,14 +42,13 @@ export class EventFlow {
   }
 
   public dispatch(event: string, details: any) {
-    let self = this.parent;
     // Check if this event not exists
     if (this.events[event] === undefined) {
       // console.error(`This event: ${event} does not exist`);
       return false;
     }
     this.events[event].listeners.forEach((listener: any) => {
-      listener(details, self);
+      listener(details);
     });
   }
 }

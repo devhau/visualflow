@@ -1,5 +1,5 @@
 import { WorkerFlow } from "../WorkerFlow";
-import { BaseFlow } from "./BaseFlow";
+import { BaseFlow } from "../core/BaseFlow";
 import { LineFlow } from "./LineFlow";
 import { NodeFlow } from "./NodeFlow";
 
@@ -140,7 +140,6 @@ export class ViewFlow extends BaseFlow<WorkerFlow> {
     }
     this.Id = data.Id;
     this.data.load(data.data);
-    this.data.UpdateUI();
     this.nodes = (data.nodes ?? []).map((item: any) => {
       return (new NodeFlow(this, "")).load(item);
     });

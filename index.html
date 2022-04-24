@@ -22,23 +22,20 @@
   let optionFlow = {
     control: {
       node_begin: {
-        key: "node_begin",
         name: '<span><i class="fas fa-play"></i> Begin</span>',
+        class: 'node-test',
         html: '<div><i class="fas fa-play"></i> Node Begin</div>',
-
         output: 1,
         input: 0,
         onlyNode: true
       },
       node_end: {
-        key: "node_end",
         name: '<i class="fas fa-stop"></i> End',
         html: '<div><i class="fas fa-stop"></i> Node End</div>',
         output: 0,
         onlyNode: true
       },
       node_if: {
-        key: "node_if",
         name: '<i class="fas fa-equals"></i> If',
         html: '<div>condition:<br/><input node:model="condition"/></div>',
         script: ``,

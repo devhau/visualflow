@@ -1,5 +1,5 @@
 import { WorkerFlow } from "../WorkerFlow";
-import { BaseFlow } from "./BaseFlow";
+import { BaseFlow } from "../core/BaseFlow";
 export class TabItemFlow extends BaseFlow<TabFlow>{
   public ItemId: any;
   public constructor(parent: TabFlow, private dataItem: any) {
@@ -26,10 +26,8 @@ export class TabItemFlow extends BaseFlow<TabFlow>{
     if (flg) {
       this.elNode.classList.add('active');
       this.parent.parent.View?.load(this.dataItem);
-      this.parent.parent.View?.data.BindEvent(this);
     } else {
       this.elNode.classList.remove('active');
-      this.parent.parent.View?.data.RemoveEvent(this);
     }
   }
 

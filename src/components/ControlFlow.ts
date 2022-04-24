@@ -1,5 +1,5 @@
 import { WorkerFlow } from "../WorkerFlow";
-import { BaseFlow } from "./BaseFlow";
+import { BaseFlow } from "../core/BaseFlow";
 
 export class ControlFlow extends BaseFlow<WorkerFlow>  {
   public constructor(parent: WorkerFlow) {

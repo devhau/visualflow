@@ -1,4 +1,4 @@
-import { BaseFlow } from "./BaseFlow";
+import { BaseFlow } from "../core/BaseFlow";
 import { LineFlow } from "./LineFlow";
 import { ViewFlow } from "./ViewFlow";
 const geval = eval;
@@ -90,7 +90,6 @@ export class NodeFlow extends BaseFlow<ViewFlow> {
     }
   }
   public load(data: any) {
-    this.data.RemoveEventAll();
     let option = this.parent.getOption(data?.node);
     this.setOption(option, data);
     this.ReUI();
@@ -101,7 +100,7 @@ export class NodeFlow extends BaseFlow<ViewFlow> {
   }
   public delete(isRemoveParent = true) {
     this.arrLine.forEach((item) => item.delete(this));
-    this.data.RemoveEvent(this);
+    this.data.dispatch(this.data.Event.change, {});
     this.elNode?.removeEventListener('mouseover', this.NodeOver.bind(this));
     this.elNode?.removeEventListener('mouseleave', this.NodeLeave.bind(this));
     this.elNode?.removeEventListener('mousedown', this.StartSelected.bind(this));
@@ -126,7 +125,6 @@ export class NodeFlow extends BaseFlow<ViewFlow> {
   }
   public ReUI() {
     if (this.elNode) {
-      this.data.RemoveEvent(this);
       this.elNode.removeEventListener('mouseover', this.NodeOver.bind(this));
       this.elNode.removeEventListener('mouseleave', this.NodeLeave.bind(this));
       this.elNode.removeEventListener('mousedown', this.StartSelected.bind(this));
@@ -143,6 +141,9 @@ export class NodeFlow extends BaseFlow<ViewFlow> {
     this.elNodeOutputs.innerHTML = `<div class="outputs dot" node="0"></div>`;
     this.elNode = document.createElement('div');
     this.elNode.classList.add("workerflow-node");
+    if (this.option.class) {
+      this.elNode.classList.add(this.option.class);
+    }
     this.elNode.id = `node-${this.Id}`;
     this.elNode.setAttribute('data-node', this.Id);
     this.elNode.setAttribute('style', `top: ${this.getY()}px; left: ${this.getX()}px;`);
@@ -158,7 +159,6 @@ export class NodeFlow extends BaseFlow<ViewFlow> {
     if (this.data) {
       let dataTemp = this.data.toJson();
       this.data.load(dataTemp);
-      this.data.UpdateUI();
     }
     this.initOption();
     this.on(this.data.Event.dataChange, () => {
