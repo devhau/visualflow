@@ -1,8 +1,25 @@
-import { IControlNode } from './../core/BaseFlow';
-export class VisualStudio implements IControlNode {
+import { IControlNode, IEvent } from './core/BaseFlow';
+import { DockManager } from './dock/DockManager';
+import { EventFlow } from './core/EventFlow';
+export class VisualStudio implements IControlNode, IEvent {
   private $properties: any = {};
   private $control: any = {};
-  public constructor(container: HTMLElement, option: any = null) {
+  private $dockManager: DockManager;
+  private events: EventFlow;
+  onSafe(event: string, callback: any) {
+    this.events.onSafe(event, callback);
+  }
+  on(event: string, callback: any) {
+    this.events.on(event, callback);
+  }
+  removeListener(event: string, callback: any) {
+    this.events.removeListener(event, callback);
+  }
+  dispatch(event: string, details: any) {
+    this.events.dispatch(event, details);
+  }
+  public constructor(private container: HTMLElement, option: any = null) {
+    this.events = new EventFlow();
     //set project
     this.$properties['project'] = {
       ...(option?.properties || {}),
@@ -38,7 +55,10 @@ export class VisualStudio implements IControlNode {
         },
       };
     });
-
+    this.container.classList.remove('vs-container');
+    this.container.classList.add('vs-container');
+    this.$dockManager = new DockManager(this.container, this);
+    this.$dockManager.reset();
   }
   getControlNodeByKey(key: string) {
     return {

@@ -1,10 +1,10 @@
 {
-  "name": "workerflow",
-  "version": "0.0.1",
-  "description": "workerflow",
-  "main": "dist/workerflow.cjs.js",
-  "module": "dist/workerflow.es.js",
-  "browser": "dist/workerflow.js",
+  "name": "visualstudio",
+  "version": "0.0.1-beta",
+  "description": "visualstudio",
+  "main": "dist/visualstudio.cjs.js",
+  "module": "dist/visualstudio.es.js",
+  "browser": "dist/visualstudio.js",
   "author": "Nguyen Van Hau",
   "license": "MIT",
   "devDependencies": {

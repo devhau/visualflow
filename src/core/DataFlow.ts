@@ -1,5 +1,5 @@
-import { FlowCore, IProperty } from "./BaseFlow";
-import { EventEnum } from "./EventEnum";
+import { IProperty } from "./BaseFlow";
+import { EventEnum } from "./Constant";
 import { EventFlow } from "./EventFlow";
 
 export class DataFlow {

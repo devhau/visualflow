@@ -1,10 +1,6 @@
-import { FlowCore } from "./BaseFlow";
-
 export class EventFlow {
   private events: any = {};
-  public constructor() {
-
-  }
+  public constructor() { }
   public onSafe(event: string, callback: any) {
     this.removeListener(event, callback);
     this.on(event, callback);

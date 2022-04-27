@@ -1,5 +1,5 @@
 import { BaseFlow, FlowCore } from "./BaseFlow"
-import { EventEnum } from "./EventEnum";
+import { EventEnum } from "./Constant";
 import { LOG } from "./Utils";
 export enum EditorType {
   Label,
@@ -20,7 +20,8 @@ export class Editor<TParent extends FlowCore> extends BaseFlow<TParent> {
     this.elNode.classList.add('node-editor');
     if (chagne && el) {
       el.parentElement?.insertBefore(this.elNode, el);
-      el.remove();
+      el.parentElement?.removeChild(el);
+      el?.remove();
     } else if (el) {
       el.appendChild(this.elNode);
     } else {
@@ -62,6 +63,7 @@ export class Editor<TParent extends FlowCore> extends BaseFlow<TParent> {
       }
       this.elLabel.setAttribute('node:model', this.key);
       this.elLabel.innerHTML = data;
+      this.elNode.appendChild(this.elLabel);
     }
   }
   public switchModeEdit() {

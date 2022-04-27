@@ -1,5 +1,5 @@
 import { DataFlow } from "./DataFlow";
-import { EventEnum } from "./EventEnum";
+import { EventEnum } from "./Constant";
 import { EventFlow } from "./EventFlow";
 
 export interface IProperty {
@@ -8,7 +8,13 @@ export interface IProperty {
 export interface IControlNode extends IProperty {
   getControlNodeByKey(key: string): any;
 }
-export class FlowCore {
+export interface IEvent {
+  onSafe(event: string, callback: any): void;
+  on(event: string, callback: any): void;
+  removeListener(event: string, callback: any): void;
+  dispatch(event: string, details: any): void;
+}
+export class FlowCore implements IEvent {
   public Id: any;
   public properties: any = {};
   public data: DataFlow = new DataFlow();

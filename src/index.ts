@@ -1,3 +1,3 @@
-import { WorkerFlow } from "./WorkerFlow";
+import { VisualStudio } from "./VisualStudio";
 
-export default WorkerFlow;
+export default VisualStudio;

@@ -1,22 +1,16 @@
 <!DOCTYPE html>
 <html>
-
 <head>
   <title>VisualStudio</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css"
     integrity="sha256-h20CPZ0QyXlBuAw7A+KluUYx/3pK+c7lYEpqLTlxjYQ=" crossorigin="anonymous" />
   <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="./dist/workerflow.css" />
-  <script src="./dist/workerflow.min.js"></script>
+  <link rel="stylesheet" href="./dist/visualstudio.css" />
+  <script src="./dist/visualstudio.min.js"></script>
 </head>
 
 <body>
-  <button onclick="onExport()">Export</button>
-  <button onclick="onNew()">New</button>
-  <button onclick="onLoad()">Load</button>
-  <textarea id="text"></textarea>
-  <textarea id="share"></textarea>
   <div id="flow"></div>
 </body>
 <script>
@@ -75,12 +69,12 @@
       }
     }
   }
-  let flow = (new workerflow(document.getElementById("flow"), optionFlow));
+  let flow = (new visualstudio(document.getElementById("flow"), optionFlow));
   let text = document.getElementById('text');
   let share = document.getElementById('share');
   try {
-    flow.openProject(JSON.parse(atob(window.location.search.substring(1))));
-    onExport();
+    // flow.openProject(JSON.parse(atob(window.location.search.substring(1))));
+    // onExport();
   } catch {
 
   }

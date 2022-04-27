@@ -2,7 +2,7 @@ import { BaseFlow } from "../core/BaseFlow";
 import { getUuid } from "../core/Utils";
 import { Line } from "./Line";
 import { DesginerView } from "./DesginerView";
-import { EventEnum } from "../core/EventEnum";
+import { EventEnum } from "../core/Constant";
 
 const geval = eval;
 export class Node extends BaseFlow<DesginerView> {
@@ -30,7 +30,7 @@ export class Node extends BaseFlow<DesginerView> {
     this.properties = this.option.properties;
     this.data.InitData(data, this.properties);
     this.onSafe(EventEnum.dataChange, () => this.renderUI());
-    this.elNode.classList.add('node-item');
+    this.elNode.classList.add('vs-node');
 
     if (this.option.class) {
       this.elNode.classList.add(this.option.class);
@@ -40,13 +40,21 @@ export class Node extends BaseFlow<DesginerView> {
   }
   private renderUI() {
     this.elNode.innerHTML = `
-      <div class="node-left"></div>
-      <div class="node-container">
-        <div class="node-top"></div>
-        <div class="node-content"></div>
-        <div class="node-bottom"></div>
+      <div class="node-left">
+        <div class="node-dot"></div>
       </div>
-      <div class="node-right"></div>
+      <div class="node-container">
+        <div class="node-top">
+          <div class="node-dot"></div>
+        </div>
+        <div class="node-content"></div>
+        <div class="node-bottom">
+          <div class="node-dot"></div>
+        </div>
+      </div>
+      <div class="node-right">
+        <div class="node-dot"></div>
+      </div>
     `;
     this.elContent = this.elNode.querySelector('.node-content');
   }
