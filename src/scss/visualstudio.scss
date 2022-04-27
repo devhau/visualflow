@@ -43,6 +43,7 @@ body {
     .vs-boxinfo_content {
       padding: 7px 5px;
       min-height: 200px;
+      border-bottom: 2px solid var(--border-color);
     }
   }
   .vs-dock {
