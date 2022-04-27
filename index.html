@@ -2,6 +2,7 @@
 <html>
 
 <head>
+  <title>VisualStudio</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css"
     integrity="sha256-h20CPZ0QyXlBuAw7A+KluUYx/3pK+c7lYEpqLTlxjYQ=" crossorigin="anonymous" />
   <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
@@ -20,6 +21,20 @@
 </body>
 <script>
   let optionFlow = {
+    properties: {
+      name: {
+        defautl: ""
+      },
+      x: {
+        defautl: 0
+      },
+      y: {
+        default: 0
+      },
+      zoom: {
+        default: 0
+      }
+    },
     control: {
       node_begin: {
         name: '<span><i class="fas fa-play"></i> Begin</span>',

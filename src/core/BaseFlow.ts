@@ -1,12 +1,24 @@
 import { DataFlow } from "./DataFlow";
+import { EventEnum } from "./EventEnum";
 import { EventFlow } from "./EventFlow";
 
+export interface IProperty {
+  getPropertyByKey(key: string): any;
+}
+export interface IControlNode extends IProperty {
+  getControlNodeByKey(key: string): any;
+}
 export class FlowCore {
   public Id: any;
   public properties: any = {};
-  public data: DataFlow = new DataFlow(this);
+  public data: DataFlow = new DataFlow();
   public elNode: HTMLElement = document.createElement('div');
   private events: EventFlow;
+  public setData(data: DataFlow) {
+    this.data = data;
+    this.BindDataEvent();
+    this.dispatch(`bind_data_event`, { data, sender: this });
+  }
   onSafe(event: string, callback: any) {
     this.events.onSafe(event, callback);
   }
@@ -20,21 +32,21 @@ export class FlowCore {
     this.events.dispatch(event, details);
   }
   BindDataEvent() {
-    this.data.on(this.data.Event.dataChange, ({ key, value, sender }: any) => {
+    this.data.on(EventEnum.dataChange, ({ key, value, sender }: any) => {
       setTimeout(() => {
-        this.dispatch(`${this.data.Event.dataChange}_${key}`, {
+        this.dispatch(`${EventEnum.dataChange}_${key}`, {
           type: 'data',
           key, value, sender
         });
-        this.dispatch(this.data.Event.dataChange, {
+        this.dispatch(EventEnum.dataChange, {
           type: 'data',
           key, value, sender
         });
       });
     })
-    this.data.on(this.data.Event.change, ({ key, value, sender }: any) => {
+    this.data.on(EventEnum.change, ({ key, value, sender }: any) => {
       setTimeout(() => {
-        this.dispatch(this.data.Event.change, {
+        this.dispatch(EventEnum.change, {
           type: 'data',
           key, value, sender
         });
@@ -43,7 +55,6 @@ export class FlowCore {
   }
   public constructor() {
     this.events = new EventFlow();
-
   }
 }
 

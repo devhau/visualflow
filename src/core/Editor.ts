@@ -1,4 +1,5 @@
 import { BaseFlow, FlowCore } from "./BaseFlow"
+import { EventEnum } from "./EventEnum";
 import { LOG } from "./Utils";
 export enum EditorType {
   Label,
@@ -13,8 +14,8 @@ export class Editor<TParent extends FlowCore> extends BaseFlow<TParent> {
   public constructor(public parent: TParent, private key: string, el: HTMLElement | null = null, private type: EditorType = EditorType.Label, chagne: boolean = false) {
     super(parent);
     this.data = parent.data;
-    this.data.onSafe(`${this.data.Event.dataChange}_${key}`, this.changeData.bind(this));
-    this.data.onSafe(this.data.Event.dispose, this.dispose.bind(this));
+    this.data.onSafe(`${EventEnum.dataChange}_${key}`, this.changeData.bind(this));
+    this.data.onSafe(EventEnum.dispose, this.dispose.bind(this));
     this.isEdit = type == EditorType.Text;
     this.elNode.classList.add('node-editor');
     if (chagne && el) {
@@ -77,8 +78,8 @@ export class Editor<TParent extends FlowCore> extends BaseFlow<TParent> {
   public dispose() {
     this.elInput?.removeEventListener('keydown', this.inputData.bind(this));
     this.elLabel?.removeEventListener('dblclick', this.switchModeEdit.bind(this));
-    this.data.removeListener(`${this.data.Event.dataChange}_${this.key}`, this.changeData.bind(this));
-    this.data.removeListener(this.data.Event.dispose, this.dispose.bind(this));
+    this.data.removeListener(`${EventEnum.dataChange}_${this.key}`, this.changeData.bind(this));
+    this.data.removeListener(EventEnum.dispose, this.dispose.bind(this));
   }
 
 }
