@@ -1,12 +1,33 @@
-import { IEvent } from "../core/BaseFlow";
+import { IMain } from "../core/BaseFlow";
 import { DockBase } from "./DockBase";
 
 export class ControlDock extends DockBase {
-  public constructor(container: HTMLElement, protected event: IEvent) {
-    super(container, event);
+  public constructor(container: HTMLElement, protected main: IMain) {
+    super(container, main);
     this.elNode.classList.add('vs-control');
     this.BoxInfo('Control', (node: HTMLElement) => {
-      node.innerHTML = "xin chào";
+      let controls = this.main.getControlAll();
+      Object.keys(controls).forEach((item: any) => {
+        let nodeItem = document.createElement('div');
+        nodeItem.classList.add('node-item');
+        nodeItem.setAttribute('draggable', 'true');
+        nodeItem.setAttribute('data-node', item);
+        nodeItem.innerHTML = controls[item].name;
+        nodeItem.addEventListener('dragstart', this.dragStart.bind(this))
+        nodeItem.addEventListener('dragend', this.dragend.bind(this))
+        node.appendChild(nodeItem);
+      });
     });
+  }
+  private dragend(e: any) {
+    this.main.setControlChoose(null);
+  }
+
+  private dragStart(e: any) {
+    let key = e.target.closest(".node-item").getAttribute('data-node');
+    this.main.setControlChoose(key);
+    if (e.type !== "touchstart") {
+      e.dataTransfer.setData("node", key);
+    }
   }
 }

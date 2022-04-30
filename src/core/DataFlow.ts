@@ -6,6 +6,9 @@ export class DataFlow {
   private data: any = {};
   private properties: any = null;
   private events: EventFlow;
+  public getProperties(): any {
+    return this.properties;
+  }
   onSafe(event: string, callback: any) {
     this.events.onSafe(event, callback);
   }
@@ -16,6 +19,7 @@ export class DataFlow {
     this.events.removeListener(event, callback);
   }
   dispatch(event: string, details: any) {
+
     this.events.dispatch(event, details);
   }
   public constructor(private property: IProperty | undefined = undefined, data: any = undefined) {
@@ -97,7 +101,7 @@ export class DataFlow {
     }
     if (this.properties) {
       for (let key of Object.keys(this.properties)) {
-        this.data[key] = (data?.[key] ?? (this.properties[key]?.default ?? ""));
+        this.data[key] = (data?.[key] ?? ((typeof this.properties[key]?.default === "function" ? this.properties[key]?.default() : this.properties[key]?.default) ?? ""));
         this.BindEvent(this.data[key], key);
       }
     }

@@ -1,0 +1,176 @@
+html,
+body {
+  margin: 0px;
+  padding: 0px;
+  width: 100vw;
+  height: 100vh;
+  overflow: auto;
+  font-family: "Roboto", sans-serif;
+}
+:root {
+  --border-color-dock: #ddd9d9;
+  --border-color: #cacaca;
+  --background-color: #ffffff;
+  --background-box-title: #f7f7f7;
+}
+
+.vs-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: row;
+  .vs-content {
+    height: 100%;
+    flex: auto;
+    display: flex;
+    flex-direction: column;
+    .vs-view {
+      flex: auto;
+    }
+  }
+  .vs-boxinfo {
+    background-color: #ffffff;
+    border: 0.5px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    .vs-boxinfo_title {
+      padding: 7px 5px;
+      margin: 0;
+      border-bottom: 2px solid var(--border-color);
+    }
+    .vs-boxinfo_content {
+      flex: auto;
+      padding: 7px 5px;
+      min-height: 200px;
+      border-bottom: 2px solid var(--border-color);
+    }
+  }
+  .vs-dock {
+    display: flex;
+    border: 0.5px solid var(--border-color-dock);
+    flex-direction: column;
+    min-height: 30px;
+    :last-child {
+      flex: auto;
+    }
+  }
+  .vs-property,
+  .vs-control {
+    width: 200px;
+    padding: 0;
+  }
+  .vs-control {
+    .vs-boxinfo_content {
+      padding: 0;
+      .node-item {
+        padding: 5px;
+        border-bottom: 1px solid #cacaca;
+      }
+    }
+  }
+}
+.desginer-view {
+  height: 100%;
+  background: var(--background-color);
+  background-size: 25px 25px;
+  background-image: linear-gradient(to right, #f1f1f1 1px, transparent 1px),
+    linear-gradient(to bottom, #f1f1f1 1px, transparent 1px);
+  overflow: hidden;
+  position: relative;
+  &:focus-visible {
+    outline: none;
+  }
+  .desginer-canvas {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    user-select: none;
+    .connection {
+      position: absolute;
+      pointer-events: none;
+      .main-path {
+        fill: none;
+        stroke: #4ea9ff;
+        stroke-width: 3px;
+        pointer-events: all;
+        &.active {
+          stroke-width: 5px;
+          stroke: #3e88ce;
+        }
+      }
+    }
+    svg {
+      z-index: 0;
+      position: absolute;
+      overflow: visible !important;
+    }
+  }
+}
+.vs-node {
+  display: flex;
+  align-items: center;
+  position: absolute;
+  min-height: 40px;
+  border-radius: 4px;
+  background: var(--background-color);
+  border: 1px solid var(--border-color);
+  -webkit-box-shadow: 0 2px 15px 2px var(--border-color);
+  box-shadow: 0 2px 15px 2px var(--border-color);
+  padding: 0px;
+  min-width: 150px;
+  max-width: 300px;
+  color: #000;
+  z-index: 2;
+  &.active {
+    border: 2px solid var(--border-color);
+  }
+
+  .node-dot {
+    display: inline-block;
+    position: relative;
+    height: 12px;
+    width: 12px;
+    background: #fff;
+    border-radius: 50%;
+    border: 2px solid var(--border-color);
+    cursor: crosshair;
+    z-index: 1;
+  }
+  .node-container {
+    flex: auto;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    .node-top,
+    .node-bottom {
+      height: 0;
+      padding: 0;
+      flex: none;
+      text-align: center;
+      top: -1px;
+      .node-dot {
+        bottom: 8px;
+      }
+    }
+    .node-content {
+      padding: 10px;
+      flex: auto;
+    }
+  }
+  .node-right,
+  .node-left {
+    width: 0;
+    padding: 0;
+    flex: none;
+    left: -1px;
+    .node-dot {
+      right: 8px;
+    }
+  }
+}
+.vs-property {
+  .property-item {
+    border-bottom: 1px solid #cacaca;
+    padding-bottom: 5px;
+  }
+}

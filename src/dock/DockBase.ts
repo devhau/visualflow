@@ -1,8 +1,8 @@
-import { IEvent } from "../core/BaseFlow";
+import { IMain } from "../core/BaseFlow";
 
 export class DockBase {
   public elNode: HTMLElement = document.createElement('div');
-  public constructor(container: HTMLElement, protected event: IEvent) {
+  public constructor(container: HTMLElement, protected main: IMain) {
     container.appendChild(this.elNode);
     this.elNode.innerHTML = 'DockBase';
   }

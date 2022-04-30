@@ -14,11 +14,25 @@ export interface IEvent {
   removeListener(event: string, callback: any): void;
   dispatch(event: string, details: any): void;
 }
+export interface IMain extends IControlNode, IEvent {
+  getControlAll(): any[];
+  setControlChoose(key: string | null): void;
+  getControlChoose(): string | null;
+  getControlByKey(key: string): any;
+}
 export class FlowCore implements IEvent {
-  public Id: any;
+  public GetId() {
+    return this.data.Get('id');
+  }
+  public SetId(id: string) {
+    return this.data.Set('id', id);
+  }
   public properties: any = {};
   public data: DataFlow = new DataFlow();
   public elNode: HTMLElement = document.createElement('div');
+  public CheckElementChild(el: HTMLElement) {
+    return this.elNode == el || this.elNode.contains(el);
+  }
   private events: EventFlow;
   public setData(data: DataFlow) {
     this.data = data;
@@ -61,6 +75,7 @@ export class FlowCore implements IEvent {
   }
   public constructor() {
     this.events = new EventFlow();
+    this.BindDataEvent();
   }
 }
 

@@ -1,11 +1,17 @@
-import { IControlNode, IEvent } from './core/BaseFlow';
+import { IMain } from './core/BaseFlow';
 import { DockManager } from './dock/DockManager';
 import { EventFlow } from './core/EventFlow';
-export class VisualStudio implements IControlNode, IEvent {
+import { PropertyEnum } from './core/Constant';
+import { getTime } from './core/Utils';
+export class VisualFlow implements IMain {
   private $properties: any = {};
   private $control: any = {};
+  private $controlChoose: string | null = null;
   private $dockManager: DockManager;
   private events: EventFlow;
+  public getDockManager(): DockManager {
+    return this.$dockManager;
+  }
   onSafe(event: string, callback: any) {
     this.events.onSafe(event, callback);
   }
@@ -18,22 +24,28 @@ export class VisualStudio implements IControlNode, IEvent {
   dispatch(event: string, details: any) {
     this.events.dispatch(event, details);
   }
+  getControlAll() {
+    return this.$control ?? {};
+  }
   public constructor(private container: HTMLElement, option: any = null) {
     this.events = new EventFlow();
     //set project
-    this.$properties['project'] = {
+    this.$properties[PropertyEnum.main] = {
       ...(option?.properties || {}),
+      id: {
+        default: () => getTime()
+      },
       name: {
-        defautl: ""
+        default: ""
       },
       x: {
-        defautl: 0
+        default: 0
       },
       y: {
         default: 0
       },
       zoom: {
-        default: 0
+        default: 1
       }
     };
     // set control
@@ -41,14 +53,17 @@ export class VisualStudio implements IControlNode, IEvent {
     Object.keys(this.$control).forEach((key: string) => {
       this.$properties[`node_${key}`] = {
         ...(this.$control[key].properties || {}),
+        id: {
+          default: () => getTime()
+        },
         key: {
-          defautl: key
+          default: key
         },
         name: {
-          defautl: ""
+          default: ""
         },
         x: {
-          defautl: 0
+          default: 0
         },
         y: {
           default: 0
@@ -60,10 +75,19 @@ export class VisualStudio implements IControlNode, IEvent {
     this.$dockManager = new DockManager(this.container, this);
     this.$dockManager.reset();
   }
+  setControlChoose(key: string | null): void {
+    this.$controlChoose = key;
+  }
+  getControlChoose(): string | null {
+    return this.$controlChoose;
+  }
+  getControlByKey(key: string) {
+    return this.$control[key] || {};
+  }
   getControlNodeByKey(key: string) {
     return {
-      ...this.$control[key],
-      properties: this.getPropertyByKey(key)
+      ...this.getControlByKey(key),
+      properties: this.getPropertyByKey(`node_${key}`)
     }
   }
   getPropertyByKey(key: string) {

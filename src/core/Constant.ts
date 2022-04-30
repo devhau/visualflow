@@ -1,7 +1,7 @@
 export const EventEnum = {
   init: "init",
   dataChange: "dataChange",
-  selectNode: "selectNode",
+  showProperty: "showProperty",
   change: "change",
   dispose: "dispose"
 }
@@ -13,3 +13,7 @@ export const DockEnum = {
   bottom: "vs-bottom",
   right: "vs-right",
 }
+
+export const PropertyEnum = {
+  main: "main_project"
+};

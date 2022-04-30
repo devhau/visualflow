@@ -1,22 +1,23 @@
 import { BaseFlow, FlowCore } from "./BaseFlow"
 import { EventEnum } from "./Constant";
+import { DataFlow } from "./DataFlow";
 import { LOG } from "./Utils";
 export enum EditorType {
   Label,
   Text,
   Inline
 }
-export class Editor<TParent extends FlowCore> extends BaseFlow<TParent> {
-  private isEdit: boolean = true;
+export class Editor {
+  private isEdit: boolean = false;
   private elInput: HTMLDataElement | null = null;
   private elLabel: HTMLElement | null = null;
+  private elNode: HTMLElement = document.createElement('div');
+  public constructor(public data: DataFlow, private key: string, el: HTMLElement | null = null, private type: EditorType = EditorType.Label, chagne: boolean = false) {
 
-  public constructor(public parent: TParent, private key: string, el: HTMLElement | null = null, private type: EditorType = EditorType.Label, chagne: boolean = false) {
-    super(parent);
-    this.data = parent.data;
+    this.data = data;
     this.data.onSafe(`${EventEnum.dataChange}_${key}`, this.changeData.bind(this));
     this.data.onSafe(EventEnum.dispose, this.dispose.bind(this));
-    this.isEdit = type == EditorType.Text;
+    this.isEdit = type === EditorType.Text;
     this.elNode.classList.add('node-editor');
     if (chagne && el) {
       el.parentElement?.insertBefore(this.elNode, el);
@@ -24,8 +25,6 @@ export class Editor<TParent extends FlowCore> extends BaseFlow<TParent> {
       el?.remove();
     } else if (el) {
       el.appendChild(this.elNode);
-    } else {
-      this.parent.elNode.appendChild(this.elNode);
     }
     this.render();
   }
@@ -49,7 +48,7 @@ export class Editor<TParent extends FlowCore> extends BaseFlow<TParent> {
       this.elNode.appendChild(this.elInput);
     } else {
       if (this.elInput) {
-        this.elInput.removeEventListener('keydown', this.inputData.bind(this));
+        this.elInput.removeEventListener('keyup', this.inputData.bind(this));
         this.elInput.remove();
         this.elInput = null;
       }
@@ -71,7 +70,9 @@ export class Editor<TParent extends FlowCore> extends BaseFlow<TParent> {
     this.render();
   }
   public inputData(e: any) {
-    this.data.Set(this.key, e.target.value, this);
+    setTimeout(() => {
+      this.data.Set(this.key, e.target.value, this);
+    })
   }
   public changeData({ key, value, sender }: any) {
     this.render();

@@ -1,4 +1,4 @@
-import { IEvent } from "../core/BaseFlow";
+import { IMain } from "../core/BaseFlow";
 import { DockEnum } from "../core/Constant";
 import { ControlDock } from "./ControlDock";
 import { DockBase } from "./DockBase";
@@ -7,13 +7,11 @@ import { ViewDock } from "./ViewDock";
 
 export class DockManager {
   private $dockManager: any = {};
-  public constructor(private container: HTMLElement, protected event: IEvent) {
-  }
+  public constructor(private container: HTMLElement, protected main: IMain) {}
   public reset() {
     this.$dockManager = {};
     this.addDock(DockEnum.left, ControlDock);
     this.addDock(DockEnum.right, PropertyDock);
-    this.addDock(DockEnum.right, ControlDock);
     this.addDock(DockEnum.view, ViewDock);
     this.addDock(DockEnum.top, DockBase);
     this.addDock(DockEnum.bottom, DockBase);
@@ -39,7 +37,7 @@ export class DockManager {
       let querySelector = this.container.querySelector(`.${key}`);
       if (querySelector) {
         this.$dockManager[key].forEach(($item: any) => {
-          new $item(querySelector, this);
+          new $item(querySelector, this.main);
         })
       }
     });

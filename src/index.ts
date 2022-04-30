@@ -1,3 +1,3 @@
-import { VisualStudio } from "./VisualStudio";
+import { VisualFlow } from "./VisualFlow";
 
-export default VisualStudio;
+export default VisualFlow;
