@@ -76,6 +76,7 @@ export class DesginerView extends FlowCore {
    * Varibute
   */
   public elCanvas: HTMLElement = document.createElement('div');
+  public $lock: boolean = true;
   public constructor(elNode: HTMLElement, public main: IMain) {
     super();
     this.elNode = elNode;

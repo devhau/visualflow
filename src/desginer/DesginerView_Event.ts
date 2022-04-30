@@ -60,6 +60,7 @@ export class DesginerView_Event {
   private node_dragover(ev: any) { ev.preventDefault(); }
   private node_dropEnd(ev: any) {
     ev.preventDefault();
+    if (this.parent.$lock) return;
     let keyNode: any = this.parent.main.getControlChoose();
     if (!keyNode && ev.type !== "touchend") {
       keyNode = ev.dataTransfer.getData("node");
@@ -84,6 +85,7 @@ export class DesginerView_Event {
     nodeItem.updatePosition(x, y);
   }
   public zoom_enter(event: any) {
+    if (this.parent.$lock) return;
     if (event.ctrlKey) {
       event.preventDefault()
       if (event.deltaY > 0) {
@@ -114,6 +116,7 @@ export class DesginerView_Event {
     this.zoom_refresh(0);
   }
   private StartMove(ev: any) {
+    if (this.parent.$lock) return;
     if (this.tagIngore.includes(ev.target.tagName.toLowerCase())) {
       return;
     }
@@ -148,6 +151,7 @@ export class DesginerView_Event {
     this.flgMove = false;
   }
   public Move(ev: any) {
+    if (this.parent.$lock) return;
     if (!this.flgDrap) return;
     this.flgMove = true;
     let e_pos_x = 0;
@@ -204,6 +208,7 @@ export class DesginerView_Event {
     }
   }
   private EndMove(ev: any) {
+    if (this.parent.$lock) return;
     if (!this.flgDrap) return;
     //fix Fast Click
     if (((getTime() - this.timeFastClick) < 100) || !this.flgMove) {
@@ -242,6 +247,7 @@ export class DesginerView_Event {
     this.flgMove = false;
   }
   private keydown(ev: any) {
+    if (this.parent.$lock) return;
     if (ev.key === 'Delete' || (ev.key === 'Backspace' && ev.metaKey)) {
       ev.preventDefault()
 

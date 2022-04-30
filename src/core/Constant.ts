@@ -2,6 +2,7 @@ export const EventEnum = {
   init: "init",
   dataChange: "dataChange",
   showProperty: "showProperty",
+  openProject: "openProject",
   change: "change",
   dispose: "dispose"
 }

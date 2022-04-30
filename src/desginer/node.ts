@@ -1,5 +1,4 @@
 import { BaseFlow } from "../core/BaseFlow";
-import { getUuid } from "../core/Utils";
 import { Line } from "./Line";
 import { DesginerView } from "./DesginerView";
 import { EventEnum } from "../core/Constant";
