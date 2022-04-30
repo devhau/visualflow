@@ -53,7 +53,7 @@ export class DesginerView_Event {
     /* Zoom Mouse */
     this.parent.elNode.addEventListener('wheel', this.zoom_enter.bind(this));
     /* Delete */
-    // this.parent.elNode.addEventListener('keydown', this.keydown.bind(this));
+    this.parent.elNode.addEventListener('keydown', this.keydown.bind(this));
   }
 
   private contextmenu(ev: any) { ev.preventDefault(); }
@@ -233,11 +233,24 @@ export class DesginerView_Event {
     if (this.tempLine) {
       this.tempLine.Clone();
       this.tempLine.delete();
+      this.tempLine = undefined;
     }
     this.pos_x = e_pos_x;
     this.pos_y = e_pos_y;
     this.moveType = MoveType.None;
     this.flgDrap = false;
     this.flgMove = false;
+  }
+  private keydown(ev: any) {
+    if (ev.key === 'Delete' || (ev.key === 'Backspace' && ev.metaKey)) {
+      ev.preventDefault()
+
+      this.parent.getNodeChoose()?.delete();
+      this.parent.getLineChoose()?.delete();
+    }
+    if (ev.key === 'F2') {
+      ev.preventDefault()
+      console.log(this.parent.data.toJson());
+    }
   }
 }

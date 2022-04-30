@@ -94,6 +94,19 @@ export class DataFlow {
   public Get(key: string) {
     return this.data[key];
   }
+  public Append(key: string, value: any) {
+    this.data[key] = [...this.data[key], value];
+    this.BindEvent(value, key);
+  }
+  public Remove(key: string, value: any) {
+    this.data[key].indexOf(value);
+    var index = this.data[key].indexOf(value);
+    if (index > -1) {
+      this.RemoveEventData(this.data[key][index], key);
+      this.data[key].splice(index, 1);
+    }
+
+  }
   public load(data: any) {
     this.data = {};
     if (!this.properties) {
@@ -121,5 +134,9 @@ export class DataFlow {
       }
     }
     return rs;
+  }
+  public delete() {
+    this.events = new EventFlow();
+    this.data = {};
   }
 }

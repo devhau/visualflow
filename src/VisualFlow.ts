@@ -46,6 +46,9 @@ export class VisualFlow implements IMain {
       },
       zoom: {
         default: 1
+      },
+      nodes: {
+        default: []
       }
     };
     // set control
@@ -68,6 +71,9 @@ export class VisualFlow implements IMain {
         y: {
           default: 0
         },
+        lines: {
+          default: []
+        }
       };
     });
     this.container.classList.remove('vs-container');

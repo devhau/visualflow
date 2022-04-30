@@ -42,6 +42,7 @@ export class Editor {
         return;
       }
       this.elInput = document.createElement('input');
+      this.elInput.classList.add('node-form-control');
       this.elInput.addEventListener('keydown', this.inputData.bind(this));
       this.elInput.value = data;
       this.elInput.setAttribute('node:model', this.key);
@@ -76,7 +77,6 @@ export class Editor {
   }
   public changeData({ key, value, sender }: any) {
     this.render();
-    LOG('changeData: ? ? ?', key, value, sender);
   }
   public dispose() {
     this.elInput?.removeEventListener('keydown', this.inputData.bind(this));

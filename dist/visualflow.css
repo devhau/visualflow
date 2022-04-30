@@ -58,7 +58,7 @@ body {
 }
 .vs-container .vs-property,
 .vs-container .vs-control {
-  width: 200px;
+  width: 250px;
   padding: 0;
 }
 .vs-container .vs-control .vs-boxinfo_content {
@@ -173,4 +173,39 @@ body {
 .vs-property .property-item {
   border-bottom: 1px solid #cacaca;
   padding-bottom: 5px;
+  display: flex;
+}
+.vs-property .property-item .property-label {
+  width: 60px;
+  padding: 5px;
+  flex: none;
+}
+.vs-property .property-item .property-value {
+  flex: auto;
+  padding: 1px;
+  position: relative;
+}
+.vs-property .property-item .property-value .node-editor {
+  width: 100%;
+}
+.vs-property .property-item .property-value .node-editor span {
+  padding: 4px;
+}
+
+.node-form-control {
+  display: block;
+  width: 90%;
+  padding: 0.125rem 0.45rem;
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.5;
+  color: #212529;
+  background-color: #fff;
+  background-clip: padding-box;
+  border: 1px solid #ced4da;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  border-radius: 0.15rem;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 }

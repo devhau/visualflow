@@ -42,6 +42,8 @@ export class Node extends BaseFlow<DesginerView> {
     this.parent.elCanvas.appendChild(this.elNode);
     this.elNode.setAttribute('node-id', this.GetId());
     this.elNode.addEventListener('mousedown', () => this.parent.setNodeChoose(this));
+    this.elNode.addEventListener('touchstart', () => this.parent.setNodeChoose(this));
+    this.parent.data.Append('nodes', this.data);
     this.renderUI();
   }
   private renderUI() {
@@ -109,8 +111,19 @@ export class Node extends BaseFlow<DesginerView> {
   }
   public UpdateUI() {
     this.elNode.setAttribute('style', `top: ${this.getY()}px; left: ${this.getX()}px;`);
-      this.arrLine.forEach((item) => {
-        item.UpdateUI();
-      })
+    this.arrLine.forEach((item) => {
+      item.UpdateUI();
+    })
+  }
+  public delete(isRemoveParent = true) {
+    this.arrLine.forEach((item) => item.delete(this));
+    this.data.delete();
+    this.elNode.removeEventListener('mousedown', () => this.parent.setNodeChoose(this));
+    this.elNode.removeEventListener('touchstart', () => this.parent.setNodeChoose(this));
+    this.elNode.remove();
+    this.arrLine = [];
+    if (isRemoveParent)
+      this.parent.RemoveNode(this);
+    this.dispatch(EventEnum.change, {});
   }
 }

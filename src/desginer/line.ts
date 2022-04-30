@@ -1,8 +1,10 @@
+import { DataFlow } from "../core/DataFlow";
 import { Node } from "./Node";
 
 export class Line {
   public elNode: SVGElement = document.createElementNS('http://www.w3.org/2000/svg', "svg");
   public elPath: SVGPathElement = document.createElementNS('http://www.w3.org/2000/svg', "path");
+  private data: DataFlow = new DataFlow();
   private curvature: number = 0.5;
   public constructor(public from: Node, public fromIndex: number = 0, public to: Node | undefined = undefined, public toIndex: number = 0) {
     this.elPath.classList.add("main-path");
@@ -14,6 +16,21 @@ export class Line {
     this.from.parent.elCanvas.appendChild(this.elNode);
     this.from.AddLine(this);
     this.to?.AddLine(this);
+    this.data.InitData({}, {
+      from: {
+        default: this.from.GetId()
+      },
+      fromIndex: {
+        default: this.fromIndex
+      },
+      to: {
+        default: this.to?.GetId()
+      },
+      toIndex: {
+        default: this.toIndex
+      }
+    });
+    this.from.data.Append('lines', this.data);
   }
   public updateTo(to_x: number, to_y: number) {
     if (!this.from || this.from.elNode == null) return;
@@ -86,11 +103,14 @@ export class Line {
   public delete(nodeThis: any = null) {
     this.elPath?.removeEventListener('mousedown', this.StartSelected.bind(this));
     this.elPath?.removeEventListener('touchstart', this.StartSelected.bind(this));
+
+    this.from.data.Remove('lines', this.data);
     if (this.from != nodeThis)
       this.from.RemoveLine(this);
     if (this.to != nodeThis)
       this.to?.RemoveLine(this);
-    this.elNode?.remove();
+    this.elPath.remove();
+    this.elNode.remove();
   }
   public StartSelected(e: any) {
     this.from.parent.setLineChoose(this)

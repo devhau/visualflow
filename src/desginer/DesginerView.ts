@@ -9,19 +9,19 @@ export class DesginerView extends FlowCore {
    * GET SET for Data
    */
   public getZoom() {
-    return this.data.Get('zoom');
+    return +this.data.Get('zoom');
   }
   public setZoom(value: any) {
     return this.data.Set('zoom', value, this);
   }
   public getY() {
-    return this.data.Get('y');
+    return +this.data.Get('y');
   }
   public setY(value: any) {
     return this.data.Set('y', value, this);
   }
   public getX() {
-    return this.data.Get('x');
+    return +this.data.Get('x');
   }
   public setX(value: any) {
     return this.data.Set('x', value, this);
@@ -63,6 +63,14 @@ export class DesginerView extends FlowCore {
   public InsertNode(node: Node): Node {
     this.nodes = [...this.nodes, node];
     return node;
+  }
+  public RemoveNode(node: Node) {
+    var index = this.nodes.indexOf(node);
+    this.data.Remove('nodes', node);
+    if (index > -1) {
+      this.nodes.splice(index, 1);
+    }
+    return this.nodes;
   }
   /**
    * Varibute

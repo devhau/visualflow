@@ -7,6 +7,7 @@ import { DockBase } from "./DockBase";
 export class PropertyDock extends DockBase {
   private lastData: DataFlow | undefined;
   private labelKeys: string[] = ['id', 'key'];
+  private dataJson: HTMLTextAreaElement = document.createElement('textarea');
   public constructor(container: HTMLElement, protected main: IMain) {
     super(container, main);
 
@@ -40,6 +41,10 @@ export class PropertyDock extends DockBase {
       propertyItem.appendChild(propertyLabel);
       propertyItem.appendChild(propertyValue);
       node.appendChild(propertyItem);
-    })
+    });
+    node.appendChild(this.dataJson);
+    this.dataJson.value = data.toString();
+    this.dataJson.classList.add('node-form-control');
+    data.on(EventEnum.dataChange, () => this.dataJson.value = data.toString())
   }
 }
