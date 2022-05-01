@@ -1,11 +1,45 @@
 import { IMain } from './core/BaseFlow';
 import { DockManager } from './dock/DockManager';
 import { EventFlow } from './core/EventFlow';
-import { PropertyEnum } from './core/Constant';
+import { compareSort, PropertyEnum } from './core/Constant';
 import { getTime } from './core/Utils';
 export class VisualFlow implements IMain {
   private $properties: any = {};
   private $control: any = {};
+  private $controlDefault: any = {
+    node_begin: {
+      icon: '<i class="fas fa-play"></i>',
+      sort: 0,
+      name: 'Begin',
+      class: 'node-test',
+      html: '<div><i class="fas fa-play"></i> Node Begin</div>',
+      output: 1,
+      input: 0,
+      onlyNode: true
+    },
+    node_end: {
+      icon: '<i class="fas fa-stop"></i>',
+      sort: 0,
+      name: 'End',
+      html: '<div><i class="fas fa-stop"></i> Node End</div>',
+      output: 0,
+      onlyNode: true
+    },
+    node_if: {
+      icon: '<i class="fas fa-equals"></i>',
+      sort: 0,
+      name: 'If',
+      html: '<div>condition:<br/><input node:model="condition"/></div>',
+      script: ``,
+      properties: {
+        condition: {
+          key: "condition",
+          default: ''
+        }
+      },
+      output: 2
+    },
+  }
   private $controlChoose: string | null = null;
   private $dockManager: DockManager;
   private events: EventFlow;
@@ -36,7 +70,7 @@ export class VisualFlow implements IMain {
         default: () => getTime()
       },
       name: {
-        default: ""
+        default: ''
       },
       x: {
         default: 0
@@ -52,18 +86,20 @@ export class VisualFlow implements IMain {
       }
     };
     // set control
-    this.$control = option?.control || {};
-    Object.keys(this.$control).forEach((key: string) => {
-      this.$properties[`node_${key}`] = {
-        ...(this.$control[key].properties || {}),
+    this.$control = { ...option?.control || {}, ...this.$controlDefault };
+    let controlTemp: any = {};
+    Object.keys(this.$control).map((key) => ({ ...this.$control[key], key, sort: (this.$control[key].sort === undefined ? 99999 : this.$control[key].sort) })).sort(compareSort).forEach((item: any) => {
+      controlTemp[item.key] = item;
+      this.$properties[`node_${item.key}`] = {
+        ...(item.properties || {}),
         id: {
           default: () => getTime()
         },
         key: {
-          default: key
+          default: item.key
         },
         name: {
-          default: ""
+          default: ''
         },
         x: {
           default: 0
@@ -71,11 +107,15 @@ export class VisualFlow implements IMain {
         y: {
           default: 0
         },
+        group: {
+          default: ''
+        },
         lines: {
           default: []
         }
       };
     });
+    this.$control = controlTemp;
     this.container.classList.remove('vs-container');
     this.container.classList.add('vs-container');
     this.$dockManager = new DockManager(this.container, this);

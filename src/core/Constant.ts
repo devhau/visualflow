@@ -18,3 +18,13 @@ export const DockEnum = {
 export const PropertyEnum = {
   main: "main_project"
 };
+
+export const compareSort = (a: any, b: any) => {
+  if (a.sort < b.sort) {
+    return -1;
+  }
+  if (a.sort > b.sort) {
+    return 1;
+  }
+  return 0;
+}

@@ -12,7 +12,7 @@ export class ControlDock extends DockBase {
         nodeItem.classList.add('node-item');
         nodeItem.setAttribute('draggable', 'true');
         nodeItem.setAttribute('data-node', item);
-        nodeItem.innerHTML = controls[item].name;
+        nodeItem.innerHTML = `${controls[item].icon} <span>${controls[item].name}</span`;
         nodeItem.addEventListener('dragstart', this.dragStart.bind(this))
         nodeItem.addEventListener('dragend', this.dragend.bind(this))
         node.appendChild(nodeItem);

@@ -31,35 +31,9 @@
       }
     },
     control: {
-      node_begin: {
-        name: '<span><i class="fas fa-play"></i> Begin</span>',
-        class: 'node-test',
-        html: '<div><i class="fas fa-play"></i> Node Begin</div>',
-        output: 1,
-        input: 0,
-        onlyNode: true
-      },
-      node_end: {
-        name: '<i class="fas fa-stop"></i> End',
-        html: '<div><i class="fas fa-stop"></i> Node End</div>',
-        output: 0,
-        onlyNode: true
-      },
-      node_if: {
-        name: '<i class="fas fa-equals"></i> If',
-        html: '<div>condition:<br/><input node:model="condition"/></div>',
-        script: ``,
-        properties: {
-          condition: {
-            key: "condition",
-            default: ""
-          }
-        },
-        output: 2
-      },
       node_note: {
-        key: "node_note",
-        name: '<i class="fas fa-comment-alt"></i> Note',
+        icon: '<i class="fas fa-comment-alt"></i>',
+        name: 'Note',
         html: '<div><textarea node:model="note"></textarea></div>',
         properties: {
           note: {
