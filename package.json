@@ -1,11 +1,11 @@
 {
   "name": "visualflow",
-  "version": "0.0.1-beta2",
+  "version": "0.0.1",
   "description": "visualflow",
   "main": "dist/visualflow.cjs.js",
   "module": "dist/visualflow.es.js",
   "browser": "dist/visualflow.js",
-  "author": "Nguyen Van Hau",
+  "author": "Nguyen Van Hau(nguyenvanhaudev@gmail.com)",
   "license": "MIT",
   "devDependencies": {
     "@babel/core": "^7.17.9",

@@ -45,28 +45,6 @@
     }
   }
   let flow = (new visualflow(document.getElementById("flow"), optionFlow));
-  let text = document.getElementById('text');
-  let share = document.getElementById('share');
-  try {
-    // flow.openProject(JSON.parse(atob(window.location.search.substring(1))));
-    // onExport();
-  } catch {
-
-  }
-
-  function onNew() {
-    flow.new();
-  }
-
-  function onLoad() {
-    flow.openProject(JSON.parse(text.value));
-  }
-
-  function onExport() {
-    let data = flow.toJson();
-    text.value = JSON.stringify(data);
-    share.value = window.location.href.split('?')[0] + `?` + btoa(text.value);
-  }
 
 </script>
 
