@@ -1,26 +1,60 @@
-import { NodeFlow } from "./NodeFlow";
-import { ViewFlow } from "./ViewFlow";
+import { PropertyEnum } from "../core/Constant";
+import { DataFlow } from "../core/DataFlow";
+import { Node } from "./Node";
 
-export class LineFlow {
-  public elConnection: SVGElement | null;
-  public elPath: SVGPathElement;
+export class Line {
+  public elNode: SVGElement = document.createElementNS('http://www.w3.org/2000/svg', "svg");
+  public elPath: SVGPathElement = document.createElementNS('http://www.w3.org/2000/svg', "path");
+  private data: DataFlow = new DataFlow();
   private curvature: number = 0.5;
-  public constructor(private parent: ViewFlow, public fromNode: NodeFlow, public toNode: NodeFlow | null = null, public outputIndex: number = 0) {
-    this.elConnection = document.createElementNS('http://www.w3.org/2000/svg', "svg");
-    this.elPath = document.createElementNS('http://www.w3.org/2000/svg', "path");
+  public constructor(public from: Node, public fromIndex: number = 0, public to: Node | undefined = undefined, public toIndex: number = 0, data: any = null) {
     this.elPath.classList.add("main-path");
     this.elPath.addEventListener('mousedown', this.StartSelected.bind(this));
     this.elPath.addEventListener('touchstart', this.StartSelected.bind(this));
     this.elPath.setAttributeNS(null, 'd', '');
-    this.elConnection.classList.add("connection");
-    this.elConnection.appendChild(this.elPath);
-    this.parent.elCanvas?.appendChild(this.elConnection);
-    this.fromNode.AddLine(this);
-    this.toNode?.AddLine(this);
-    this.update();
+    this.elNode.classList.add("connection");
+    this.elNode.appendChild(this.elPath);
+    this.from.parent.elCanvas.appendChild(this.elNode);
+
+    this.from.AddLine(this);
+    this.to?.AddLine(this);
+    if (data) {
+      this.data = data;
+      return;
+    }
+    this.data.InitData(
+      {
+        from: this.from.GetId(),
+        fromIndex: this.fromIndex,
+        to: this.to?.GetId(),
+        toIndex: this.toIndex
+      },
+      {
+        ... this.from.parent.main.getPropertyByKey(PropertyEnum.line) || {}
+      }
+    );
+    this.from.data.Append('lines', this.data);
   }
-  public StartSelected(e: any) {
-    this.parent.SelectLine(this);
+  public updateTo(to_x: number, to_y: number) {
+    if (!this.from || this.from.elNode == null) return;
+    let { x: from_x, y: from_y }: any = this.from.getPostisionDot(this.fromIndex);
+    var lineCurve = this.createCurvature(from_x, from_y, to_x, to_y, this.curvature, 'openclose');
+    this.elPath.setAttributeNS(null, 'd', lineCurve);
+  }
+  public UpdateUI(): Line {
+    //Postion output
+    if (this.to && this.to.elNode) {
+      let { x: to_x, y: to_y }: any = this.to.getPostisionDot(this.toIndex);
+      this.updateTo(to_x, to_y);
+    }
+    return this;
+  }
+  public Active(flg: any = true) {
+    if (flg) {
+      this.elPath.classList.add('active');
+    } else {
+      this.elPath.classList.remove('active');
+    }
   }
   private createCurvature(start_pos_x: number, start_pos_y: number, end_pos_x: number, end_pos_y: number, curvature_value: number, type: string) {
     let line_x = start_pos_x;
@@ -69,29 +103,28 @@ export class LineFlow {
         return ' M ' + line_x + ' ' + line_y + ' C ' + hx1 + ' ' + line_y + ' ' + hx2 + ' ' + y + ' ' + x + '  ' + y;
     }
   }
-  public delete(nodeThis: any = null) {
+  public delete(nodeThis: any = null, isClearData = true) {
     this.elPath?.removeEventListener('mousedown', this.StartSelected.bind(this));
     this.elPath?.removeEventListener('touchstart', this.StartSelected.bind(this));
-    if (this.fromNode != nodeThis)
-      this.fromNode.RemoveLine(this);
-    if (this.toNode != nodeThis)
-      this.toNode?.RemoveLine(this);
-    this.elConnection?.remove();
-    this.elConnection = null;
+    if (isClearData)
+      this.from.data.Remove('lines', this.data);
+    if (this.from != nodeThis)
+      this.from.RemoveLine(this);
+    if (this.to != nodeThis)
+      this.to?.RemoveLine(this);
+    this.elPath.remove();
+    this.elNode.remove();
   }
-  public updateTo(to_x: number, to_y: number) {
-    if (this.fromNode.elNode == null) return;
-    let { x: from_x, y: from_y }: any = this.fromNode.getDotOutput(this.outputIndex);
-    var lineCurve = this.createCurvature(from_x, from_y, to_x, to_y, this.curvature, 'openclose');
-    this.elPath.setAttributeNS(null, 'd', lineCurve);
+  public StartSelected(e: any) {
+    this.from.parent.setLineChoose(this)
   }
-  public update() {
-    //Postion output
-    if (this.toNode && this.toNode.elNode) {
-      let to_x = this.toNode.getX() - 5;
-      let to_y = this.toNode.getY() + this.toNode.elNode.clientHeight / 2;
-      this.updateTo(to_x, to_y);
+  public setNodeTo(node: Node | undefined, toIndex: number) {
+    this.to = node;
+    this.toIndex = toIndex;
+  }
+  public Clone() {
+    if (this.to && this.toIndex) {
+      return new Line(this.from, this.fromIndex, this.to, this.toIndex).UpdateUI();
     }
-
   }
 }

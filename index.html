@@ -2,73 +2,54 @@
 <html>
 
 <head>
+  <title>VisualStudio</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css"
     integrity="sha256-h20CPZ0QyXlBuAw7A+KluUYx/3pK+c7lYEpqLTlxjYQ=" crossorigin="anonymous" />
   <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="./dist/workerflow.css" />
-  <script src="./dist/workerflow.min.js"></script>
+  <link rel="stylesheet" href="./dist/VisualFlow.css" />
+  <script src="./dist/VisualFlow.min.js"></script>
 </head>
 
 <body>
-  <button onclick="onExport()">Export</button>
-  <button onclick="onNew()">New</button>
-  <button onclick="onLoad()">Load</button>
-  <textarea id="text"></textarea>
-  <textarea id="share"></textarea>
   <div id="flow"></div>
 </body>
 <script>
   let optionFlow = {
+    properties: {
+      name: {
+        default: ""
+      },
+      x: {
+        default: 0
+      },
+      y: {
+        default: 0
+      },
+      zoom: {
+        default: 0
+      }
+    },
     control: {
-      node_begin: {
-        key: "node_begin",
-        name: '<span><i class="fas fa-play"></i> Begin</span>',
-        html: '<div><i class="fas fa-play"></i> Node Begin</div>',
-
-        output: 1,
-        input: 0,
-        onlyNode: true
-      },
-      node_end: {
-        key: "node_end",
-        name: '<i class="fas fa-stop"></i> End',
-        html: '<div><i class="fas fa-stop"></i> Node End</div>',
-        output: 0,
-        onlyNode: true
-      },
-      node_if: {
-        key: "node_if",
-        name: '<i class="fas fa-equals"></i> If',
-        html: '<div>condition:<br/><input node:model="condition"/></div>',
-        script: ``,
-        properties: {
-          condition: {
-            key: "condition",
-            defautl: ""
-          }
-        },
-        output: 2
-      },
       node_note: {
-        key: "node_note",
-        name: '<i class="fas fa-comment-alt"></i> Note',
+        icon: '<i class="fas fa-comment-alt"></i>',
+        name: 'Note',
         html: '<div><textarea node:model="note"></textarea></div>',
         properties: {
           note: {
             key: "note",
-            defautl: ""
+            default: ""
           }
         }
       }
     }
   }
-  let flow = (new workerflow(document.getElementById("flow"), optionFlow));
+  let flow = (new visualflow(document.getElementById("flow"), optionFlow));
   let text = document.getElementById('text');
   let share = document.getElementById('share');
   try {
-    flow.openProject(JSON.parse(atob(window.location.search.substring(1))));
-    onExport();
+    // flow.openProject(JSON.parse(atob(window.location.search.substring(1))));
+    // onExport();
   } catch {
 
   }

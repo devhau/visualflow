@@ -21,20 +21,20 @@ const banner = `
 
 export default [
   {
-    input: "src/scss/workerflow.scss",
+    input: "src/scss/visualflow.scss",
     plugins: [
       scss({
-        output: "dist/workerflow.css",
+        output: "dist/visualflow.css",
         banner
       })
     ]
 
   },
   {
-    input: "src/scss/workerflow.scss",
+    input: "src/scss/visualflow.scss",
     plugins: [
       scss({
-        output: "dist/workerflow.mini.css",
+        output: "dist/visualflow.mini.css",
         outputStyle: 'compressed',
         banner
       })

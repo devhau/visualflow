@@ -1,3 +1,3 @@
-import { WorkerFlow } from "./WorkerFlow";
+import { VisualFlow } from "./VisualFlow";
 
-export default WorkerFlow;
+export default VisualFlow;
