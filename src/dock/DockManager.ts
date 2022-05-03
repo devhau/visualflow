@@ -2,15 +2,17 @@ import { IMain } from "../core/BaseFlow";
 import { DockEnum } from "../core/Constant";
 import { ControlDock } from "./ControlDock";
 import { DockBase } from "./DockBase";
+import { ProjectDock } from "./ProjectDock";
 import { PropertyDock } from "./PropertyDock";
 import { ViewDock } from "./ViewDock";
 
 export class DockManager {
   private $dockManager: any = {};
-  public constructor(private container: HTMLElement, protected main: IMain) {}
+  public constructor(private container: HTMLElement, protected main: IMain) { }
   public reset() {
     this.$dockManager = {};
     this.addDock(DockEnum.left, ControlDock);
+    this.addDock(DockEnum.left, ProjectDock);
     this.addDock(DockEnum.right, PropertyDock);
     this.addDock(DockEnum.view, ViewDock);
     this.addDock(DockEnum.top, DockBase);

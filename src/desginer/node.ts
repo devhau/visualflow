@@ -8,6 +8,9 @@ export class Node extends BaseFlow<DesginerView> {
   /**
    * GET SET for Data
    */
+  public getName() {
+    return this.data.Get('name');
+  }
   public getY() {
     return +this.data.Get('y');
   }
@@ -55,7 +58,10 @@ export class Node extends BaseFlow<DesginerView> {
         <div class="node-top">
           <div class="node-dot" node="1000"></div>
         </div>
-        <div class="node-content">${this.option.html}</div>
+        <div class="node-content">
+        <div class="title">${this.option.icon} ${this.getName()}</div>
+        <div class="body">${this.option.html}</div>
+        </div>
         <div class="node-bottom">
           <div class="node-dot" node="2000"></div>
         </div>
@@ -64,21 +70,25 @@ export class Node extends BaseFlow<DesginerView> {
         <div class="node-dot"  node="3000"></div>
       </div>
     `;
-    this.elContent = this.elNode.querySelector('.node-content');
+    this.elContent = this.elNode.querySelector('.node-content .body');
     this.UpdateUI();
+    setTimeout(() => {
+      geval(`(node,view)=>{${this.option.script}}`)(this, this.parent);
+    })
   }
   public updatePosition(x: any, y: any, iCheck = false) {
     if (this.elNode) {
-      if (iCheck) {
-        if (x !== this.getX()) {
-          this.setX(x);
-        }
-        if (y !== this.getY()) {
-          this.setX(y);
-        }
-      } else {
-        this.setY((this.elNode.offsetTop - y));
-        this.setX((this.elNode.offsetLeft - x));
+      let tempx = x;
+      let tempy = y;
+      if (!iCheck) {
+        tempy = (this.elNode.offsetTop - y);
+        tempx = (this.elNode.offsetLeft - x);
+      }
+      if (tempx !== this.getX()) {
+        this.setX(tempx);
+      }
+      if (tempy !== this.getY()) {
+        this.setY(tempy);
       }
     }
   }

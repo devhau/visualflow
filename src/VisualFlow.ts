@@ -1,9 +1,11 @@
 import { IMain } from './core/BaseFlow';
 import { DockManager } from './dock/DockManager';
 import { EventFlow } from './core/EventFlow';
-import { compareSort, PropertyEnum } from './core/Constant';
-import { getTime } from './core/Utils';
+import { compareSort, EventEnum, PropertyEnum } from './core/Constant';
+import { getTime, getUuid } from './core/Utils';
+import { DataFlow } from './core/DataFlow';
 export class VisualFlow implements IMain {
+  private $data: DataFlow = new DataFlow(this);
   private $properties: any = {};
   private $control: any = {};
   private $controlDefault: any = {
@@ -12,7 +14,7 @@ export class VisualFlow implements IMain {
       sort: 0,
       name: 'Begin',
       class: 'node-test',
-      html: '<div><i class="fas fa-play"></i> Node Begin</div>',
+      html: '',
       output: 1,
       input: 0,
       onlyNode: true
@@ -21,7 +23,7 @@ export class VisualFlow implements IMain {
       icon: '<i class="fas fa-stop"></i>',
       sort: 0,
       name: 'End',
-      html: '<div><i class="fas fa-stop"></i> Node End</div>',
+      html: '',
       output: 0,
       onlyNode: true
     },
@@ -31,6 +33,20 @@ export class VisualFlow implements IMain {
       name: 'If',
       html: '<div>condition:<br/><input node:model="condition"/></div>',
       script: ``,
+      properties: {
+        condition: {
+          key: "condition",
+          default: ''
+        }
+      },
+      output: 2
+    },
+    node_group: {
+      icon: '<i class="fas fa-object-group"></i>',
+      sort: 0,
+      name: 'Group',
+      html: '<div class="text-center p3"><button>Go</button></div>',
+      script: `console.log(node);console.log(view);`,
       properties: {
         condition: {
           key: "condition",
@@ -64,13 +80,26 @@ export class VisualFlow implements IMain {
   public constructor(private container: HTMLElement, option: any = null) {
     this.events = new EventFlow();
     //set project
+    this.$properties[PropertyEnum.solution] = {
+      ...(option?.properties || {}),
+      id: {
+        default: () => getTime()
+      },
+      name: {
+        default: () => `solution-${getTime()}`
+      },
+      projects: {
+        default: []
+      }
+    };
+    //set project
     this.$properties[PropertyEnum.main] = {
       ...(option?.properties || {}),
       id: {
         default: () => getTime()
       },
       name: {
-        default: ''
+        default: () => `app-${getTime()}`
       },
       x: {
         default: 0
@@ -99,7 +128,7 @@ export class VisualFlow implements IMain {
           default: item.key
         },
         name: {
-          default: ''
+          default: item.key
         },
         x: {
           default: 0
@@ -120,6 +149,36 @@ export class VisualFlow implements IMain {
     this.container.classList.add('vs-container');
     this.$dockManager = new DockManager(this.container, this);
     this.$dockManager.reset();
+    this.$data.Set('id', getUuid());
+
+  }
+  getProjectAll(): any[] {
+    return this.$data.Get('projects') ?? [];
+  }
+  open($data: any): void {
+    this.$data.InitData($data, this.getPropertyByKey(PropertyEnum.solution));
+  }
+  newProject(): void {
+    this.openProject({});
+  }
+  openProject($data: any): void {
+    if ($data instanceof DataFlow) {
+      let $project: any = this.getProjectById($data.Get('id'));
+      if (!$project) {
+        $project = $data;
+        this.$data.Append('projects', $project);
+      }
+      this.dispatch(EventEnum.openProject, $project);
+    } else {
+      let data = new DataFlow(this);
+      data.InitData($data, this.getPropertyByKey(PropertyEnum.main));
+      this.$data.Append('projects', data);
+      this.dispatch(EventEnum.openProject, data);
+      this.dispatch(EventEnum.change, { data });
+    }
+  }
+  public getProjectById($id: any) {
+    return this.$data.Get('projects').filter((item: DataFlow) => item.Get('id') === $id)?.[0];
   }
   setControlChoose(key: string | null): void {
     this.$controlChoose = key;

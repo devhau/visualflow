@@ -68,7 +68,7 @@ export class DataFlow {
       (value as DataFlow[]).forEach((item: DataFlow, index: number) => this.OnEventData(item, key, index));
     }
   }
-  public Set(key: string, value: any, sender: any = null) {
+  public Set(key: string, value: any, sender: any = null, isDispatch: boolean = true) {
     if (this.data[key] != value) {
       if (this.data[key]) {
         if (this.data[key] instanceof DataFlow) {
@@ -81,20 +81,32 @@ export class DataFlow {
       this.BindEvent(value, key);
     }
     this.data[key] = value;
-    this.dispatch(`${EventEnum.dataChange}_${key}`, {
-      key, value, sender
-    });
-    this.dispatch(EventEnum.dataChange, {
-      key, value, sender
+    if (isDispatch) {
+      this.dispatch(`${EventEnum.dataChange}_${key}`, {
+        key, value, sender
+      });
+      this.dispatch(EventEnum.dataChange, {
+        key, value, sender
+      });
+      this.dispatch(EventEnum.change, {
+        key, value, sender
+      });
+    }
+
+  }
+  public SetData(data: any, sender: any = null) {
+    Object.keys(data).forEach(key => {
+      this.Set(key, data[key], sender, false);
     });
     this.dispatch(EventEnum.change, {
-      key, value, sender
+      data
     });
   }
   public Get(key: string) {
     return this.data[key];
   }
   public Append(key: string, value: any) {
+    if (!this.data[key]) this.data[key] = [];
     this.data[key] = [...this.data[key], value];
     this.BindEvent(value, key);
   }
@@ -115,6 +127,9 @@ export class DataFlow {
     if (this.properties) {
       for (let key of Object.keys(this.properties)) {
         this.data[key] = (data?.[key] ?? ((typeof this.properties[key]?.default === "function" ? this.properties[key]?.default() : this.properties[key]?.default) ?? ""));
+        /* if (Array.isArray(this.data[key]) && this.property && !(this.data[key][0] instanceof DataFlow)) {
+           this.data[key] = this.data[key].map((item: any) => new DataFlow(this.property, item));
+         }*/
         this.BindEvent(this.data[key], key);
       }
     }

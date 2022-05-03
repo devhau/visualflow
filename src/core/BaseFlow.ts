@@ -15,6 +15,10 @@ export interface IEvent {
   dispatch(event: string, details: any): void;
 }
 export interface IMain extends IControlNode, IEvent {
+  newProject($name: string): void;
+  openProject($name: string): void;
+  getProjectAll(): any[];
+  open($data: any): void;
   getControlAll(): any[];
   setControlChoose(key: string | null): void;
   getControlChoose(): string | null;
@@ -30,20 +34,26 @@ export class FlowCore implements IEvent {
   public properties: any = {};
   public data: DataFlow = new DataFlow();
   public elNode: HTMLElement = document.createElement('div');
+
   public CheckElementChild(el: HTMLElement) {
     return this.elNode == el || this.elNode.contains(el);
   }
   private events: EventFlow;
-  public setData(data: DataFlow) {
+  public SetData(data: any, sender: any = null) {
+    this.data.SetData(data, sender);
+  }
+  public SetDataFlow(data: DataFlow) {
     this.data = data;
     this.BindDataEvent();
     this.dispatch(`bind_data_event`, { data, sender: this });
   }
   onSafe(event: string, callback: any) {
     this.events.onSafe(event, callback);
+    return this;
   }
   on(event: string, callback: any) {
     this.events.on(event, callback);
+    return this;
   }
   removeListener(event: string, callback: any) {
     this.events.removeListener(event, callback);

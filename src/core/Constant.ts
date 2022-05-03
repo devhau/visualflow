@@ -16,7 +16,8 @@ export const DockEnum = {
 }
 
 export const PropertyEnum = {
-  main: "main_project"
+  main: "main_project",
+  solution: 'main_solution',
 };
 
 export const compareSort = (a: any, b: any) => {

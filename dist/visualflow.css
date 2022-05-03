@@ -209,3 +209,19 @@ body {
   border-radius: 0.15rem;
   transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 }
+
+.text-center {
+  text-align: center;
+}
+
+.p1 {
+  padding: 1px;
+}
+
+.p2 {
+  padding: 2px;
+}
+
+.p3 {
+  padding: 3px;
+}

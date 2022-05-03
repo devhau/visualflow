@@ -52,7 +52,6 @@ export class DesginerView extends FlowCore {
     } else {
       this.dispatch(EventEnum.showProperty, { data: this.data });
     }
-
   }
   public getNodeChoose(): Node | undefined {
     return this.nodeChoose;
@@ -72,6 +71,10 @@ export class DesginerView extends FlowCore {
     }
     return this.nodes;
   }
+  public ClearNode() {
+    this.nodes?.forEach(item => item.delete());
+    this.nodes = [];
+  }
   /**
    * Varibute
   */
@@ -83,7 +86,6 @@ export class DesginerView extends FlowCore {
     let properties: any = this.main.getPropertyByKey(PropertyEnum.main);
     this.data.InitData({}, properties);
     this.RenderUI();
-    this.UpdateUI();
     this.on(EventEnum.dataChange, this.RenderUI.bind(this));
     this.view_event = new DesginerView_Event(this);
   }
