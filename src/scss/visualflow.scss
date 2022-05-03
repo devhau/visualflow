@@ -33,10 +33,18 @@ body {
     border: 0.5px solid var(--border-color);
     display: flex;
     flex-direction: column;
-    .vs-boxinfo_title {
-      padding: 7px 5px;
-      margin: 0;
+    .vs-boxinfo_header {
       border-bottom: 2px solid var(--border-color);
+      display: flex;
+      .vs-boxinfo_title {
+        padding: 7px 5px;
+        margin: 0;
+        flex: auto;
+      }
+      .vs-boxinfo_button {
+        padding: 7px 5px;
+        flex: none;
+      }
     }
     .vs-boxinfo_content {
       flex: auto;
@@ -55,16 +63,42 @@ body {
     }
   }
   .vs-property,
-  .vs-control {
+  .vs-control,
+  .vs-project {
     width: 250px;
     padding: 0;
   }
-  .vs-control {
+  .vs-control,
+  .vs-project {
     .vs-boxinfo_content {
       padding: 0;
       .node-item {
         padding: 5px;
         border-bottom: 1px solid #cacaca;
+        &:hover,
+        &.active {
+          background-color: #3e88ce;
+          color: #fff;
+        }
+        &:hover {
+          cursor: pointer;
+        }
+      }
+    }
+  }
+  .vs-tab {
+    float: left;
+    .node-item {
+      padding: 10px;
+      display: inline-block;
+      border-right: 1px solid #cacaca;
+      &:hover,
+      &.active {
+        background-color: #3e88ce;
+        color: #fff;
+      }
+      &:hover {
+        cursor: pointer;
       }
     }
   }
@@ -104,6 +138,12 @@ body {
       position: absolute;
       overflow: visible !important;
     }
+  }
+  .desginer-toolbar {
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: 999;
   }
 }
 .vs-node {

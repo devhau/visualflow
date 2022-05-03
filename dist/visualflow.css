@@ -36,10 +36,18 @@ body {
   display: flex;
   flex-direction: column;
 }
-.vs-container .vs-boxinfo .vs-boxinfo_title {
+.vs-container .vs-boxinfo .vs-boxinfo_header {
+  border-bottom: 2px solid var(--border-color);
+  display: flex;
+}
+.vs-container .vs-boxinfo .vs-boxinfo_header .vs-boxinfo_title {
   padding: 7px 5px;
   margin: 0;
-  border-bottom: 2px solid var(--border-color);
+  flex: auto;
+}
+.vs-container .vs-boxinfo .vs-boxinfo_header .vs-boxinfo_button {
+  padding: 7px 5px;
+  flex: none;
 }
 .vs-container .vs-boxinfo .vs-boxinfo_content {
   flex: auto;
@@ -57,16 +65,44 @@ body {
   flex: auto;
 }
 .vs-container .vs-property,
-.vs-container .vs-control {
+.vs-container .vs-control,
+.vs-container .vs-project {
   width: 250px;
   padding: 0;
 }
-.vs-container .vs-control .vs-boxinfo_content {
+.vs-container .vs-control .vs-boxinfo_content,
+.vs-container .vs-project .vs-boxinfo_content {
   padding: 0;
 }
-.vs-container .vs-control .vs-boxinfo_content .node-item {
+.vs-container .vs-control .vs-boxinfo_content .node-item,
+.vs-container .vs-project .vs-boxinfo_content .node-item {
   padding: 5px;
   border-bottom: 1px solid #cacaca;
+}
+.vs-container .vs-control .vs-boxinfo_content .node-item:hover, .vs-container .vs-control .vs-boxinfo_content .node-item.active,
+.vs-container .vs-project .vs-boxinfo_content .node-item:hover,
+.vs-container .vs-project .vs-boxinfo_content .node-item.active {
+  background-color: #3e88ce;
+  color: #fff;
+}
+.vs-container .vs-control .vs-boxinfo_content .node-item:hover,
+.vs-container .vs-project .vs-boxinfo_content .node-item:hover {
+  cursor: pointer;
+}
+.vs-container .vs-tab {
+  float: left;
+}
+.vs-container .vs-tab .node-item {
+  padding: 10px;
+  display: inline-block;
+  border-right: 1px solid #cacaca;
+}
+.vs-container .vs-tab .node-item:hover, .vs-container .vs-tab .node-item.active {
+  background-color: #3e88ce;
+  color: #fff;
+}
+.vs-container .vs-tab .node-item:hover {
+  cursor: pointer;
 }
 
 .desginer-view {
@@ -104,6 +140,12 @@ body {
   z-index: 0;
   position: absolute;
   overflow: visible !important;
+}
+.desginer-view .desginer-toolbar {
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 999;
 }
 
 .vs-node {

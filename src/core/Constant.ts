@@ -3,6 +3,7 @@ export const EventEnum = {
   dataChange: "dataChange",
   showProperty: "showProperty",
   openProject: "openProject",
+  newProject: "newProject",
   change: "change",
   dispose: "dispose"
 }
@@ -18,6 +19,8 @@ export const DockEnum = {
 export const PropertyEnum = {
   main: "main_project",
   solution: 'main_solution',
+  line: 'main_line',
+  variable: 'main_variable'
 };
 
 export const compareSort = (a: any, b: any) => {

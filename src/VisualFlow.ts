@@ -6,6 +6,7 @@ import { getTime, getUuid } from './core/Utils';
 import { DataFlow } from './core/DataFlow';
 export class VisualFlow implements IMain {
   private $data: DataFlow = new DataFlow(this);
+  private $projectOpen: any;
   private $properties: any = {};
   private $control: any = {};
   private $controlDefault: any = {
@@ -45,8 +46,8 @@ export class VisualFlow implements IMain {
       icon: '<i class="fas fa-object-group"></i>',
       sort: 0,
       name: 'Group',
-      html: '<div class="text-center p3"><button>Go</button></div>',
-      script: `console.log(node);console.log(view);`,
+      html: '<div class="text-center p3"><button class="btnGoGroup">Go</button></div>',
+      script: `node.elNode.querySelector('.btnGoGroup')?.addEventListener('click', () => {node.openGroup()});`,
       properties: {
         condition: {
           key: "condition",
@@ -81,15 +82,34 @@ export class VisualFlow implements IMain {
     this.events = new EventFlow();
     //set project
     this.$properties[PropertyEnum.solution] = {
-      ...(option?.properties || {}),
       id: {
         default: () => getTime()
+      },
+      key: {
+        default: PropertyEnum.solution
       },
       name: {
         default: () => `solution-${getTime()}`
       },
       projects: {
         default: []
+      }
+    };
+    this.$properties[PropertyEnum.line] = {
+      key: {
+        default: PropertyEnum.line
+      },
+      from: {
+        default: 0
+      },
+      fromIndex: {
+        default: 0
+      },
+      to: {
+        default: 0
+      },
+      toIndex: {
+        default: 0
       }
     };
     //set project
@@ -100,6 +120,9 @@ export class VisualFlow implements IMain {
       },
       name: {
         default: () => `app-${getTime()}`
+      },
+      key: {
+        default: PropertyEnum.main
       },
       x: {
         default: 0
@@ -149,7 +172,7 @@ export class VisualFlow implements IMain {
     this.container.classList.add('vs-container');
     this.$dockManager = new DockManager(this.container, this);
     this.$dockManager.reset();
-    this.$data.Set('id', getUuid());
+    this.$data.InitData({}, this.getPropertyByKey(PropertyEnum.solution));
 
   }
   getProjectAll(): any[] {
@@ -158,8 +181,15 @@ export class VisualFlow implements IMain {
   open($data: any): void {
     this.$data.InitData($data, this.getPropertyByKey(PropertyEnum.solution));
   }
+  SetProjectOpen($data: any): void {
+    this.$projectOpen = $data;
+  }
+  CheckProjectOpen($data: any): boolean {
+    return this.$projectOpen == $data;
+  }
   newProject(): void {
     this.openProject({});
+    this.dispatch(EventEnum.newProject, {});
   }
   openProject($data: any): void {
     if ($data instanceof DataFlow) {
@@ -173,7 +203,8 @@ export class VisualFlow implements IMain {
       let data = new DataFlow(this);
       data.InitData($data, this.getPropertyByKey(PropertyEnum.main));
       this.$data.Append('projects', data);
-      this.dispatch(EventEnum.openProject, data);
+      this.dispatch(EventEnum.openProject, { data });
+      this.dispatch(EventEnum.showProperty, { data });
       this.dispatch(EventEnum.change, { data });
     }
   }

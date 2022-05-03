@@ -1,3 +1,4 @@
+import { PropertyEnum } from "../core/Constant";
 import { DataFlow } from "../core/DataFlow";
 import { Node } from "./Node";
 
@@ -6,7 +7,7 @@ export class Line {
   public elPath: SVGPathElement = document.createElementNS('http://www.w3.org/2000/svg', "path");
   private data: DataFlow = new DataFlow();
   private curvature: number = 0.5;
-  public constructor(public from: Node, public fromIndex: number = 0, public to: Node | undefined = undefined, public toIndex: number = 0) {
+  public constructor(public from: Node, public fromIndex: number = 0, public to: Node | undefined = undefined, public toIndex: number = 0, data: any = null) {
     this.elPath.classList.add("main-path");
     this.elPath.addEventListener('mousedown', this.StartSelected.bind(this));
     this.elPath.addEventListener('touchstart', this.StartSelected.bind(this));
@@ -14,22 +15,24 @@ export class Line {
     this.elNode.classList.add("connection");
     this.elNode.appendChild(this.elPath);
     this.from.parent.elCanvas.appendChild(this.elNode);
+
     this.from.AddLine(this);
     this.to?.AddLine(this);
-    this.data.InitData({}, {
-      from: {
-        default: this.from.GetId()
+    if (data) {
+      this.data = data;
+      return;
+    }
+    this.data.InitData(
+      {
+        from: this.from.GetId(),
+        fromIndex: this.fromIndex,
+        to: this.to?.GetId(),
+        toIndex: this.toIndex
       },
-      fromIndex: {
-        default: this.fromIndex
-      },
-      to: {
-        default: this.to?.GetId()
-      },
-      toIndex: {
-        default: this.toIndex
+      {
+        ... this.from.parent.main.getPropertyByKey(PropertyEnum.line) || {}
       }
-    });
+    );
     this.from.data.Append('lines', this.data);
   }
   public updateTo(to_x: number, to_y: number) {
@@ -100,11 +103,11 @@ export class Line {
         return ' M ' + line_x + ' ' + line_y + ' C ' + hx1 + ' ' + line_y + ' ' + hx2 + ' ' + y + ' ' + x + '  ' + y;
     }
   }
-  public delete(nodeThis: any = null) {
+  public delete(nodeThis: any = null, isClearData = true) {
     this.elPath?.removeEventListener('mousedown', this.StartSelected.bind(this));
     this.elPath?.removeEventListener('touchstart', this.StartSelected.bind(this));
-
-    this.from.data.Remove('lines', this.data);
+    if (isClearData)
+      this.from.data.Remove('lines', this.data);
     if (this.from != nodeThis)
       this.from.RemoveLine(this);
     if (this.to != nodeThis)

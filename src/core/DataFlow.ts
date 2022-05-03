@@ -94,10 +94,28 @@ export class DataFlow {
     }
 
   }
-  public SetData(data: any, sender: any = null) {
-    Object.keys(data).forEach(key => {
-      this.Set(key, data[key], sender, false);
-    });
+  public SetData(data: any, sender: any = null, isClearData = false) {
+
+    if (isClearData) this.data = {};
+    if (data instanceof DataFlow) {
+      let $data: DataFlow = data as DataFlow;
+      if (!this.property && $data.property) this.property = $data.property;
+      if (this.properties) {
+        for (let key of Object.keys(this.properties)) {
+          this.Set(key, $data.Get(key), sender, false);
+        }
+      } else {
+        for (let key of Object.keys($data.getProperties())) {
+          this.Set(key, $data.Get(key), sender, false);
+        }
+      }
+    }
+    else {
+      Object.keys(data).forEach(key => {
+        this.Set(key, data[key], sender, false);
+      });
+    }
+
     this.dispatch(EventEnum.change, {
       data
     });
@@ -117,7 +135,6 @@ export class DataFlow {
       this.RemoveEventData(this.data[key][index], key);
       this.data[key].splice(index, 1);
     }
-
   }
   public load(data: any) {
     this.data = {};
@@ -127,9 +144,18 @@ export class DataFlow {
     if (this.properties) {
       for (let key of Object.keys(this.properties)) {
         this.data[key] = (data?.[key] ?? ((typeof this.properties[key]?.default === "function" ? this.properties[key]?.default() : this.properties[key]?.default) ?? ""));
-        /* if (Array.isArray(this.data[key]) && this.property && !(this.data[key][0] instanceof DataFlow)) {
-           this.data[key] = this.data[key].map((item: any) => new DataFlow(this.property, item));
-         }*/
+        if (!(this.data[key] instanceof DataFlow) && this.data[key].key) {
+          this.data[key] = new DataFlow(this.property, this.data[key]);
+        }
+        if (Array.isArray(this.data[key]) && this.property && !(this.data[key][0] instanceof DataFlow)) {
+          this.data[key] = this.data[key].map((item: any) => {
+            if (!(item instanceof DataFlow) && item.key) {
+              return new DataFlow(this.property, item);
+            } else {
+              return item;
+            }
+          });
+        }
         this.BindEvent(this.data[key], key);
       }
     }

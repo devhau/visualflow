@@ -2,6 +2,7 @@ import { BaseFlow } from "../core/BaseFlow";
 import { Line } from "./Line";
 import { DesginerView } from "./DesginerView";
 import { EventEnum } from "../core/Constant";
+import { DataFlow } from "../core/DataFlow";
 
 const geval = eval;
 export class Node extends BaseFlow<DesginerView> {
@@ -26,6 +27,9 @@ export class Node extends BaseFlow<DesginerView> {
   public CheckKey(key: string) {
     return this.data.Get('key') == key;
   }
+  public getDataLine() {
+    return this.data.Get('lines') ?? [];
+  }
   public elContent: Element | null | undefined;
   public arrLine: Line[] = [];
   private option: any = {};
@@ -34,7 +38,12 @@ export class Node extends BaseFlow<DesginerView> {
     super(parent);
     this.option = this.parent.main.getControlNodeByKey(keyNode);
     this.properties = this.option?.properties;
-    this.data.InitData(data, this.properties);
+    if (data instanceof DataFlow) {
+      this.data = data;
+    } else {
+      this.data.InitData(data, this.properties);
+      this.parent.data.Append('nodes', this.data);
+    }
     this.data.on(EventEnum.dataChange, this.renderUI.bind(this));
     this.elNode.classList.add('vs-node');
 
@@ -45,7 +54,6 @@ export class Node extends BaseFlow<DesginerView> {
     this.elNode.setAttribute('node-id', this.GetId());
     this.elNode.addEventListener('mousedown', () => this.parent.setNodeChoose(this));
     this.elNode.addEventListener('touchstart', () => this.parent.setNodeChoose(this));
-    this.parent.data.Append('nodes', this.data);
     this.renderUI();
   }
   private renderUI() {
@@ -72,9 +80,12 @@ export class Node extends BaseFlow<DesginerView> {
     `;
     this.elContent = this.elNode.querySelector('.node-content .body');
     this.UpdateUI();
-    setTimeout(() => {
-      geval(`(node,view)=>{${this.option.script}}`)(this, this.parent);
-    })
+    geval(`(node,view)=>{${this.option.script}}`)(this, this.parent);
+  }
+  public openGroup() {
+    if (this.CheckKey('node_group')) {
+      this.parent.openGroup(this.GetId());
+    }
   }
   public updatePosition(x: any, y: any, iCheck = false) {
     if (this.elNode) {
@@ -124,15 +135,29 @@ export class Node extends BaseFlow<DesginerView> {
       item.UpdateUI();
     })
   }
-  public delete(isRemoveParent = true) {
-    this.arrLine.forEach((item) => item.delete(this));
-    this.data.delete();
+  public delete(isClearData = true) {
+    this.arrLine.forEach((item) => item.delete(this, isClearData));
+    if (isClearData)
+      this.data.delete();
+    else {
+      this.data.removeListener(EventEnum.dataChange, this.renderUI.bind(this));
+      this.RemoveDataEvent();
+    }
     this.elNode.removeEventListener('mousedown', () => this.parent.setNodeChoose(this));
     this.elNode.removeEventListener('touchstart', () => this.parent.setNodeChoose(this));
     this.elNode.remove();
     this.arrLine = [];
-    if (isRemoveParent)
+    if (isClearData)
       this.parent.RemoveNode(this);
     this.dispatch(EventEnum.change, {});
+  }
+  public RenderLine() {
+    this.getDataLine().forEach((item: DataFlow) => {
+      let nodeFrom = this;
+      let nodeTo = this.parent.GetNodeById(item.Get('to'));
+      let toIndex = item.Get('toIndex');
+      let fromIndex = item.Get('fromIndex');
+      new Line(nodeFrom, fromIndex, nodeTo, toIndex, item).UpdateUI();
+    });
   }
 }

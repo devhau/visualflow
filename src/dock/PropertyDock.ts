@@ -6,7 +6,7 @@ import { DockBase } from "./DockBase";
 
 export class PropertyDock extends DockBase {
   private lastData: DataFlow | undefined;
-  private labelKeys: string[] = ['id', 'key'];
+  private labelKeys: string[] = ['id', 'key', 'group'];
   private dataJson: HTMLTextAreaElement = document.createElement('textarea');
   public constructor(container: HTMLElement, protected main: IMain) {
     super(container, main);

@@ -18,6 +18,8 @@ export interface IMain extends IControlNode, IEvent {
   newProject($name: string): void;
   openProject($name: string): void;
   getProjectAll(): any[];
+  SetProjectOpen($data: any): void;
+  CheckProjectOpen($data: any): boolean;
   open($data: any): void;
   getControlAll(): any[];
   setControlChoose(key: string | null): void;
@@ -43,9 +45,10 @@ export class FlowCore implements IEvent {
     this.data.SetData(data, sender);
   }
   public SetDataFlow(data: DataFlow) {
-    this.data = data;
-    this.BindDataEvent();
+    this.data.SetData(data, this, true);
+
     this.dispatch(`bind_data_event`, { data, sender: this });
+    this.dispatch(EventEnum.change, { data, sender: this });
   }
   onSafe(event: string, callback: any) {
     this.events.onSafe(event, callback);
@@ -75,6 +78,28 @@ export class FlowCore implements IEvent {
       });
     })
     this.data.on(EventEnum.change, ({ key, value, sender }: any) => {
+      setTimeout(() => {
+        this.dispatch(EventEnum.change, {
+          type: 'data',
+          key, value, sender
+        });
+      });
+    });
+  }
+  RemoveDataEvent() {
+    this.data.removeListener(EventEnum.dataChange, ({ key, value, sender }: any) => {
+      setTimeout(() => {
+        this.dispatch(`${EventEnum.dataChange}_${key}`, {
+          type: 'data',
+          key, value, sender
+        });
+        this.dispatch(EventEnum.dataChange, {
+          type: 'data',
+          key, value, sender
+        });
+      });
+    })
+    this.data.removeListener(EventEnum.change, ({ key, value, sender }: any) => {
       setTimeout(() => {
         this.dispatch(EventEnum.change, {
           type: 'data',

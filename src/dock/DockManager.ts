@@ -4,6 +4,7 @@ import { ControlDock } from "./ControlDock";
 import { DockBase } from "./DockBase";
 import { ProjectDock } from "./ProjectDock";
 import { PropertyDock } from "./PropertyDock";
+import { TabDock } from "./TabDock";
 import { ViewDock } from "./ViewDock";
 
 export class DockManager {
@@ -15,7 +16,7 @@ export class DockManager {
     this.addDock(DockEnum.left, ProjectDock);
     this.addDock(DockEnum.right, PropertyDock);
     this.addDock(DockEnum.view, ViewDock);
-    this.addDock(DockEnum.top, DockBase);
+    this.addDock(DockEnum.top, TabDock);
     this.addDock(DockEnum.bottom, DockBase);
     this.RenderUI();
   }

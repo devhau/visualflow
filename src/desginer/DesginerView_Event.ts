@@ -9,14 +9,7 @@ export enum MoveType {
   Canvas = 2,
   Line = 3,
 }
-export const Zoom = {
-  max: 1.6,
-  min: 0.6,
-  value: 0.1,
-  default: 1
-}
 export class DesginerView_Event {
-  private zoom_last_value: any = 1;
 
   private timeFastClick: number = 0;
   private tagIngore = ['input', 'button', 'a', 'textarea'];
@@ -81,7 +74,9 @@ export class DesginerView_Event {
     if (this.parent.checkOnlyNode(keyNode)) {
       return;
     }
-    let nodeItem = this.parent.AddNode(keyNode);
+    let nodeItem = this.parent.AddNode(keyNode, {
+      group: this.parent.CurrentGroup()
+    });
     nodeItem.updatePosition(x, y);
   }
   public zoom_enter(event: any) {
@@ -90,30 +85,12 @@ export class DesginerView_Event {
       event.preventDefault()
       if (event.deltaY > 0) {
         // Zoom Out
-        this.zoom_out();
+        this.parent.zoom_out();
       } else {
         // Zoom In
-        this.zoom_in();
+        this.parent.zoom_in();
       }
     }
-  }
-  public zoom_refresh(flg: any = 0) {
-    let temp_zoom = flg == 0 ? Zoom.default : (this.parent.getZoom() + Zoom.value * flg);
-    if (Zoom.max >= temp_zoom && temp_zoom >= Zoom.min) {
-      this.parent.setX((this.parent.getX() / this.zoom_last_value) * temp_zoom);
-      this.parent.setY((this.parent.getY() / this.zoom_last_value) * temp_zoom);
-      this.zoom_last_value = temp_zoom;
-      this.parent.setZoom(this.zoom_last_value);
-    }
-  }
-  public zoom_in() {
-    this.zoom_refresh(1);
-  }
-  public zoom_out() {
-    this.zoom_refresh(-1);
-  }
-  public zoom_reset() {
-    this.zoom_refresh(0);
   }
   private StartMove(ev: any) {
     if (this.parent.$lock) return;
@@ -256,7 +233,6 @@ export class DesginerView_Event {
     }
     if (ev.key === 'F2') {
       ev.preventDefault()
-      console.log(this.parent.data.toJson());
     }
   }
 }
