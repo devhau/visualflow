@@ -2,7 +2,11 @@
 
 demo: https://devhau.github.io/visualflow/
 
+```
 npm i visualflow
+```
+
+https://www.npmjs.com/package/visualflow
 
 ```
  let optionFlow = {
