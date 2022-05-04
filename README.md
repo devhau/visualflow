@@ -1,4 +1,4 @@
-# visualflow
+# Visual Flow Creator
 
 demo: https://devhau.github.io/visualflow/
 
