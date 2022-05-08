@@ -20,7 +20,8 @@ export const PropertyEnum = {
   main: "main_project",
   solution: 'main_solution',
   line: 'main_line',
-  variable: 'main_variable'
+  variable: 'main_variable',
+  groupCavas: "main_groupCavas",
 };
 
 export const compareSort = (a: any, b: any) => {

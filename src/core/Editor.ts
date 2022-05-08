@@ -1,11 +1,58 @@
 import { BaseFlow, FlowCore } from "./BaseFlow"
 import { EventEnum } from "./Constant";
 import { DataFlow } from "./DataFlow";
-import { LOG } from "./Utils";
 export enum EditorType {
   Label,
   Text,
   Inline
+}
+export const TagView = ['SPAN', 'DIV', 'P', 'TEXTAREA'];
+export class DataView {
+  private keyName: string | null | undefined = "";
+  public constructor(public data: DataFlow, private el: HTMLElement | null = null) {
+    this.keyName = el?.getAttribute('node:model');
+    this.bindData();
+  }
+  private bindData() {
+    if (this.keyName && this.el) {
+      this.data.on(`${EventEnum.dataChange}_${this.keyName}`, this.bindInput.bind(this));
+      this.el.addEventListener('change', this.bindEvent.bind(this));
+      this.el.addEventListener('keydown', this.bindEvent.bind(this));
+    }
+  }
+  public unBindData() {
+    if (this.keyName && this.el) {
+      this.data.removeListener(`${EventEnum.dataChange}_${this.keyName}`, this.bindInput.bind(this));
+      this.el.removeEventListener('change', this.bindEvent.bind(this));
+      this.el.removeEventListener('keydown', this.bindEvent.bind(this));
+    }
+  }
+  private bindInput({ value, sender }: any) {
+
+    if (sender !== this && this.el && sender.el !== this.el) {
+      console.log(this.el.tagName);
+      console.log(sender);
+      if (TagView.includes(this.el.tagName)) {
+        this.el.innerText = `${value}`;
+      } else {
+        (this.el as any).value = value;
+      }
+    }
+  }
+  private bindEvent() {
+    if (this.keyName && this.el) {
+      console.log(this.keyName);
+      this.data.Set(this.keyName, (this.el as any).value, this);
+    }
+  }
+  public static BindView(data: DataFlow, root: Element) {
+    if (root) {
+      return Array.from(root.querySelectorAll('[node\\:model]')).map((el) => {
+        return new DataView(data, el as HTMLElement);
+      });
+    }
+    return [];
+  }
 }
 export class Editor {
   private isEdit: boolean = false;

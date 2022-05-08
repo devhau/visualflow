@@ -144,6 +144,14 @@ body {
     left: 0;
     top: 0;
     z-index: 999;
+    width: 100%;
+    display: flex;
+    .toolbar-group {
+      flex: auto;
+    }
+    .toolbar-button {
+      flex: none;
+    }
   }
 }
 .vs-node {
@@ -233,7 +241,7 @@ body {
 }
 .node-form-control {
   display: block;
-  width: 90%;
+  width: 100%;
   padding: 0.125rem 0.45rem;
   font-size: 1rem;
   font-weight: 400;

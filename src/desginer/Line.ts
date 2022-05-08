@@ -123,7 +123,7 @@ export class Line {
     this.toIndex = toIndex;
   }
   public Clone() {
-    if (this.to && this.toIndex) {
+    if (this.to && this.toIndex && this.from != this.to) {
       return new Line(this.from, this.fromIndex, this.to, this.toIndex).UpdateUI();
     }
   }

@@ -46,11 +46,42 @@ export class VisualFlow implements IMain {
       icon: '<i class="fas fa-object-group"></i>',
       sort: 0,
       name: 'Group',
-      html: '<div class="text-center p3"><button class="btnGoGroup">Go</button></div>',
+      html: '<div class="text-center p3"><button class="btnGoGroup node-form-control">Go</button></div>',
       script: `node.elNode.querySelector('.btnGoGroup')?.addEventListener('click', () => {node.openGroup()});`,
       properties: {
         condition: {
           key: "condition",
+          default: ''
+        }
+      },
+      output: 2
+    },
+    node_project: {
+      icon: '<i class="fas fa-object-group"></i>',
+      sort: 0,
+      name: 'Project',
+      html: '<div class="text-center p3"><select class="listProject node-form-control" node:model="project"></select></div>',
+      script: `
+      const reloadProject = ()=>{
+        node.elNode.querySelector('.listProject').innerHtml='';
+        let option = document.createElement('option');
+        option.text='none';
+        option.value='';
+        node.elNode.querySelector('.listProject').appendChild(option);
+        node.parent.main.getProjectAll().forEach((item)=>{
+          let option = document.createElement('option');
+          option.text=item.Get('name');
+          option.value=item.Get('id');
+          node.elNode.querySelector('.listProject').appendChild(option);
+        });
+        node.elNode.querySelector('.listProject').value= node.data.Get('project')
+      }
+      reloadProject();
+
+     ;`,
+      properties: {
+        project: {
+          key: "project",
           default: ''
         }
       },

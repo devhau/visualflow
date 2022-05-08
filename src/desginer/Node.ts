@@ -3,6 +3,7 @@ import { Line } from "./Line";
 import { DesginerView } from "./DesginerView";
 import { EventEnum } from "../core/Constant";
 import { DataFlow } from "../core/DataFlow";
+import { DataView } from "../core/Editor";
 
 const geval = eval;
 export class Node extends BaseFlow<DesginerView> {
@@ -33,7 +34,7 @@ export class Node extends BaseFlow<DesginerView> {
   public elContent: Element | null | undefined;
   public arrLine: Line[] = [];
   private option: any = {};
-
+  private arrDataView: DataView[] = [];
   public constructor(parent: DesginerView, private keyNode: any, data: any = {}) {
     super(parent);
     this.option = this.parent.main.getControlNodeByKey(keyNode);
@@ -57,6 +58,7 @@ export class Node extends BaseFlow<DesginerView> {
     this.renderUI();
   }
   private renderUI() {
+    if (this.elNode.contains(document.activeElement)) return;
     this.elNode.setAttribute('style', `display:none;`);
     this.elNode.innerHTML = `
       <div class="node-left">
@@ -81,6 +83,9 @@ export class Node extends BaseFlow<DesginerView> {
     this.elContent = this.elNode.querySelector('.node-content .body');
     this.UpdateUI();
     geval(`(node,view)=>{${this.option.script}}`)(this, this.parent);
+    this.arrDataView.forEach((item) => item.unBindData());
+    if (this.elContent)
+      this.arrDataView = DataView.BindView(this.data, this.elContent);
   }
   public openGroup() {
     if (this.CheckKey('node_group')) {
