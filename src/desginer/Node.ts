@@ -61,25 +61,36 @@ export class Node extends BaseFlow<DesginerView> {
     if (this.elNode.contains(document.activeElement)) return;
     this.elNode.setAttribute('style', `display:none;`);
     this.elNode.innerHTML = `
-      <div class="node-left">
-        <div class="node-dot" node="4000"></div>
-      </div>
+      <div class="node-left"></div>
       <div class="node-container">
-        <div class="node-top">
-          <div class="node-dot" node="1000"></div>
-        </div>
+        <div class="node-top"></div>
         <div class="node-content">
         <div class="title">${this.option.icon} ${this.getName()}</div>
         <div class="body">${this.option.html}</div>
         </div>
-        <div class="node-bottom">
-          <div class="node-dot" node="2000"></div>
-        </div>
+        <div class="node-bottom"></div>
       </div>
-      <div class="node-right">
-        <div class="node-dot"  node="3000"></div>
-      </div>
+      <div class="node-right"></div>
     `;
+    const addNodeDot = (num: number | null | undefined, start: number, query: string) => {
+      if (num) {
+        let nodeQuery = this.elNode.querySelector(query);
+        if (nodeQuery) {
+          nodeQuery.innerHTML = '';
+          for (let i: number = 0; i < num; i++) {
+            let nodeDot = document.createElement('div');
+            nodeDot.classList.add('node-dot');
+            nodeDot.setAttribute('node', `${start + i}`);
+            nodeQuery.appendChild(nodeDot);
+          }
+        }
+      }
+    }
+    addNodeDot(this.option?.dot?.left, 1000, '.node-left');
+    addNodeDot(this.option?.dot?.top, 2000, '.node-top');
+    addNodeDot(this.option?.dot?.bottom, 3000, '.node-bottom');
+    addNodeDot(this.option?.dot?.right, 4000, '.node-right');
+
     this.elContent = this.elNode.querySelector('.node-content .body');
     this.UpdateUI();
     geval(`(node,view)=>{${this.option.script}}`)(this, this.parent);

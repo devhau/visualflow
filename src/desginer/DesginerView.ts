@@ -18,22 +18,44 @@ export class DesginerView extends FlowCore {
    * GET SET for Data
    */
   public getZoom() {
-    return +this.data.Get('zoom');
+    return +this.getDataGroup().Get('zoom');
   }
   public setZoom(value: any) {
-    return this.data.Set('zoom', value, this);
+    return this.getDataGroup().Set('zoom', value, this);
   }
   public getY() {
-    return +this.data.Get('y');
+    return +this.getDataGroup().Get('y');
   }
   public setY(value: any) {
-    return this.data.Set('y', value, this);
+    return this.getDataGroup().Set('y', value, this);
   }
   public getX() {
-    return +this.data.Get('x');
+    return +this.getDataGroup().Get('x');
   }
   public setX(value: any) {
-    return this.data.Set('x', value, this);
+    return this.getDataGroup().Set('x', value, this);
+  }
+  private groupData: DataFlow | undefined;
+  private lastGroupName: string = "";
+  private getDataGroup(): DataFlow {
+    if (this.$lock) return this.data;
+    // cache groupData
+    if (this.lastGroupName === this.CurrentGroup()) return this.groupData ?? this.data;
+    this.lastGroupName = this.CurrentGroup();
+    let groups = this.data.Get('groups');
+    this.groupData = groups?.filter((item: DataFlow) => item.Get('group') == this.lastGroupName)?.[0];
+
+    if (!this.groupData) {
+      this.groupData = new DataFlow(this.main, {
+        key: PropertyEnum.groupCavas,
+        group: this.lastGroupName
+      });
+      this.data.Append('groups', this.groupData);
+      this.groupData.onSafe(EventEnum.dataChange, this.UpdateUI.bind(this));
+    } else {
+      this.groupData.onSafe(EventEnum.dataChange, this.UpdateUI.bind(this));
+    }
+    return this.groupData;
   }
   private group: any[] = [];
   public GetGroupName(): any[] {
@@ -45,7 +67,12 @@ export class DesginerView extends FlowCore {
     this.RenderUI();
   }
   public CurrentGroup() {
-    return this.group?.[0] ?? 'root';
+    let name = this.group?.[0];
+
+    if (name && name != '') {
+      return name;
+    }
+    return 'root';
   }
   public openGroup(id: any) {
     this.group = [id, ...this.group];
@@ -160,6 +187,8 @@ export class DesginerView extends FlowCore {
   public Open($data: DataFlow) {
     this.data = $data;
     this.$lock = false;
+    this.lastGroupName = '';
+    this.groupData = undefined;
     this.group = [];
     this.toolbar.renderPathGroup();
     this.BindDataEvent();

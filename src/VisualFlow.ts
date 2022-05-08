@@ -16,8 +16,12 @@ export class VisualFlow implements IMain {
       name: 'Begin',
       class: 'node-test',
       html: '',
-      output: 1,
-      input: 0,
+      dot: {
+        top: 0,
+        right: 5,
+        left: 1,
+        bottom: 5,
+      },
       onlyNode: true
     },
     node_end: {
@@ -25,7 +29,12 @@ export class VisualFlow implements IMain {
       sort: 0,
       name: 'End',
       html: '',
-      output: 0,
+      dot: {
+        left: 1,
+        top: 1,
+        right: 0,
+        bottom: 0,
+      },
       onlyNode: true
     },
     node_if: {
@@ -47,6 +56,36 @@ export class VisualFlow implements IMain {
       sort: 0,
       name: 'Group',
       html: '<div class="text-center p3"><button class="btnGoGroup node-form-control">Go</button></div>',
+      script: `node.elNode.querySelector('.btnGoGroup')?.addEventListener('click', () => {node.openGroup()});`,
+      properties: {
+        condition: {
+          key: "condition",
+          default: ''
+        }
+      },
+      output: 2
+    },
+    node_option: {
+      icon: '<i class="fas fa-object-group"></i>',
+      sort: 0,
+      name: 'Option',
+      dot: {
+        top: 1,
+        right: 0,
+        left: 1,
+        bottom: 0,
+      },
+      html: `
+      <div>
+        <div class="node-content-row"><span>Họ tên :</span><span class="node-dot" node="50001"></span></div>
+        <div class="node-content-row"><span>Họ tên :</span><span class="node-dot" node="50002"></span></div>
+        <div class="node-content-row"><span>Họ tên :</span><span class="node-dot" node="50003"></span></div>
+        <div class="node-content-row"><span>Họ tên :</span><span class="node-dot" node="50004"></span></div>
+        <div class="node-content-row"><span>Họ tên :</span><span class="node-dot" node="50005"></span></div>
+
+
+      </div>
+      `,
       script: `node.elNode.querySelector('.btnGoGroup')?.addEventListener('click', () => {node.openGroup()});`,
       properties: {
         condition: {
@@ -155,14 +194,8 @@ export class VisualFlow implements IMain {
       key: {
         default: PropertyEnum.main
       },
-      x: {
-        default: 0
-      },
-      y: {
-        default: 0
-      },
-      zoom: {
-        default: 1
+      groups: {
+        default: []
       },
       nodes: {
         default: []
@@ -172,7 +205,15 @@ export class VisualFlow implements IMain {
     this.$control = { ...option?.control || {}, ...this.$controlDefault };
     let controlTemp: any = {};
     Object.keys(this.$control).map((key) => ({ ...this.$control[key], key, sort: (this.$control[key].sort === undefined ? 99999 : this.$control[key].sort) })).sort(compareSort).forEach((item: any) => {
-      controlTemp[item.key] = item;
+      controlTemp[item.key] = {
+        dot: {
+          left: 1,
+          top: 1,
+          right: 1,
+          bottom: 1,
+        },
+        ...item
+      };
       this.$properties[`node_${item.key}`] = {
         ...(item.properties || {}),
         id: {
@@ -198,6 +239,23 @@ export class VisualFlow implements IMain {
         }
       };
     });
+    this.$properties[PropertyEnum.groupCavas] = {
+      key: {
+        default: PropertyEnum.groupCavas
+      },
+      group: {
+        default: ''
+      },
+      x: {
+        default: 0
+      },
+      y: {
+        default: 0
+      },
+      zoom: {
+        default: 1
+      },
+    }
     this.$control = controlTemp;
     this.container.classList.remove('vs-container');
     this.container.classList.add('vs-container');

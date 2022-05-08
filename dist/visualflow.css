@@ -59,7 +59,6 @@ body {
   display: flex;
   border: 0.5px solid var(--border-color-dock);
   flex-direction: column;
-  min-height: 30px;
 }
 .vs-container .vs-dock :last-child {
   flex: auto;
@@ -137,7 +136,7 @@ body {
   stroke: #3e88ce;
 }
 .desginer-view .desginer-canvas svg {
-  z-index: 0;
+  z-index: 8;
   position: absolute;
   overflow: visible !important;
 }
@@ -158,7 +157,7 @@ body {
 
 .vs-node {
   display: flex;
-  align-items: center;
+  align-items: stretch;
   position: absolute;
   min-height: 40px;
   border-radius: 4px;
@@ -178,13 +177,13 @@ body {
 .vs-node .node-dot {
   display: inline-block;
   position: relative;
-  height: 12px;
-  width: 12px;
+  height: 10px;
+  width: 10px;
   background: #fff;
   border-radius: 50%;
   border: 2px solid var(--border-color);
   cursor: crosshair;
-  z-index: 1;
+  z-index: 99;
 }
 .vs-node .node-container {
   flex: auto;
@@ -202,11 +201,22 @@ body {
 }
 .vs-node .node-container .node-top .node-dot,
 .vs-node .node-container .node-bottom .node-dot {
-  bottom: 8px;
+  bottom: 6px;
 }
 .vs-node .node-container .node-content {
   padding: 10px;
   flex: auto;
+}
+.vs-node .node-container .node-content .node-content-row {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+}
+.vs-node .node-container .node-content .node-content-row * {
+  flex: auto;
+}
+.vs-node .node-container .node-content .node-content-row .node-dot {
+  flex: none;
 }
 .vs-node .node-right,
 .vs-node .node-left {
@@ -214,10 +224,11 @@ body {
   padding: 0;
   flex: none;
   left: -1px;
+  align-self: center;
 }
 .vs-node .node-right .node-dot,
 .vs-node .node-left .node-dot {
-  right: 8px;
+  right: 6px;
 }
 
 .vs-property .property-item {
