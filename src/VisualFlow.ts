@@ -18,9 +18,9 @@ export class VisualFlow implements IMain {
       html: '',
       dot: {
         top: 0,
-        right: 5,
-        left: 1,
-        bottom: 5,
+        right: 1,
+        left: 0,
+        bottom: 1,
       },
       onlyNode: true
     },

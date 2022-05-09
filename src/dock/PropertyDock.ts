@@ -6,7 +6,9 @@ import { DockBase } from "./DockBase";
 
 export class PropertyDock extends DockBase {
   private lastData: DataFlow | undefined;
-  private labelKeys: string[] = ['id', 'key', 'group'];
+  private labelKeys: string[] = ['id', 'key', 'group', 'lines', 'nodes', 'project', 'x', 'y'];
+  private hideKeys: string[] = ['lines', 'nodes', 'groups'];
+  private sortKeys: string[] = ['id', 'key', 'name', 'group'];
   private dataJson: HTMLTextAreaElement = document.createElement('textarea');
   public constructor(container: HTMLElement, protected main: IMain) {
     super(container, main);
@@ -18,14 +20,16 @@ export class PropertyDock extends DockBase {
       })
     });
   }
+
   private renderUI(node: HTMLElement, data: DataFlow) {
     if (this.lastData == data) {
       return;
     }
     this.lastData = data;
     node.innerHTML = '';
-    let properties: any = data.getProperties()
-    Object.keys(properties).forEach((key: string) => {
+    let properties: any = data.getProperties();
+    this.sortKeys.forEach((key: string) => {
+      if (this.hideKeys.includes(key) || !properties[key]) return;
       let propertyItem = document.createElement('div');
       propertyItem.classList.add('property-item');
       let propertyLabel = document.createElement('div');
@@ -42,9 +46,28 @@ export class PropertyDock extends DockBase {
       propertyItem.appendChild(propertyValue);
       node.appendChild(propertyItem);
     });
-    node.appendChild(this.dataJson);
-    this.dataJson.value = data.toString();
-    this.dataJson.classList.add('node-form-control');
-    data.on(EventEnum.dataChange, () => this.dataJson.value = data.toString())
+    Object.keys(properties).forEach((key: string) => {
+      if (this.hideKeys.includes(key) || this.sortKeys.includes(key)) return;
+      let propertyItem = document.createElement('div');
+      propertyItem.classList.add('property-item');
+      let propertyLabel = document.createElement('div');
+      propertyLabel.classList.add('property-label');
+      propertyLabel.innerHTML = key;
+      let propertyValue = document.createElement('div');
+      propertyValue.classList.add('property-value');
+      if (this.labelKeys.includes(key)) {
+        new Editor(data, key, propertyValue, EditorType.Label);
+      } else {
+        new Editor(data, key, propertyValue, EditorType.Text);
+      }
+      propertyItem.appendChild(propertyLabel);
+      propertyItem.appendChild(propertyValue);
+      node.appendChild(propertyItem);
+    });
+    // node.appendChild(this.dataJson);
+    // this.dataJson.value = data.toString();
+    // this.dataJson.classList.add('node-form-control');
+
+    //data.on(EventEnum.dataChange, () => this.dataJson.value = data.toString())
   }
 }

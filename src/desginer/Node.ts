@@ -139,8 +139,8 @@ export class Node extends BaseFlow<DesginerView> {
   public getPostisionDot(index: number = 0) {
     let elDot: any = this.elNode?.querySelector(`.node-dot[node="${index}"]`);
     if (elDot) {
-      let y = (this.elNode.offsetTop + elDot.offsetTop + 10);
-      let x = (this.elNode.offsetLeft + elDot.offsetLeft + 10);
+      let y = (this.elNode.offsetTop + elDot.offsetTop + 12);
+      let x = (this.elNode.offsetLeft + elDot.offsetLeft + 12);
       return { x, y };
     }
     return {};

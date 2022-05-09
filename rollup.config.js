@@ -13,7 +13,7 @@ const author = pkg.author;
 const banner = `
   /**
    * @license
-   * author: ${author}
+   * author:${author.email} (${author.name})
    * ${moduleName}.js v${pkg.version}
    * Released under the ${pkg.license} license.
    */
