@@ -1,7 +1,6 @@
 import { getTime } from "../core/Utils";
 import { DesginerView } from "./DesginerView";
 import { Line } from "./Line";
-import { Node } from "./Node";
 
 export enum MoveType {
   None = 0,

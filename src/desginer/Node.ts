@@ -1,9 +1,6 @@
-import { BaseFlow } from "../core/BaseFlow";
+import { BaseFlow, EventEnum, DataFlow, DataView } from "../core/index";
 import { Line } from "./Line";
 import { DesginerView } from "./DesginerView";
-import { EventEnum } from "../core/Constant";
-import { DataFlow } from "../core/DataFlow";
-import { DataView } from "../core/Editor";
 
 const geval = eval;
 export class Node extends BaseFlow<DesginerView> {

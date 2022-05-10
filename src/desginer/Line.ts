@@ -1,5 +1,4 @@
-import { PropertyEnum } from "../core/Constant";
-import { DataFlow } from "../core/DataFlow";
+import { DataFlow, PropertyEnum } from "../core/index";
 import { Node } from "./Node";
 
 export class Line {

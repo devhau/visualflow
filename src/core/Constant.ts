@@ -23,13 +23,3 @@ export const PropertyEnum = {
   variable: 'main_variable',
   groupCavas: "main_groupCavas",
 };
-
-export const compareSort = (a: any, b: any) => {
-  if (a.sort < b.sort) {
-    return -1;
-  }
-  if (a.sort > b.sort) {
-    return 1;
-  }
-  return 0;
-}

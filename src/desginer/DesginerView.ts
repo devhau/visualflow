@@ -1,6 +1,4 @@
-import { FlowCore, IMain } from "../core/BaseFlow";
-import { EventEnum, PropertyEnum } from "../core/Constant";
-import { DataFlow } from "../core/DataFlow";
+import { DataFlow, FlowCore, IMain, EventEnum, PropertyEnum } from "../core/index";
 import { DesginerView_Event } from "./DesginerView_Event";
 import { DesginerView_Toolbar } from "./DesginerView_Toolbar";
 import { Line } from "./Line";

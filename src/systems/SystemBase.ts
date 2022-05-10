@@ -1,9 +1,5 @@
-import { compareSort, EventEnum, PropertyEnum } from "../core/Constant";
-import { EventFlow } from "../core/EventFlow";
-import { getTime } from "../core/Utils";
-import { Node } from "../desginer/Node";
-import { IMain } from "../core/BaseFlow";
-import { DataFlow } from "../core/DataFlow";
+import { DataFlow, IMain, compareSort, EventEnum, PropertyEnum, EventFlow, getTime } from "../core/index";
+import { Node } from "../desginer/index";
 import { Control } from "./control";
 
 export class SystemBase implements IMain {

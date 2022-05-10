@@ -1,10 +1,13 @@
 import { VisualFlow } from "./VisualFlow";
-import { DesginerView } from './desginer/DesginerView';
-export { IMain } from './core/BaseFlow';
-import { DataFlow } from './core/DataFlow';
+import { SystemBase } from "./systems/SystemBase";
+import * as Core from './core/index';
+import * as Desginer from "./desginer/index";
+import * as Dock from './dock/index';
 export default {
   VisualFlow,
-  DesginerView,
-  DataFlow
+  SystemBase,
+  ...Core,
+  ...Dock,
+  ...Desginer
 };
 
