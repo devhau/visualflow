@@ -1,4 +1,10 @@
-export { VisualFlow } from "./VisualFlow";
-export { DesginerView } from './desginer/DesginerView';
+import { VisualFlow } from "./VisualFlow";
+import { DesginerView } from './desginer/DesginerView';
 export { IMain } from './core/BaseFlow';
-export { DataFlow } from './core/DataFlow';
+import { DataFlow } from './core/DataFlow';
+export default {
+  VisualFlow,
+  DesginerView,
+  DataFlow
+};
+

@@ -1,6 +1,7 @@
 import { DataFlow } from "./DataFlow";
 import { EventEnum } from "./Constant";
 import { EventFlow } from "./EventFlow";
+import { Node } from "../desginer/Node";
 
 export interface IProperty {
   getPropertyByKey(key: string): any;
@@ -18,13 +19,17 @@ export interface IMain extends IControlNode, IEvent {
   newProject($name: string): void;
   openProject($name: string): void;
   getProjectAll(): any[];
-  SetProjectOpen($data: any): void;
-  CheckProjectOpen($data: any): boolean;
-  open($data: any): void;
-  getControlAll(): any[];
+  setProjectOpen($data: any): void;
+  checkProjectOpen($data: any): boolean;
+  getControlAll(): any;
   setControlChoose(key: string | null): void;
   getControlChoose(): string | null;
   getControlByKey(key: string): any;
+  renderHtml(node: Node): string;
+  initOption(option: any): void;
+  checkInitOption(): boolean;
+  importJson(data: any): void;
+  exportJson(): any;
 }
 export class FlowCore implements IEvent {
   public GetId() {

@@ -2,7 +2,7 @@
 <html>
 
 <head>
-  <title>VisualStudio</title>
+  <title>Visual Flow Creator</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css"
     integrity="sha256-h20CPZ0QyXlBuAw7A+KluUYx/3pK+c7lYEpqLTlxjYQ=" crossorigin="anonymous" />
   <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
@@ -35,7 +35,8 @@
       }
     }
   }
-  let flow = (new visualflow.VisualFlow(document.getElementById("flow"), optionFlow));
+  let flow = (new visualflow.VisualFlow(document.getElementById("flow")));
+  flow.setOption(optionFlow);
   flow.newProject();
 
 </script>

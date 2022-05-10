@@ -12,7 +12,7 @@ export class ViewDock extends DockBase {
     this.view.on(EventEnum.showProperty, (data: any) => { main.dispatch(EventEnum.showProperty, data); });
     this.main.on(EventEnum.openProject, (item: any) => {
       this.view?.Open(item.data);
-      this.main.SetProjectOpen(item.data);
+      this.main.setProjectOpen(item.data);
     })
   }
 }

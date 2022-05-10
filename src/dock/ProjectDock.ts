@@ -42,7 +42,7 @@ export class ProjectDock extends DockBase {
       item.on(`${EventEnum.dataChange}_name`, () => {
         nodeItem.innerHTML = `${item.Get('name')}`;
       });
-      if (this.main.CheckProjectOpen(item)) {
+      if (this.main.checkProjectOpen(item)) {
         nodeItem.classList.add('active');
       }
       nodeItem.addEventListener('click', () => {

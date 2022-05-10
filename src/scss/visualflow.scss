@@ -135,7 +135,6 @@ body {
       }
     }
     svg {
-      z-index: 8;
       position: absolute;
       overflow: visible !important;
     }
@@ -212,8 +211,12 @@ body {
         * {
           flex: auto;
         }
-        .node-dot {
+        :last-child:not(.node-dot) {
+          width: 0;
           flex: none;
+          .node-dot {
+            margin-left: 3px;
+          }
         }
       }
     }

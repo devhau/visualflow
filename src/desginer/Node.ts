@@ -57,6 +57,9 @@ export class Node extends BaseFlow<DesginerView> {
     this.elNode.addEventListener('touchstart', () => this.parent.setNodeChoose(this));
     this.renderUI();
   }
+  public getOption() {
+    return this.option;
+  }
   private renderUI() {
     if (this.elNode.contains(document.activeElement)) return;
     this.elNode.setAttribute('style', `display:none;`);
@@ -139,8 +142,8 @@ export class Node extends BaseFlow<DesginerView> {
   public getPostisionDot(index: number = 0) {
     let elDot: any = this.elNode?.querySelector(`.node-dot[node="${index}"]`);
     if (elDot) {
-      let y = (this.elNode.offsetTop + elDot.offsetTop + 12);
-      let x = (this.elNode.offsetLeft + elDot.offsetLeft + 12);
+      let y = (this.elNode.offsetTop + elDot.offsetTop + 10);
+      let x = (this.elNode.offsetLeft + elDot.offsetLeft + 10);
       return { x, y };
     }
     return {};

@@ -138,7 +138,6 @@ body {
   stroke: #3e88ce;
 }
 .desginer-view .desginer-canvas svg {
-  z-index: 8;
   position: absolute;
   overflow: visible !important;
 }
@@ -217,8 +216,12 @@ body {
 .vs-node .node-container .node-content .node-content-row * {
   flex: auto;
 }
-.vs-node .node-container .node-content .node-content-row .node-dot {
+.vs-node .node-container .node-content .node-content-row :last-child:not(.node-dot) {
+  width: 0;
   flex: none;
+}
+.vs-node .node-container .node-content .node-content-row :last-child:not(.node-dot) .node-dot {
+  margin-left: 3px;
 }
 .vs-node .node-right,
 .vs-node .node-left {
