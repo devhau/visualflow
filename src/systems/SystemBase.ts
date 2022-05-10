@@ -92,7 +92,7 @@ export class SystemBase implements IMain {
   initOption(option: any, isDefault: boolean = true): void {
     this.$checkOption = true;
     // set control
-    this.$control = isDefault ? { ...option?.control || {} } : { ...option?.control || {}, ...Control };
+    this.$control = isDefault ? { ...option?.control || {}, ...Control } : { ...option?.control || {} };
     let controlTemp: any = {};
     Object.keys(this.$control).map((key) => ({ ...this.$control[key], key, sort: (this.$control[key].sort === undefined ? 99999 : this.$control[key].sort) })).sort(compareSort).forEach((item: any) => {
       controlTemp[item.key] = {

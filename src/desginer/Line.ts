@@ -7,6 +7,7 @@ export class Line {
   public elPath: SVGPathElement = document.createElementNS('http://www.w3.org/2000/svg', "path");
   private data: DataFlow = new DataFlow();
   private curvature: number = 0.5;
+  public temp: boolean = false;
   public constructor(public from: Node, public fromIndex: number = 0, public to: Node | undefined = undefined, public toIndex: number = 0, data: any = null) {
     this.elPath.classList.add("main-path");
     this.elPath.addEventListener('mousedown', this.StartSelected.bind(this));
@@ -123,7 +124,7 @@ export class Line {
     this.toIndex = toIndex;
   }
   public Clone() {
-    if (this.to && this.toIndex && this.from != this.to) {
+    if (this.to && this.toIndex && this.from != this.to && !this.from.checkLineExists(this.fromIndex, this.to, this.toIndex)) {
       return new Line(this.from, this.fromIndex, this.to, this.toIndex).UpdateUI();
     }
   }

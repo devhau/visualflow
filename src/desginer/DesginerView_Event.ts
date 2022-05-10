@@ -119,6 +119,7 @@ export class DesginerView_Event {
       this.moveType = MoveType.Line;
       let fromIndex = ev.target.getAttribute('node');
       this.tempLine = new Line(nodeChoose, fromIndex);
+      this.tempLine.temp = true;
     }
     if (this.moveType == MoveType.Canvas) {
       this.av_x = this.parent.getX();

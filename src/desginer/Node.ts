@@ -31,6 +31,17 @@ export class Node extends BaseFlow<DesginerView> {
   public getDataLine() {
     return this.data.Get('lines') ?? [];
   }
+  public checkLineExists(fromIndex: number, to: Node, toIndex: Number) {
+    return this.arrLine.filter((item: Line) => {
+      if (!item.temp && item.to == to && item.toIndex == toIndex && item.fromIndex == fromIndex) {
+        return true;
+      }
+      if (!item.temp && item.from == to && item.fromIndex == toIndex && item.toIndex == fromIndex) {
+        return true;
+      }
+      return false
+    }).length > 0;
+  }
   public elContent: Element | null | undefined;
   public arrLine: Line[] = [];
   private option: any = {};

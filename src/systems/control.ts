@@ -8,7 +8,7 @@ export const Control = {
     html: '',
     dot: {
       top: 0,
-      right: 1,
+      right: 0,
       left: 0,
       bottom: 1,
     },
@@ -21,7 +21,7 @@ export const Control = {
     group: 'common',
     html: '',
     dot: {
-      left: 1,
+      left: 0,
       top: 1,
       right: 0,
       bottom: 0,

@@ -7,8 +7,8 @@ export class VisualFlow {
   public getDockManager(): DockManager {
     return this.$dockManager;
   }
-  public setOption(data: any) {
-    this.main?.initOption(data);
+  public setOption(data: any, isDefault: boolean = true) {
+    this.main?.initOption(data, isDefault);
     this.$dockManager.reset();
   }
   public constructor(private container: HTMLElement, main: IMain | undefined = undefined) {
@@ -32,5 +32,23 @@ export class VisualFlow {
   }
   public getMain(): IMain | undefined {
     return this.main;
+  }
+  newProject($name: string): void {
+    this.getMain()?.newProject($name);
+  }
+  openProject($name: string): void {
+    this.getMain()?.openProject($name);
+  }
+  getProjectAll(): any[] | undefined {
+    return this.getMain()?.getProjectAll();
+  }
+  setProjectOpen($data: any): void {
+    this.getMain()?.setProjectOpen($data);
+  }
+  importJson(data: any): void {
+    this.getMain()?.importJson(data);
+  }
+  exportJson(): any {
+    return this.getMain()?.exportJson();
   }
 }
