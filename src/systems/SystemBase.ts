@@ -128,8 +128,8 @@ export class SystemBase implements IMain {
 
     this.$control = controlTemp;
   }
-  renderHtml(node: Node): string {
-    return node.getOption()?.html;
+  renderHtml(node: Node, elParent: Element) {
+    elParent.innerHTML = node.getOption()?.html;
   }
   onSafe(event: string, callback: any) {
     this.events.onSafe(event, callback);

@@ -71,18 +71,33 @@ export class Node extends BaseFlow<DesginerView> {
   private renderUI() {
     if (this.elNode.contains(document.activeElement)) return;
     this.elNode.setAttribute('style', `display:none;`);
-    this.elNode.innerHTML = `
+    if (this.getOption()?.hideTitle === true) {
+      this.elNode.innerHTML = `
       <div class="node-left"></div>
       <div class="node-container">
         <div class="node-top"></div>
         <div class="node-content">
-        <div class="title">${this.option.icon} ${this.getName()}</div>
-        <div class="body">${this.option.html}</div>
+          <div class="body"></div>
         </div>
         <div class="node-bottom"></div>
       </div>
       <div class="node-right"></div>
     `;
+    } else {
+      this.elNode.innerHTML = `
+      <div class="node-left"></div>
+      <div class="node-container">
+        <div class="node-top"></div>
+        <div class="node-content">
+          <div class="title">${this.option.icon} ${this.getName()}</div>
+          <div class="body"></div>
+        </div>
+        <div class="node-bottom"></div>
+      </div>
+      <div class="node-right"></div>
+    `;
+    }
+
     const addNodeDot = (num: number | null | undefined, start: number, query: string) => {
       if (num) {
         let nodeQuery = this.elNode.querySelector(query);
@@ -102,7 +117,8 @@ export class Node extends BaseFlow<DesginerView> {
     addNodeDot(this.option?.dot?.bottom, 3000, '.node-bottom');
     addNodeDot(this.option?.dot?.right, 4000, '.node-right');
 
-    this.elContent = this.elNode.querySelector('.node-content .body');
+    this.elContent = this.elNode.querySelector('.node-content .body') || document.createElement('div');
+    this.parent.main.renderHtml(this, this.elContent);
     this.UpdateUI();
     geval(`(node,view)=>{${this.option.script}}`)(this, this.parent);
     this.arrDataView.forEach((item) => item.unBindData());

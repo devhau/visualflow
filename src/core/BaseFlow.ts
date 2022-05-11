@@ -25,7 +25,7 @@ export interface IMain extends IControlNode, IEvent {
   setControlChoose(key: string | null): void;
   getControlChoose(): string | null;
   getControlByKey(key: string): any;
-  renderHtml(node: Node): string;
+  renderHtml(node: Node, elParent: Element): void;
   initOption(option: any, isDefault: boolean): void;
   checkInitOption(): boolean;
   importJson(data: any): void;
