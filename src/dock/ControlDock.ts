@@ -1,4 +1,4 @@
-import { IMain } from "../core/BaseFlow";
+import { IMain } from "../core/index";
 import { DockBase } from "./DockBase";
 
 export class ControlDock extends DockBase {
@@ -7,7 +7,6 @@ export class ControlDock extends DockBase {
     this.elNode.classList.add('vs-control');
     this.BoxInfo('Control', (node: HTMLElement) => {
       let controls = this.main.getControlAll();
-      console.log(controls);
       Object.keys(controls).forEach((item: any) => {
         let nodeItem = document.createElement('div');
         nodeItem.classList.add('node-item');

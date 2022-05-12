@@ -1,4 +1,4 @@
-import { IMain } from './core/BaseFlow';
+import { IMain } from './core/index';
 import { DockManager } from './dock/DockManager';
 import { SystemBase } from './systems/SystemBase';
 export class VisualFlow {

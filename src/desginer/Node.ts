@@ -1,8 +1,7 @@
 import { BaseFlow, EventEnum, DataFlow, DataView } from "../core/index";
 import { Line } from "./Line";
 import { DesginerView } from "./DesginerView";
-
-const geval = eval;
+import { isFunction } from "../core/Utils";
 export class Node extends BaseFlow<DesginerView> {
   /**
    * GET SET for Data
@@ -68,7 +67,13 @@ export class Node extends BaseFlow<DesginerView> {
   public getOption() {
     return this.option;
   }
-  private renderUI() {
+  private renderUI(detail: any = null) {
+    if ((detail && ['x', 'y'].includes(detail.key))) {
+      setTimeout(() => {
+        this.UpdateUI();
+      });
+      return;
+    }
     if (this.elNode.contains(document.activeElement)) return;
     this.elNode.setAttribute('style', `display:none;`);
     if (this.getOption()?.hideTitle === true) {
@@ -120,10 +125,12 @@ export class Node extends BaseFlow<DesginerView> {
     this.elContent = this.elNode.querySelector('.node-content .body') || document.createElement('div');
     this.parent.main.renderHtml(this, this.elContent);
     this.UpdateUI();
-    geval(`(node,view)=>{${this.option.script}}`)(this, this.parent);
-    this.arrDataView.forEach((item) => item.unBindData());
+    this.arrDataView.forEach((item) => item.Delete());
+    if (isFunction(this.option.script)) {
+      this.option.script({ node: this, elNode: this.elNode, main: this.parent.main });
+    }
     if (this.elContent)
-      this.arrDataView = DataView.BindView(this.data, this.elContent);
+      this.arrDataView = DataView.BindElement(this.elContent, this.data, this.parent.main);
   }
   public openGroup() {
     if (this.CheckKey('node_group')) {

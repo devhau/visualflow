@@ -57,10 +57,17 @@ export class DesginerView extends FlowCore {
   }
   private group: any[] = [];
   public GetGroupName(): any[] {
-    return this.group.map((item) => this.GetDataById(item)?.Get('name'));
+    return this.group.map((item) => ({ id: item, text: this.GetDataById(item)?.Get('name') }));
   }
-  public BackGroup() {
-    this.group.splice(0, 1);
+  public BackGroup(id: any = null) {
+    let index = 1;
+    if (id) {
+      index = this.group.indexOf(id);
+      if (index < 0) index = 0;
+    }
+    if (index)
+      this.group.splice(0, index);
+    else this.group = [];
     this.toolbar.renderPathGroup();
     this.RenderUI();
   }

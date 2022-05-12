@@ -1,6 +1,4 @@
-import { IMain } from "../core/BaseFlow";
-import { EventEnum } from "../core/Constant";
-import { DataFlow } from "../core/DataFlow";
+import { DataFlow, EventEnum, IMain } from "../core/index";
 import { DockBase } from "./DockBase";
 
 export class ProjectDock extends DockBase {

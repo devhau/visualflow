@@ -18,11 +18,14 @@ export class DesginerView_Toolbar {
     if (len < 0) return;
     let text = document.createElement('span');
     text.innerHTML = `Root`;
+    text.addEventListener('click', (ev) => this.parent.BackGroup('Root'));
     this.elPathGroup.appendChild(text);
     this.btnBack.removeAttribute('style');
     for (let index = len; index >= 0; index--) {
       let text = document.createElement('span');
-      text.innerHTML = `>>${groups[index]}`;
+      text.innerHTML = `>>${groups[index].text}`;
+      text.setAttribute('group', groups[index].id);
+      text.addEventListener('click', (ev) => this.parent.BackGroup(groups[index].id));
       this.elPathGroup.appendChild(text);
     }
   }

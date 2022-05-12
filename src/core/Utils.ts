@@ -25,3 +25,6 @@ export const compareSort = (a: any, b: any) => {
   }
   return 0;
 }
+export const isFunction = (fn: any) => {
+  return fn && fn instanceof Function;
+}

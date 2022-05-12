@@ -20,7 +20,8 @@ export class SystemBase implements IMain {
         default: PropertyEnum.solution
       },
       name: {
-        default: () => `solution-${getTime()}`
+        default: () => `solution-${getTime()}`,
+        edit: true,
       },
       projects: {
         default: []
@@ -49,7 +50,8 @@ export class SystemBase implements IMain {
         default: () => getTime()
       },
       name: {
-        default: () => `Flow-${getTime()}`
+        default: () => `Flow-${getTime()}`,
+        edit: true,
       },
       key: {
         default: PropertyEnum.main
@@ -100,7 +102,7 @@ export class SystemBase implements IMain {
         },
         ...item
       };
-      this.$properties[`node_${item.key}`] = {
+      this.$properties[`${item.key}`] = {
         ...(item.properties || {}),
         id: {
           default: () => getTime()
@@ -109,7 +111,8 @@ export class SystemBase implements IMain {
           default: item.key
         },
         name: {
-          default: item.key
+          default: item.key,
+          edit: true,
         },
         x: {
           default: 0
@@ -195,11 +198,10 @@ export class SystemBase implements IMain {
   getControlNodeByKey(key: string) {
     return {
       ...this.getControlByKey(key),
-      properties: this.getPropertyByKey(`node_${key}`)
+      properties: this.getPropertyByKey(`${key}`)
     }
   }
   getPropertyByKey(key: string) {
     return this.$properties[key];
   }
-
 }

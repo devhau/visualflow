@@ -33,11 +33,12 @@ export const Control = {
     sort: 0,
     name: 'If',
     group: 'common',
-    html: '<div>condition:<br/><input node:model="condition"/></div>',
+    html: '<div>condition:<br/><input class="node-form-control" node:model="condition"/></div>',
     script: ``,
     properties: {
       condition: {
         key: "condition",
+        edit: true,
         default: ''
       }
     },
@@ -49,13 +50,10 @@ export const Control = {
     name: 'Group',
     group: 'common',
     html: '<div class="text-center p3"><button class="btnGoGroup node-form-control">Go</button></div>',
-    script: `node.elNode.querySelector('.btnGoGroup')?.addEventListener('click', () => {node.openGroup()});`,
-    properties: {
-      condition: {
-        key: "condition",
-        default: ''
-      }
+    script: ({ elNode, main, node }: any) => {
+      elNode.querySelector('.btnGoGroup')?.addEventListener('click', () => { node.openGroup() });
     },
+    properties: {},
     output: 2
   },
   node_option: {
@@ -78,13 +76,10 @@ export const Control = {
       <div class="node-content-row"><span>Họ tên :</span><span><span class="node-dot" node="50005"></span></span></div>
     </div>
     `,
-    script: `node.elNode.querySelector('.btnGoGroup')?.addEventListener('click', () => {node.openGroup()});`,
-    properties: {
-      condition: {
-        key: "condition",
-        default: ''
-      }
+    script: ({ elNode, main, node }: any) => {
+      elNode.querySelector('.btnGoGroup')?.addEventListener('click', () => { node.openGroup() });
     },
+    properties: {},
     output: 2
   },
   node_project: {
@@ -92,28 +87,26 @@ export const Control = {
     sort: 0,
     name: 'Project',
     group: 'common',
-    html: '<div class="text-center p3"><select class="listProject node-form-control" node:model="project"></select></div>',
-    script: `
-    const reloadProject = ()=>{
-      node.elNode.querySelector('.listProject').innerHtml='';
-      let option = document.createElement('option');
-      option.text='none';
-      option.value='';
-      node.elNode.querySelector('.listProject').appendChild(option);
-      node.parent.main.getProjectAll().forEach((item)=>{
-        let option = document.createElement('option');
-        option.text=item.Get('name');
-        option.value=item.Get('id');
-        node.elNode.querySelector('.listProject').appendChild(option);
-      });
-      node.elNode.querySelector('.listProject').value= node.data.Get('project')
-    }
-    reloadProject();
+    html: '<div class="text-center p3"><select class="node-form-control" node:model="project"></select></div>',
+    script: ({ elNode, main, node }: any) => {
 
-   ;`,
+    },
     properties: {
       project: {
         key: "project",
+        edit: true,
+        select: true,
+        dataSelect: ({ elNode, main, node }: any) => {
+          return main.getProjectAll().map((item: any) => {
+            return {
+              value: item.Get('id'),
+              text: item.Get('name')
+            };
+          })
+        },
+        script: ({ elNode, main, node }: any) => {
+
+        },
         default: ''
       }
     },

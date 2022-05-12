@@ -19,7 +19,6 @@ export class DataFlow {
     this.events.removeListener(event, callback);
   }
   dispatch(event: string, details: any) {
-
     this.events.dispatch(event, details);
   }
   public constructor(private property: IProperty | undefined = undefined, data: any = undefined) {
