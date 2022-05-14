@@ -9,20 +9,11 @@ npm i visualflow
 https://www.npmjs.com/package/visualflow
 
 ```
- let optionFlow = {
+  let optionFlow = {
     properties: {
       name: {
         default: ""
       },
-      x: {
-        default: 0
-      },
-      y: {
-        default: 0
-      },
-      zoom: {
-        default: 0
-      }
     },
     control: {
       node_note: {
@@ -38,5 +29,7 @@ https://www.npmjs.com/package/visualflow
       }
     }
   }
-  let flow = (new visualflow(document.getElementById("flow"), optionFlow));
+  let flow = (new visualflow.VisualFlow(document.getElementById("flow")));
+  flow.setOption(optionFlow);
+  flow.newProject();
 ```
