@@ -1,4 +1,4 @@
-import { IMain } from "../core/BaseFlow";
+import { IMain } from "../core/index";
 
 export class DockBase {
   public elNode: HTMLElement = document.createElement('div');

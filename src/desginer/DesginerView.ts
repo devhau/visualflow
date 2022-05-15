@@ -42,7 +42,6 @@ export class DesginerView extends FlowCore {
     this.lastGroupName = this.CurrentGroup();
     let groups = this.data.Get('groups');
     this.groupData = groups?.filter((item: DataFlow) => item.Get('group') == this.lastGroupName)?.[0];
-
     if (!this.groupData) {
       this.groupData = new DataFlow(this.main, {
         key: PropertyEnum.groupCavas,
@@ -68,21 +67,29 @@ export class DesginerView extends FlowCore {
     if (index)
       this.group.splice(0, index);
     else this.group = [];
-    this.toolbar.renderPathGroup();
     this.RenderUI();
+    this.main.dispatch(EventEnum.groupChange, {
+      group: this.GetGroupName()
+    });
   }
   public CurrentGroup() {
     let name = this.group?.[0];
-
     if (name && name != '') {
       return name;
     }
     return 'root';
   }
+
+  public CurrentGroupData() {
+    return this.GetDataById(this.CurrentGroup()) ?? this.data;
+  }
   public openGroup(id: any) {
     this.group = [id, ...this.group];
     this.toolbar.renderPathGroup();
     this.RenderUI();
+    this.main.dispatch(EventEnum.groupChange, {
+      group: this.GetGroupName()
+    });
   }
   private lineChoose: Line | undefined;
   public setLineChoose(node: Line | undefined): void {
@@ -106,7 +113,7 @@ export class DesginerView extends FlowCore {
       this.setLineChoose(undefined);
       this.dispatch(EventEnum.showProperty, { data: this.nodeChoose.data });
     } else {
-      this.dispatch(EventEnum.showProperty, { data: this.data });
+      this.dispatch(EventEnum.showProperty, { data: this.CurrentGroupData() });
     }
   }
   public getNodeChoose(): Node | undefined {
@@ -135,7 +142,7 @@ export class DesginerView extends FlowCore {
     this.nodes = [];
   }
   public GetDataAllNode(): any[] {
-    return (this.data.Get('nodes') ?? []);
+    return (this.data?.Get('nodes') ?? []);
   }
   public GetDataNode(): any[] {
     return this.GetDataAllNode().filter((item: DataFlow) => item.Get("group") === this.CurrentGroup());
@@ -162,7 +169,6 @@ export class DesginerView extends FlowCore {
     this.elNode.appendChild(this.elCanvas);
     this.elNode.appendChild(this.elToolbar);
     this.elNode.tabIndex = 0;
-    this.RenderUI();
     this.on(EventEnum.dataChange, this.RenderUI.bind(this));
     new DesginerView_Event(this);
     this.toolbar = new DesginerView_Toolbar(this);
@@ -188,15 +194,21 @@ export class DesginerView extends FlowCore {
       item.RenderLine();
     })
     this.UpdateUI();
+    this.toolbar.renderPathGroup();
   }
   public Open($data: DataFlow) {
+    if ($data == this.data) {
+      this.toolbar.renderPathGroup();
+      this.RenderUI();
+      return;
+    }
+    this.data?.dispatch(EventEnum.dataChange, (detail: any) => this.dispatch(EventEnum.dataChange, detail));
     this.data = $data;
+    this.data.on(EventEnum.dataChange, (detail: any) => this.dispatch(EventEnum.dataChange, detail));
     this.$lock = false;
     this.lastGroupName = '';
     this.groupData = undefined;
     this.group = [];
-    this.toolbar.renderPathGroup();
-    this.BindDataEvent();
     this.RenderUI();
   }
   public CalcX(number: any) {

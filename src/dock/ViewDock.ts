@@ -1,6 +1,5 @@
-import { IMain } from "../core/BaseFlow";
-import { EventEnum } from "../core/Constant";
-import { DesginerView } from "../desginer/DesginerView";
+import { EventEnum, IMain } from "../core/index";
+import { DesginerView } from "../desginer/index";
 import { DockBase } from "./DockBase";
 
 export class ViewDock extends DockBase {
@@ -12,7 +11,6 @@ export class ViewDock extends DockBase {
     this.view.on(EventEnum.showProperty, (data: any) => { main.dispatch(EventEnum.showProperty, data); });
     this.main.on(EventEnum.openProject, (item: any) => {
       this.view?.Open(item.data);
-      this.main.setProjectOpen(item.data);
     })
   }
 }

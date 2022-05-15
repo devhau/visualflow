@@ -4,8 +4,10 @@ export const EventEnum = {
   showProperty: "showProperty",
   openProject: "openProject",
   newProject: "newProject",
+  changeVariable: "changeVariable",
   change: "change",
-  dispose: "dispose"
+  dispose: "dispose",
+  groupChange: "groupChange",
 }
 
 export const DockEnum = {

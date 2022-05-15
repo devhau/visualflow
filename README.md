@@ -8,6 +8,8 @@ npm i visualflow
 
 https://www.npmjs.com/package/visualflow
 
+https://github.com/devhau/visualflow
+
 ```
   let optionFlow = {
     properties: {

@@ -286,3 +286,16 @@ body {
 .p3 {
   padding: 3px;
 }
+.vs-variable {
+  table {
+    .variable-name {
+      min-width: 300px;
+    }
+    .variable-scope {
+      min-width: 60px;
+    }
+    .variable-init-value {
+      min-width: 300px;
+    }
+  }
+}

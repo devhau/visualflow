@@ -1,6 +1,9 @@
-export class EventFlow {
+import { IEvent } from "./IFlow";
+
+export class EventFlow implements IEvent {
   private events: any = {};
-  public constructor() { }
+  public constructor() {
+  }
   public onSafe(event: string, callback: any) {
     this.removeListener(event, callback);
     this.on(event, callback);

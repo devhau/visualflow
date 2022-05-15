@@ -1,4 +1,4 @@
-import { IMain } from "./BaseFlow";
+import { IMain } from "./IFlow";
 import { EventEnum } from "./Constant";
 import { DataFlow } from "./DataFlow";
 import { isFunction } from "./Utils";
@@ -44,7 +44,7 @@ export class DataView {
     if (this.keyName && this.elNode) {
       this.data.on(`${EventEnum.dataChange}_${this.keyName}`, this.bindInput.bind(this));
       this.elNode.addEventListener('change', this.bindEvent.bind(this));
-      this.elNode.addEventListener('keypress', this.bindEvent.bind(this));
+      this.elNode.addEventListener('keydown', this.bindEvent.bind(this));
       if (this.property && this.property.select && isFunction(this.property.dataSelect)) {
         const options = this.property.dataSelect({ elNode: this.elNode, main: this.main, key: this.keyName }).map(({ value, text }: any) => {
           let option = document.createElement('option');

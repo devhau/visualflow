@@ -3,7 +3,7 @@ import { DockBase } from "./DockBase";
 
 export class PropertyDock extends DockBase {
   private lastData: DataFlow | undefined;
-  private hideKeys: string[] = ['lines', 'nodes', 'groups'];
+  private hideKeys: string[] = ['lines', 'nodes', 'groups', 'variable', 'x', 'y', 'zoom'];
   private sortKeys: string[] = ['id', 'key', 'name', 'group'];
   public constructor(container: HTMLElement, protected main: IMain) {
     super(container, main);

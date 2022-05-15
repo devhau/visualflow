@@ -1,4 +1,4 @@
-import { IProperty } from "./BaseFlow";
+import { IProperty } from "./IFlow";
 import { EventEnum } from "./Constant";
 import { EventFlow } from "./EventFlow";
 

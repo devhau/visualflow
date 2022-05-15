@@ -1,6 +1,4 @@
-import { IMain } from "../core/BaseFlow";
-import { EventEnum } from "../core/Constant";
-import { DataFlow } from "../core/DataFlow";
+import { IMain, EventEnum, DataFlow } from "../core/index";
 import { DockBase } from "./DockBase";
 
 export class TabDock extends DockBase {

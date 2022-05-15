@@ -1,10 +1,8 @@
-import { IMain } from "../core/BaseFlow";
-import { DockEnum } from "../core/Constant";
+import { IMain, DockEnum } from "../core/index";
 import { ControlDock } from "./ControlDock";
-import { DockBase } from "./DockBase";
+import { VariableDock } from "./VariableDock";
 import { ProjectDock } from "./ProjectDock";
 import { PropertyDock } from "./PropertyDock";
-import { TabDock } from "./TabDock";
 import { ViewDock } from "./ViewDock";
 
 export class DockManager {
@@ -16,8 +14,8 @@ export class DockManager {
     this.addDock(DockEnum.left, ProjectDock);
     this.addDock(DockEnum.right, PropertyDock);
     this.addDock(DockEnum.view, ViewDock);
-  //  this.addDock(DockEnum.top, TabDock);
-    this.addDock(DockEnum.bottom, DockBase);
+    //  this.addDock(DockEnum.top, TabDock);
+    this.addDock(DockEnum.bottom, VariableDock);
     this.RenderUI();
   }
   public addDock($key: string, $view: any) {
