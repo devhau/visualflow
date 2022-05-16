@@ -1,4 +1,4 @@
-import { DataFlow, IMain, compareSort, EventEnum, PropertyEnum, EventFlow, getTime, Variable } from "../core/index";
+import { DataFlow, IMain, compareSort, EventEnum, PropertyEnum, EventFlow, getTime, VariableNode } from "../core/index";
 import { Node } from "../desginer/index";
 import { Control } from "./control";
 
@@ -17,7 +17,7 @@ export class SystemBase implements IMain {
         default: () => getTime()
       },
       key: {
-        default: PropertyEnum.solution
+        default: () => PropertyEnum.solution
       },
       name: {
         default: () => `solution-${getTime()}`,
@@ -84,17 +84,28 @@ export class SystemBase implements IMain {
       },
     }
   }
-  addVariable(): Variable {
-    let varibale = new Variable();
+  newSolution($name: string = ''): void {
+    this.openSolution({ name: $name });
+  }
+  openSolution($data: any): void {
+    this.$data.InitData($data, this.getPropertyByKey(PropertyEnum.solution));
+    this.openProject(this.$data.Get('projects')?.[0] ?? {});
+  }
+  removeVariable(varibale: VariableNode): void {
+    this.$projectOpen?.Remove('variable', varibale);
+    this.dispatch(EventEnum.changeVariable, { data: varibale });
+  }
+  addVariable(): VariableNode {
+    let varibale = new VariableNode();
     this.$projectOpen?.Append('variable', varibale);
     return varibale;
   }
-  newVariable(): Variable {
+  newVariable(): VariableNode {
     let varibale = this.addVariable();
     this.dispatch(EventEnum.changeVariable, { data: varibale });
     return varibale;
   }
-  getVariable(): Variable[] {
+  getVariable(): VariableNode[] {
     let arr: any = [];
     if (this.$projectOpen) {
       arr = this.$projectOpen.Get("variable");
@@ -180,10 +191,21 @@ export class SystemBase implements IMain {
     return this.$data.Get('projects') ?? [];
   }
   importJson(data: any): void {
-    this.$data.InitData(data, this.getPropertyByKey(PropertyEnum.solution));
+    this.openSolution(data);
   }
   setProjectOpen($data: any): void {
-    this.$projectOpen = $data;
+    if (this.$projectOpen != $data) {
+      this.$projectOpen = $data;
+      this.dispatch(EventEnum.change, {
+        data: $data
+      });
+      this.dispatch(EventEnum.showProperty, {
+        data: $data
+      });
+      this.dispatch(EventEnum.openProject, {
+        data: $data
+      });
+    }
   }
   checkProjectOpen($data: any): boolean {
     return this.$projectOpen == $data;
@@ -205,25 +227,7 @@ export class SystemBase implements IMain {
       $project.InitData($data, this.getPropertyByKey(PropertyEnum.main));
       this.$data.Append('projects', $project);
     }
-    if ($project) {
-      this.$projectOpen = $project;
-
-      this.newVariable().name = 'var1';
-      this.newVariable().name = 'var2';
-      this.newVariable().name = 'var3';
-      this.newVariable().name = 'var4';
-      this.newVariable().name = 'var5';
-      this.dispatch(EventEnum.change, {
-        data: $project
-      });
-      this.dispatch(EventEnum.showProperty, {
-        data: $project
-      });
-      this.dispatch(EventEnum.openProject, {
-        data: $project
-      });
-    }
-
+    this.setProjectOpen($project);
   }
   public getProjectById($id: any) {
     return this.$data.Get('projects').filter((item: DataFlow) => item.Get('id') === $id)?.[0];

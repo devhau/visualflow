@@ -8,9 +8,6 @@ export class ViewDock extends DockBase {
     super(container, main);
 
     this.view = new DesginerView(this.elNode, main);
-    this.view.on(EventEnum.showProperty, (data: any) => { main.dispatch(EventEnum.showProperty, data); });
-    this.main.on(EventEnum.openProject, (item: any) => {
-      this.view?.Open(item.data);
-    })
+
   }
 }

@@ -287,15 +287,30 @@ body {
   padding: 3px;
 }
 .vs-variable {
+  input,
+  select {
+    width: 98%;
+    min-width: 10px;
+    margin: 0;
+    padding: 0;
+  }
+  max-height: 300px;
+  overflow: auto;
+
   table {
+    width: 100%;
+    border-collapse: collapse;
+    td {
+      text-align: center;
+    }
     .variable-name {
-      min-width: 300px;
+      max-width: 400px;
+    }
+    .variable-type {
+      max-width: 300px;
     }
     .variable-scope {
-      min-width: 60px;
-    }
-    .variable-init-value {
-      min-width: 300px;
+      max-width: 300px;
     }
   }
 }

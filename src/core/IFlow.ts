@@ -1,6 +1,6 @@
 
 import { Node } from "../desginer/Node";
-import { Variable } from "./Variable";
+import { VariableNode } from "./VariableNode";
 
 export interface IProperty {
   getPropertyByKey(key: string): any;
@@ -15,6 +15,8 @@ export interface IEvent {
   dispatch(event: string, details: any): void;
 }
 export interface IMain extends IControlNode, IEvent {
+  newSolution($name: string): void;
+  openSolution($data: any): void;
   newProject($name: string): void;
   openProject($name: string): void;
   getProjectAll(): any[];
@@ -29,7 +31,8 @@ export interface IMain extends IControlNode, IEvent {
   checkInitOption(): boolean;
   importJson(data: any): void;
   exportJson(): any;
-  getVariable(): Variable[];
-  addVariable(): Variable;
-  newVariable(): Variable;
+  getVariable(): VariableNode[];
+  addVariable(): VariableNode;
+  newVariable(): VariableNode;
+  removeVariable(varibale: VariableNode): void;
 }

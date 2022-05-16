@@ -1,7 +1,7 @@
 import { EventFlow } from "./EventFlow";
 
 export const ScopeRoot = "root";
-export class Variable extends EventFlow {
+export class VariableNode extends EventFlow {
   name: string = '';
   value: any;
   initalValue: any;

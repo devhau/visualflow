@@ -33,6 +33,12 @@ export class VisualFlow {
   public getMain(): IMain | undefined {
     return this.main;
   }
+  newSolution($name: string): void {
+    this.getMain()?.newSolution($name);
+  }
+  openSolution($data: any): void {
+    this.getMain()?.openSolution($data);
+  }
   newProject($name: string): void {
     this.getMain()?.newProject($name);
   }

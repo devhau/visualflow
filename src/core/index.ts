@@ -5,4 +5,4 @@ export { DataFlow } from './DataFlow';
 export { DataView } from './DataView';
 export { EventFlow } from './EventFlow';
 export { compareSort, getUuid, getTime, LOG, getDate, isFunction } from './Utils';
-export { Variable } from './Variable';
+export { VariableNode, ScopeRoot } from './VariableNode';

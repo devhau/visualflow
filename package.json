@@ -1,12 +1,12 @@
 {
   "name": "visualflow",
-  "version": "0.0.3",
-  "description": "visualflow",
+  "version": "0.0.5",
+  "description": "visualflow is Visual Flow Creator",
   "author": {
     "name": "Nguyen Van Hau",
     "email": "nguyenvanhaudev@gmail.com"
   },
-  "homepage": "https://github.com/devhau/visualflow",
+  "homepage": "https://visualflow.cc",
   "bugs": {
     "url": "https://github.com/devhau/visualflow/issues"
   },

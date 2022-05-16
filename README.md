@@ -1,6 +1,6 @@
 # Visual Flow Creator
 
-demo: https://devhau.github.io/visualflow/
+demo: https://visualflow.cc
 
 ```
 npm i visualflow
@@ -8,7 +8,7 @@ npm i visualflow
 
 https://www.npmjs.com/package/visualflow
 
-https://github.com/devhau/visualflow
+github: https://github.com/devhau/visualflow
 
 ```
   let optionFlow = {

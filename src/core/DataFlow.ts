@@ -164,12 +164,14 @@ export class DataFlow {
   }
   public toJson() {
     let rs: any = {};
+    if (!this.properties) {
+      this.properties = this.property?.getPropertyByKey(this.data.key);
+    }
     for (let key of Object.keys(this.properties)) {
       rs[key] = this.Get(key);
       if (rs[key] instanceof DataFlow) {
         rs[key] = rs[key].toJson();
-      }
-      if (Array.isArray(rs[key]) && (rs[key] as []).length > 0 && rs[key][0] instanceof DataFlow) {
+      } else if (Array.isArray(rs[key]) && (rs[key] as []).length > 0 && rs[key][0] instanceof DataFlow) {
         rs[key] = rs[key].map((item: DataFlow) => item.toJson());
       }
     }

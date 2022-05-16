@@ -12,6 +12,10 @@
 </head>
 
 <body>
+  <div style="position:fixed;z-index:999;left:40%;bottom:5px;">
+    https://github.com/devhau/visualflow<br />
+    https://visualflow.cc
+  </div>
   <div id="flow"></div>
 </body>
 <script>
@@ -37,7 +41,7 @@
   }
   let flow = (new visualflow.VisualFlow(document.getElementById("flow")));
   flow.setOption(optionFlow);
-  flow.newProject();
+  flow.newSolution();
 
 </script>
 

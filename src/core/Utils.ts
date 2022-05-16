@@ -28,3 +28,27 @@ export const compareSort = (a: any, b: any) => {
 export const isFunction = (fn: any) => {
   return fn && fn instanceof Function;
 }
+export const downloadObjectAsJson = (exportObj: any, exportName: string) => {
+  var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(exportObj));
+  var downloadAnchorNode = document.createElement('a');
+  downloadAnchorNode.setAttribute("href", dataStr);
+  downloadAnchorNode.setAttribute("download", exportName + ".json");
+  document.body.appendChild(downloadAnchorNode); // required for firefox
+  downloadAnchorNode.click();
+  downloadAnchorNode.remove();
+}
+export const readFileLocal = (callback: any) => {
+  var inputEl = document.createElement('input');
+  inputEl.setAttribute('type', 'file');
+  inputEl.addEventListener('change', function () {
+    var fr = new FileReader();
+    fr.onload = function () {
+      callback?.(fr.result);
+    }
+    if (inputEl && inputEl.files)
+      fr.readAsText(inputEl.files[0]);
+  });
+  document.body.appendChild(inputEl);
+  inputEl.click();
+  inputEl.remove();
+}

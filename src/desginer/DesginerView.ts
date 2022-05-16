@@ -169,9 +169,13 @@ export class DesginerView extends FlowCore {
     this.elNode.appendChild(this.elCanvas);
     this.elNode.appendChild(this.elToolbar);
     this.elNode.tabIndex = 0;
-    this.on(EventEnum.dataChange, this.RenderUI.bind(this));
     new DesginerView_Event(this);
     this.toolbar = new DesginerView_Toolbar(this);
+    this.on(EventEnum.dataChange, this.RenderUI.bind(this));
+    this.on(EventEnum.showProperty, (data: any) => { main.dispatch(EventEnum.showProperty, data); });
+    this.main.on(EventEnum.openProject, (item: any) => {
+      this.Open(item.data);
+    })
   }
 
   public updateView(x: any, y: any, zoom: any) {
