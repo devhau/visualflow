@@ -33,5 +33,5 @@ github: https://github.com/devhau/visualflow
   }
   let flow = (new visualflow.VisualFlow(document.getElementById("flow")));
   flow.setOption(optionFlow);
-  flow.newProject();
+  flow.newSolution();
 ```
