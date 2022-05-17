@@ -1,6 +1,6 @@
 # Visual Flow Creator
 
-demo: https://visualflow.cc
+demo: http://demo.visualflow.cc/
 
 ```
 npm i visualflow
