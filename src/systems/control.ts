@@ -4,7 +4,7 @@ export const Control = {
     sort: 0,
     name: 'Begin',
     group: 'common',
-    class: 'node-test',
+    class: '',
     html: '',
     dot: {
       top: 0,

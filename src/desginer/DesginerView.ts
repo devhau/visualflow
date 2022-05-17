@@ -2,7 +2,7 @@ import { DataFlow, FlowCore, IMain, EventEnum, PropertyEnum } from "../core/inde
 import { DesginerView_Event } from "./DesginerView_Event";
 import { DesginerView_Toolbar } from "./DesginerView_Toolbar";
 import { Line } from "./Line";
-import { Node } from "./Node";
+import { NodeItem } from "./NodeItem";
 
 export const Zoom = {
   max: 1.6,
@@ -48,10 +48,17 @@ export class DesginerView extends FlowCore {
         group: this.lastGroupName
       });
       this.data.Append('groups', this.groupData);
-      this.groupData.onSafe(EventEnum.dataChange, this.UpdateUI.bind(this));
     } else {
-      this.groupData.onSafe(EventEnum.dataChange, this.UpdateUI.bind(this));
     }
+    let dataGroup = this.GetDataById(this.lastGroupName);
+    if (dataGroup) {
+      dataGroup.onSafe(EventEnum.dataChange, () => {
+        this.UpdateUI.bind(this);
+        this.toolbar.renderPathGroup();
+        this.changeGroup();
+      });
+    }
+
     return this.groupData;
   }
   private group: any[] = [];
@@ -68,9 +75,7 @@ export class DesginerView extends FlowCore {
       this.group.splice(0, index);
     else this.group = [];
     this.RenderUI();
-    this.main.dispatch(EventEnum.groupChange, {
-      group: this.GetGroupName()
-    });
+    this.changeGroup();
   }
   public CurrentGroup() {
     let name = this.group?.[0];
@@ -83,13 +88,18 @@ export class DesginerView extends FlowCore {
   public CurrentGroupData() {
     return this.GetDataById(this.CurrentGroup()) ?? this.data;
   }
+  public changeGroup() {
+    setTimeout(() => {
+      this.main.dispatch(EventEnum.groupChange, {
+        group: this.GetGroupName()
+      });
+    });
+  }
   public openGroup(id: any) {
     this.group = [id, ...this.group];
     this.toolbar.renderPathGroup();
     this.RenderUI();
-    this.main.dispatch(EventEnum.groupChange, {
-      group: this.GetGroupName()
-    });
+    this.changeGroup();;
   }
   private lineChoose: Line | undefined;
   public setLineChoose(node: Line | undefined): void {
@@ -103,9 +113,9 @@ export class DesginerView extends FlowCore {
   public getLineChoose(): Line | undefined {
     return this.lineChoose;
   }
-  private nodes: Node[] = [];
-  private nodeChoose: Node | undefined;
-  public setNodeChoose(node: Node | undefined): void {
+  private nodes: NodeItem[] = [];
+  private nodeChoose: NodeItem | undefined;
+  public setNodeChoose(node: NodeItem | undefined): void {
     if (this.nodeChoose) this.nodeChoose.Active(false);
     this.nodeChoose = node;
     if (this.nodeChoose) {
@@ -116,20 +126,20 @@ export class DesginerView extends FlowCore {
       this.dispatch(EventEnum.showProperty, { data: this.CurrentGroupData() });
     }
   }
-  public getNodeChoose(): Node | undefined {
+  public getNodeChoose(): NodeItem | undefined {
     return this.nodeChoose;
   }
-  public AddNodeItem(data: any): Node {
+  public AddNodeItem(data: any): NodeItem {
     return this.AddNode(data.Get('key'), data);
   }
-  public AddNode(keyNode: string, data: any = {}): Node {
-    return this.InsertNode(new Node(this, keyNode, data));
+  public AddNode(keyNode: string, data: any = {}): NodeItem {
+    return this.InsertNode(new NodeItem(this, keyNode, data));
   }
-  public InsertNode(node: Node): Node {
+  public InsertNode(node: NodeItem): NodeItem {
     this.nodes = [...this.nodes, node];
     return node;
   }
-  public RemoveNode(node: Node) {
+  public RemoveNode(node: NodeItem) {
     var index = this.nodes.indexOf(node);
     this.data.Remove('nodes', node);
     if (index > -1) {
@@ -185,7 +195,7 @@ export class DesginerView extends FlowCore {
     this.updateView(this.getX(), this.getY(), this.getZoom());
   }
   public RenderUI(detail: any = {}) {
-    if (detail.sender && detail.sender instanceof Node) return;
+    if (detail.sender && detail.sender instanceof NodeItem) return;
     if (detail.sender && detail.sender instanceof DesginerView) {
       this.UpdateUI();
       return;
@@ -194,7 +204,7 @@ export class DesginerView extends FlowCore {
     this.GetDataNode().forEach((item: any) => {
       this.AddNodeItem(item);
     });
-    this.GetAllNode().forEach((item: Node) => {
+    this.GetAllNode().forEach((item: NodeItem) => {
       item.RenderLine();
     })
     this.UpdateUI();
@@ -221,10 +231,10 @@ export class DesginerView extends FlowCore {
   public CalcY(number: any) {
     return number * (this.elCanvas.clientHeight / (this.elNode?.clientHeight * this.getZoom()));
   }
-  public GetAllNode(): Node[] {
+  public GetAllNode(): NodeItem[] {
     return this.nodes || [];
   }
-  public GetNodeById(id: string): Node | undefined {
+  public GetNodeById(id: string): NodeItem | undefined {
     return this.GetAllNode().filter(node => node.GetId() == id)?.[0];
   }
 
@@ -232,7 +242,7 @@ export class DesginerView extends FlowCore {
     return this.GetDataAllNode().filter((item) => item.Get('id') === id)?.[0];
   }
   checkOnlyNode(key: string) {
-    return (this.main.getControlByKey(key).onlyNode) && this.nodes.filter(item => item.CheckKey(key)).length > 0;
+    return (this.main.getControlByKey(key).onlyNodeItem) && this.nodes.filter(item => item.CheckKey(key)).length > 0;
   }
   public zoom_refresh(flg: any = 0) {
     let temp_zoom = flg == 0 ? Zoom.default : (this.getZoom() + Zoom.value * flg);

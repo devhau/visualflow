@@ -1,5 +1,5 @@
 import { DataFlow, IMain, compareSort, EventEnum, PropertyEnum, EventFlow, getTime, VariableNode } from "../core/index";
-import { Node } from "../desginer/index";
+import { NodeItem } from "../desginer/index";
 import { Control } from "./control";
 
 export class SystemBase implements IMain {
@@ -116,6 +116,9 @@ export class SystemBase implements IMain {
     }
     return arr;
   }
+  updateVariable(vars: VariableNode[]): void {
+    this.$projectOpen?.Set('variable', vars);
+  }
   exportJson() {
     return this.$data.toJson();
   }
@@ -166,7 +169,7 @@ export class SystemBase implements IMain {
 
     this.$control = controlTemp;
   }
-  renderHtml(node: Node, elParent: Element) {
+  renderHtml(node: NodeItem, elParent: Element) {
     elParent.innerHTML = node.getOption()?.html;
   }
   onSafe(event: string, callback: any) {

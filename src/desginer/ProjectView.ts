@@ -2,7 +2,7 @@ import { EventEnum, IMain, DataFlow } from "../core/index";
 
 export class ProjectView {
   public constructor(public elNode: HTMLElement, public main: IMain) {
-    this.elNode.classList.add('vs-variable');
+    this.elNode.classList.add('vs-project');
     this.main.on(EventEnum.changeVariable, this.Render.bind(this));
     this.main.on(EventEnum.openProject, this.Render.bind(this));
   }

@@ -2,7 +2,7 @@ import { BaseFlow, EventEnum, DataFlow, DataView } from "../core/index";
 import { Line } from "./Line";
 import { DesginerView } from "./DesginerView";
 import { isFunction } from "../core/Utils";
-export class Node extends BaseFlow<DesginerView> {
+export class NodeItem extends BaseFlow<DesginerView> {
   /**
    * GET SET for Data
    */
@@ -27,7 +27,7 @@ export class Node extends BaseFlow<DesginerView> {
   public getDataLine() {
     return this.data.Get('lines') ?? [];
   }
-  public checkLineExists(fromIndex: number, to: Node, toIndex: Number) {
+  public checkLineExists(fromIndex: number, to: NodeItem, toIndex: Number) {
     return this.arrLine.filter((item: Line) => {
       if (!item.temp && item.to == to && item.toIndex == toIndex && item.fromIndex == fromIndex) {
         return true;
@@ -49,7 +49,7 @@ export class Node extends BaseFlow<DesginerView> {
     if (data instanceof DataFlow) {
       this.data = data;
     } else {
-      this.data.InitData(data, this.properties);
+      this.data.InitData({ ...data, name: this.option.name }, this.properties);
       this.parent.data.Append('nodes', this.data);
     }
     this.data.on(EventEnum.dataChange, this.renderUI.bind(this));
@@ -58,10 +58,11 @@ export class Node extends BaseFlow<DesginerView> {
     if (this.option.class) {
       this.elNode.classList.add(this.option.class);
     }
-    this.parent.elCanvas.appendChild(this.elNode);
     this.elNode.setAttribute('node-id', this.GetId());
+    this.elNode.setAttribute('style', 'display:none');
     this.elNode.addEventListener('mousedown', () => this.parent.setNodeChoose(this));
     this.elNode.addEventListener('touchstart', () => this.parent.setNodeChoose(this));
+    this.parent.elCanvas.appendChild(this.elNode);
     this.renderUI();
   }
   public getOption() {

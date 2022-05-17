@@ -1,5 +1,5 @@
 import { DataFlow, PropertyEnum } from "../core/index";
-import { Node } from "./Node";
+import { NodeItem } from "./NodeItem";
 
 export class Line {
   public elNode: SVGElement = document.createElementNS('http://www.w3.org/2000/svg', "svg");
@@ -7,7 +7,7 @@ export class Line {
   private data: DataFlow = new DataFlow();
   private curvature: number = 0.5;
   public temp: boolean = false;
-  public constructor(public from: Node, public fromIndex: number = 0, public to: Node | undefined = undefined, public toIndex: number = 0, data: any = null) {
+  public constructor(public from: NodeItem, public fromIndex: number = 0, public to: NodeItem | undefined = undefined, public toIndex: number = 0, data: any = null) {
     this.elPath.classList.add("main-path");
     this.elPath.addEventListener('mousedown', this.StartSelected.bind(this));
     this.elPath.addEventListener('touchstart', this.StartSelected.bind(this));
@@ -38,7 +38,7 @@ export class Line {
   public updateTo(to_x: number, to_y: number) {
     if (!this.from || this.from.elNode == null) return;
     let { x: from_x, y: from_y }: any = this.from.getPostisionDot(this.fromIndex);
-    var lineCurve = this.createCurvature(from_x, from_y, to_x, to_y, this.curvature, 'openclose');
+    var lineCurve = this.createCurvature(from_x, from_y, to_x, to_y, this.curvature, 'other');
     this.elPath.setAttributeNS(null, 'd', lineCurve);
   }
   public UpdateUI(): Line {
@@ -118,7 +118,7 @@ export class Line {
   public StartSelected(e: any) {
     this.from.parent.setLineChoose(this)
   }
-  public setNodeTo(node: Node | undefined, toIndex: number) {
+  public setNodeTo(node: NodeItem | undefined, toIndex: number) {
     this.to = node;
     this.toIndex = toIndex;
   }

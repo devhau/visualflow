@@ -1,4 +1,6 @@
 export { DesginerView } from './DesginerView';
 export { Line } from './Line';
-export { Node } from './Node';
+export { NodeItem } from './NodeItem';
 export { VariableView } from './VariableView';
+export { ToolboxView } from './ToolboxView';
+export { ProjectView } from './ProjectView';

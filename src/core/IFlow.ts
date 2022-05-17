@@ -1,5 +1,5 @@
 
-import { Node } from "../desginer/Node";
+import { NodeItem } from "../desginer/NodeItem";
 import { VariableNode } from "./VariableNode";
 
 export interface IProperty {
@@ -26,12 +26,13 @@ export interface IMain extends IControlNode, IEvent {
   setControlChoose(key: string | null): void;
   getControlChoose(): string | null;
   getControlByKey(key: string): any;
-  renderHtml(node: Node, elParent: Element): void;
+  renderHtml(node: NodeItem, elParent: Element): void;
   initOption(option: any, isDefault: boolean): void;
   checkInitOption(): boolean;
   importJson(data: any): void;
   exportJson(): any;
   getVariable(): VariableNode[];
+  updateVariable(vars: VariableNode[]): void;
   addVariable(): VariableNode;
   newVariable(): VariableNode;
   removeVariable(varibale: VariableNode): void;
