@@ -16,7 +16,7 @@ export class VariableDock extends DockBase {
       $nodeRight?.appendChild(buttonNew);
       buttonNew.innerHTML = `New Variable`;
       buttonNew.addEventListener('click', () => {
-        this.main.newVariable().name = `var${getTime()}`;
+        this.main.newVariable();
       });
     }
   }

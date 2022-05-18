@@ -5,13 +5,17 @@ import { isFunction } from "./Utils";
 
 export const TagView = ['SPAN', 'DIV', 'P', 'TEXTAREA'];
 export class DataView {
-  private elNode: Element | undefined;
+  private elNode: HTMLElement | undefined;
   private property: any;
+  private elSuggestions: Element | undefined;
+  private elSuggestionsContent: Element | undefined;
+  private nodeEditor: HTMLElement | undefined;
   public constructor(private el: Element, private data: DataFlow, private main: IMain, private keyName: string | null = null) {
     if (this.keyName) {
       if (!el.getAttribute('node:model')) {
         this.property = this.main.getPropertyByKey(this.data.Get('key'))?.[this.keyName];
-        this.el.classList.add('node-editor');
+        this.nodeEditor = el as HTMLElement;
+        this.nodeEditor.classList.add('node-editor');
         if (this.property.edit) {
           if (this.property.select) {
             this.elNode = document.createElement('select');
@@ -23,28 +27,81 @@ export class DataView {
           this.elNode = document.createElement('span');
         }
         this.elNode.setAttribute('node:model', this.keyName);
+
         this.el.appendChild(this.elNode);
       }
     } else {
       this.keyName = el?.getAttribute('node:model');
       if (this.keyName) {
         this.property = this.main.getPropertyByKey(this.data.Get('key'))?.[this.keyName];
-        this.elNode = this.el;
-        let nodeEditor = document.createElement('span');
-        nodeEditor.classList.add('node-editor');
-        el.parentElement?.insertBefore(nodeEditor, el);
+        this.elNode = this.el as HTMLElement;
+        this.nodeEditor = document.createElement('span');
+        this.nodeEditor.classList.add('node-editor');
+        el.parentElement?.insertBefore(this.nodeEditor, el);
         el.parentElement?.removeChild(el);
-        nodeEditor.appendChild(this.elNode);
+        this.nodeEditor.appendChild(this.elNode);
       }
     }
+    this.elSuggestions = document.createElement('div');
+    this.elSuggestions.classList.add('node-editor_suggestions');
+    this.elSuggestionsContent = document.createElement('div');
+    this.elSuggestionsContent.classList.add('suggestions_content');
+    this.elSuggestions.appendChild(this.elSuggestionsContent);
+    this.showSuggestions(false);
     if (this.keyName)
       this.bindData();
+  }
+  private checkShowSuggestions() {
+    if (this.elSuggestionsContent) {
+      this.elSuggestionsContent.innerHTML = '';
+      var arr = this.main.getVariable();
+      if (!arr || arr.length == 0) {
+        this.showSuggestions(false);
+        return;
+      }
+      let elUl = document.createElement('ul');
+      for (let item of arr) {
+        let elLi = document.createElement('li');
+        elLi.innerHTML = item.Get('name');
+        elUl.appendChild(elLi);
+      }
+      this.elSuggestionsContent.appendChild(elUl);
+    }
+    let txt: any = (this.elNode as any).value;
+    let selectionStart = (this.elNode as any).selectionStart;
+    if (txt) {
+      let startIndex = txt.lastIndexOf("${", selectionStart);
+      let endIndex = txt.lastIndexOf("}", selectionStart);
+      if (endIndex < startIndex)
+        this.showSuggestions(true);
+      else
+        this.showSuggestions(false);
+    }
+  }
+  private showSuggestions(flg: boolean = true) {
+    if (!this.elSuggestions) return;
+    if (flg) {
+      this.elSuggestions.removeAttribute('style');
+    } else {
+      this.elSuggestions.setAttribute('style', `display:none;`);
+    }
   }
   private bindData() {
     if (this.keyName && this.elNode) {
       this.data.on(`${EventEnum.dataChange}_${this.keyName}`, this.bindInput.bind(this));
       this.elNode.addEventListener('change', this.bindEvent.bind(this));
       this.elNode.addEventListener('keydown', this.bindEvent.bind(this));
+      this.elNode.addEventListener('focus', () => {
+        if (this.elSuggestions)
+          this.elNode?.parentElement?.appendChild(this.elSuggestions);
+      });
+      this.elNode.addEventListener('blur', () => {
+        if (this.elSuggestions)
+          this.elNode?.parentElement?.removeChild(this.elSuggestions);
+      });
+      this.elNode.addEventListener("select", () => {
+        this.checkShowSuggestions();
+      })
       if (this.property && this.property.select && isFunction(this.property.dataSelect)) {
         const options = this.property.dataSelect({ elNode: this.elNode, main: this.main, key: this.keyName }).map(({ value, text }: any) => {
           let option = document.createElement('option');
@@ -55,7 +112,6 @@ export class DataView {
         for (let option of options) {
           this.elNode.appendChild(option);
         }
-
       }
       if (this.property && isFunction(this.property.script)) {
         this.property.script({ elNode: this.elNode, main: this.main, key: this.keyName });
@@ -71,7 +127,6 @@ export class DataView {
         (this.elNode as any).value = value;
       }
     }
-
   }
   private bindInput({ value, sender }: any) {
     if (sender !== this && this.elNode && sender.elNode !== this.elNode) {
@@ -82,6 +137,9 @@ export class DataView {
     setTimeout(() => {
       if (this.keyName && this.elNode) {
         this.data.Set(this.keyName, (this.elNode as any).value, this);
+
+
+        this.checkShowSuggestions();
       }
     });
   }

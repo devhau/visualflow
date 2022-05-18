@@ -1,6 +1,6 @@
 
 import { NodeItem } from "../desginer/NodeItem";
-import { VariableNode } from "./VariableNode";
+import { DataFlow } from "./DataFlow";
 
 export interface IProperty {
   getPropertyByKey(key: string): any;
@@ -31,9 +31,9 @@ export interface IMain extends IControlNode, IEvent {
   checkInitOption(): boolean;
   importJson(data: any): void;
   exportJson(): any;
-  getVariable(): VariableNode[];
-  updateVariable(vars: VariableNode[]): void;
-  addVariable(): VariableNode;
-  newVariable(): VariableNode;
-  removeVariable(varibale: VariableNode): void;
+  getVariable(): DataFlow[];
+  addVariable(): DataFlow;
+  newVariable(): DataFlow;
+  removeVariable(varibale: DataFlow): void;
+  getGroupCurrent(): any;
 }

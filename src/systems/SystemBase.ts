@@ -1,4 +1,4 @@
-import { DataFlow, IMain, compareSort, EventEnum, PropertyEnum, EventFlow, getTime, VariableNode } from "../core/index";
+import { DataFlow, IMain, compareSort, EventEnum, PropertyEnum, EventFlow, getTime, ScopeRoot } from "../core/index";
 import { NodeItem } from "../desginer/index";
 import { Control } from "./control";
 
@@ -10,6 +10,7 @@ export class SystemBase implements IMain {
   private events: EventFlow = new EventFlow();
   private $controlChoose: string | null = null;
   private $checkOption: boolean = false;
+  private $group: any;
   public constructor() {
     //set project
     this.$properties[PropertyEnum.solution] = {
@@ -83,6 +84,26 @@ export class SystemBase implements IMain {
         default: 1
       },
     }
+    this.$properties[PropertyEnum.variable] = {
+      key: {
+        default: PropertyEnum.variable
+      },
+      name: {
+        default: () => `var${getTime()}`
+      },
+      type: {
+        default: () => 'text'
+      },
+      scope: {
+        default: () => ScopeRoot
+      },
+      initalValue: {
+        default: ''
+      },
+    }
+    this.onSafe(EventEnum.groupChange, ({ group }: any) => {
+      this.$group = group;
+    })
   }
   newSolution($name: string = ''): void {
     this.openSolution({ name: $name });
@@ -91,21 +112,21 @@ export class SystemBase implements IMain {
     this.$data.InitData($data, this.getPropertyByKey(PropertyEnum.solution));
     this.openProject(this.$data.Get('projects')?.[0] ?? {});
   }
-  removeVariable(varibale: VariableNode): void {
+  removeVariable(varibale: DataFlow): void {
     this.$projectOpen?.Remove('variable', varibale);
     this.dispatch(EventEnum.changeVariable, { data: varibale });
   }
-  addVariable(): VariableNode {
-    let varibale = new VariableNode();
+  addVariable(): DataFlow {
+    let varibale = new DataFlow(this, { key: PropertyEnum.variable });
     this.$projectOpen?.Append('variable', varibale);
     return varibale;
   }
-  newVariable(): VariableNode {
+  newVariable(): DataFlow {
     let varibale = this.addVariable();
     this.dispatch(EventEnum.changeVariable, { data: varibale });
     return varibale;
   }
-  getVariable(): VariableNode[] {
+  getVariable(): DataFlow[] {
     let arr: any = [];
     if (this.$projectOpen) {
       arr = this.$projectOpen.Get("variable");
@@ -114,10 +135,10 @@ export class SystemBase implements IMain {
         this.$projectOpen.Set('variable', arr);
       }
     }
-    return arr;
+    return arr.filter((item: any) => this.getGroupCurrent().findIndex((_group: any) => _group.id == item.Get('scope')) > -1);
   }
-  updateVariable(vars: VariableNode[]): void {
-    this.$projectOpen?.Set('variable', vars);
+  getGroupCurrent(): any {
+    return this.$group ?? [];
   }
   exportJson() {
     return this.$data.toJson();

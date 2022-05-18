@@ -25,3 +25,5 @@ export const PropertyEnum = {
   variable: 'main_variable',
   groupCavas: "main_groupCavas",
 };
+
+export const ScopeRoot = "root";

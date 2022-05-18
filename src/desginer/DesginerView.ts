@@ -1,4 +1,4 @@
-import { DataFlow, FlowCore, IMain, EventEnum, PropertyEnum } from "../core/index";
+import { DataFlow, FlowCore, IMain, EventEnum, PropertyEnum, ScopeRoot } from "../core/index";
 import { DesginerView_Event } from "./DesginerView_Event";
 import { DesginerView_Toolbar } from "./DesginerView_Toolbar";
 import { Line } from "./Line";
@@ -63,7 +63,7 @@ export class DesginerView extends FlowCore {
   }
   private group: any[] = [];
   public GetGroupName(): any[] {
-    return this.group.map((item) => ({ id: item, text: this.GetDataById(item)?.Get('name') }));
+    return [...this.group.map((item) => ({ id: item, text: this.GetDataById(item)?.Get('name') })), { id: ScopeRoot, text: ScopeRoot }];
   }
   public BackGroup(id: any = null) {
     let index = 1;
@@ -94,10 +94,10 @@ export class DesginerView extends FlowCore {
         group: this.GetGroupName()
       });
     });
+    this.toolbar.renderPathGroup();
   }
   public openGroup(id: any) {
     this.group = [id, ...this.group];
-    this.toolbar.renderPathGroup();
     this.RenderUI();
     this.changeGroup();;
   }
@@ -185,7 +185,8 @@ export class DesginerView extends FlowCore {
     this.on(EventEnum.showProperty, (data: any) => { main.dispatch(EventEnum.showProperty, data); });
     this.main.on(EventEnum.openProject, (item: any) => {
       this.Open(item.data);
-    })
+    });
+    this.changeGroup();
   }
 
   public updateView(x: any, y: any, zoom: any) {
@@ -208,11 +209,9 @@ export class DesginerView extends FlowCore {
       item.RenderLine();
     })
     this.UpdateUI();
-    this.toolbar.renderPathGroup();
   }
   public Open($data: DataFlow) {
     if ($data == this.data) {
-      this.toolbar.renderPathGroup();
       this.RenderUI();
       return;
     }
@@ -224,6 +223,7 @@ export class DesginerView extends FlowCore {
     this.groupData = undefined;
     this.group = [];
     this.RenderUI();
+    this.changeGroup();
   }
   public CalcX(number: any) {
     return number * (this.elCanvas.clientWidth / (this.elNode?.clientWidth * this.getZoom()));

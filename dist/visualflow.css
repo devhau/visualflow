@@ -15,6 +15,32 @@ body {
   --background-box-title: #f7f7f7;
 }
 
+.node-editor {
+  position: relative;
+}
+.node-editor .node-editor_suggestions {
+  position: relative;
+  width: 100%;
+}
+.node-editor .node-editor_suggestions .suggestions_content {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background-color: #eee;
+  border: 1px solid #000;
+  z-index: 999;
+  border-radius: 2px;
+}
+.node-editor .node-editor_suggestions .suggestions_content ul,
+.node-editor .node-editor_suggestions .suggestions_content li {
+  margin: 0;
+  padding: 0;
+}
+.node-editor .node-editor_suggestions .suggestions_content ul {
+  list-style: none;
+}
+
 .vs-container {
   width: 100%;
   height: 100%;
