@@ -117,7 +117,7 @@ export class SystemBase implements IMain {
     this.dispatch(EventEnum.changeVariable, { data: varibale });
   }
   addVariable(): DataFlow {
-    let varibale = new DataFlow(this, { key: PropertyEnum.variable });
+    let varibale = new DataFlow(this, { key: PropertyEnum.variable, scope: this.getGroupCurrent()?.[0]?.id });
     this.$projectOpen?.Append('variable', varibale);
     return varibale;
   }
