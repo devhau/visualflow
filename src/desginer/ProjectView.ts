@@ -14,10 +14,7 @@ export class ProjectView {
       nodeItem.classList.add('node-item');
       nodeItem.innerHTML = `${item.Get('name')}`;
       nodeItem.setAttribute('data-project-id', item.Get('id'));
-      item.removeListener(`${EventEnum.dataChange}_name`, () => {
-        nodeItem.innerHTML = `${item.Get('name')}`;
-      });
-      item.on(`${EventEnum.dataChange}_name`, () => {
+      item.onSafe(`${EventEnum.dataChange}_name`, () => {
         nodeItem.innerHTML = `${item.Get('name')}`;
       });
       if (this.main.checkProjectOpen(item)) {

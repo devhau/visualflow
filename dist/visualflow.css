@@ -78,12 +78,11 @@ body {
 .vs-container .vs-boxinfo .vs-boxinfo_content {
   flex: auto;
   padding: 7px 5px;
-  min-height: 200px;
+  min-height: 100px;
   border-bottom: 2px solid var(--border-color);
 }
 .vs-container .vs-dock {
   display: flex;
-  border: 0.5px solid var(--border-color-dock);
   flex-direction: column;
 }
 .vs-container .vs-dock :last-child {
@@ -132,11 +131,14 @@ body {
   cursor: pointer;
 }
 
+.bg-z {
+  background-size: 25px 25px;
+  background-image: linear-gradient(to right, #f1f1f1 1px, transparent 1px), linear-gradient(to bottom, #f1f1f1 1px, transparent 1px);
+}
+
 .desginer-view {
   height: 100%;
   background: var(--background-color);
-  background-size: 25px 25px;
-  background-image: linear-gradient(to right, #f1f1f1 1px, transparent 1px), linear-gradient(to bottom, #f1f1f1 1px, transparent 1px);
   overflow: hidden;
   position: relative;
 }
@@ -168,10 +170,6 @@ body {
   overflow: visible !important;
 }
 .desginer-view .desginer-toolbar {
-  position: absolute;
-  left: 0;
-  top: 0;
-  z-index: 999;
   width: 100%;
   display: flex;
 }
@@ -344,4 +342,76 @@ body {
 }
 .vs-variable table .variable-scope {
   max-width: 300px;
+}
+
+.vs-tab-project {
+  display: flex;
+  width: 100%;
+  flex-direction: row;
+  background: #eee;
+}
+.vs-tab-project .tab-project__search {
+  flex: none;
+  margin: 0px 5px;
+}
+.vs-tab-project .tab-project__list {
+  flex: auto;
+  display: flex;
+  height: 35px;
+}
+.vs-tab-project .tab-project__list .tab-project_button {
+  flex: none !important;
+  padding: 2px;
+}
+.vs-tab-project .tab-project__list .tab-project_button button {
+  padding: 5px;
+}
+.vs-tab-project .tab-project__list .tab-project_warp {
+  width: 100%;
+  overflow: hidden;
+  position: relative;
+  padding-right: 5px;
+}
+.vs-tab-project .tab-project__list .tab-project_warp .tab-project__body {
+  height: 100%;
+  position: absolute;
+  white-space: nowrap;
+}
+.vs-tab-project .tab-project__list .tab-project_warp .tab-project__body .project-item {
+  cursor: pointer;
+  text-align: center;
+  min-width: 120px;
+  display: inline-block;
+  padding: 5px;
+  margin: 1px;
+  background: #ccc;
+  border: 1px solid #cacaca;
+}
+.vs-tab-project .tab-project__list .tab-project_warp .tab-project__body .project-item:hover {
+  background: #bbb;
+}
+.vs-tab-project .tab-project__list .tab-project_warp .tab-project__body .project-item.active {
+  border-bottom: none;
+  background: #fff;
+  margin: 1px 1px 0px 1px;
+  height: 40px;
+}
+
+.node-box .node-box_title {
+  padding: 5px;
+  margin: 2px 0px 0px 0px;
+  cursor: pointer;
+  text-transform: capitalize;
+  background: #eee;
+}
+.node-box .node-box_title:hover {
+  background: #bbb;
+}
+.node-box .node-box_boby {
+  padding-left: 20px;
+  padding-right: 5px;
+  display: none;
+}
+.node-box.active .node-box_boby {
+  display: block;
 }

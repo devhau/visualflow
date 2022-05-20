@@ -11,6 +11,7 @@ export class SystemBase implements IMain {
   private $controlChoose: string | null = null;
   private $checkOption: boolean = false;
   private $group: any;
+  private $indexProject: number = -1;
   public constructor() {
     //set project
     this.$properties[PropertyEnum.solution] = {
@@ -51,7 +52,7 @@ export class SystemBase implements IMain {
         default: () => getTime()
       },
       name: {
-        default: () => `Flow-${getTime()}`,
+        default: () => `Flow ${this.$indexProject++}`,
         edit: true,
       },
       key: {
@@ -106,6 +107,7 @@ export class SystemBase implements IMain {
     })
   }
   newSolution($name: string = ''): void {
+    this.$indexProject = 1;
     this.openSolution({ name: $name });
   }
   openSolution($data: any): void {
@@ -188,7 +190,6 @@ export class SystemBase implements IMain {
         }
       };
     });
-
     this.$control = controlTemp;
   }
   renderHtml(node: NodeItem, elParent: Element) {

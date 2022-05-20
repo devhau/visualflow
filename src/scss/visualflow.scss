@@ -73,13 +73,12 @@ body {
     .vs-boxinfo_content {
       flex: auto;
       padding: 7px 5px;
-      min-height: 200px;
+      min-height: 100px;
       border-bottom: 2px solid var(--border-color);
     }
   }
   .vs-dock {
     display: flex;
-    border: 0.5px solid var(--border-color-dock);
     flex-direction: column;
     :last-child {
       flex: auto;
@@ -128,12 +127,15 @@ body {
     }
   }
 }
-.desginer-view {
-  height: 100%;
-  background: var(--background-color);
+.bg-z {
   background-size: 25px 25px;
   background-image: linear-gradient(to right, #f1f1f1 1px, transparent 1px),
     linear-gradient(to bottom, #f1f1f1 1px, transparent 1px);
+}
+.desginer-view {
+  height: 100%;
+  background: var(--background-color);
+
   overflow: hidden;
   position: relative;
   &:focus-visible {
@@ -164,10 +166,6 @@ body {
     }
   }
   .desginer-toolbar {
-    position: absolute;
-    left: 0;
-    top: 0;
-    z-index: 999;
     width: 100%;
     display: flex;
     .toolbar-group {
@@ -335,6 +333,80 @@ body {
     }
     .variable-scope {
       max-width: 300px;
+    }
+  }
+}
+.vs-tab-project {
+  display: flex;
+  width: 100%;
+  flex-direction: row;
+  background: #eee;
+  .tab-project__search {
+    flex: none;
+    margin: 0px 5px;
+  }
+  .tab-project__list {
+    flex: auto;
+    display: flex;
+    height: 35px;
+    .tab-project_button {
+      flex: none !important;
+      padding: 2px;
+      button {
+        padding: 5px;
+      }
+    }
+    .tab-project_warp {
+      width: 100%;
+      overflow: hidden;
+      position: relative;
+      padding-right: 5px;
+      .tab-project__body {
+        height: 100%;
+        position: absolute;
+        white-space: nowrap;
+        .project-item {
+          cursor: pointer;
+          text-align: center;
+          min-width: 120px;
+          display: inline-block;
+          padding: 5px;
+          margin: 1px;
+          background: #ccc;
+          border: 1px solid #cacaca;
+          &:hover {
+            background: #bbb;
+          }
+          &.active {
+            border-bottom: none;
+            background: #fff;
+            margin: 1px 1px 0px 1px;
+            height: 40px;
+          }
+        }
+      }
+    }
+  }
+}
+.node-box {
+  .node-box_title {
+    padding: 5px;
+    margin: 2px 0px 0px 0px;
+    cursor: pointer;
+    text-transform: capitalize;
+    background: #eee;
+    &:hover {
+      background: #bbb;
+    }
+  }
+  .node-box_boby {
+    padding-left: 20px;
+    padding-right: 5px;
+    display: none;
+  }
+  &.active {
+    .node-box_boby {
+      display: block;
     }
   }
 }

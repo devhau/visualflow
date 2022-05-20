@@ -4,6 +4,7 @@ import { VariableDock } from "./VariableDock";
 import { ProjectDock } from "./ProjectDock";
 import { PropertyDock } from "./PropertyDock";
 import { ViewDock } from "./ViewDock";
+import { TabDock } from "./TabDock";
 
 export class DockManager {
   private $dockManager: any = {};
@@ -11,10 +12,10 @@ export class DockManager {
   public reset() {
     this.$dockManager = {};
     this.addDock(DockEnum.left, ControlDock);
-    this.addDock(DockEnum.left, ProjectDock);
+    //this.addDock(DockEnum.left, ProjectDock);
     this.addDock(DockEnum.right, PropertyDock);
     this.addDock(DockEnum.view, ViewDock);
-    //  this.addDock(DockEnum.top, TabDock);
+    this.addDock(DockEnum.top, TabDock);
     this.addDock(DockEnum.bottom, VariableDock);
     this.RenderUI();
   }

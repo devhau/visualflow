@@ -176,8 +176,8 @@ export class DesginerView extends FlowCore {
     this.elNode.classList.add('desginer-view')
     this.elCanvas.classList.add("desginer-canvas");
     this.elToolbar.classList.add("desginer-toolbar");
-    this.elNode.appendChild(this.elCanvas);
     this.elNode.appendChild(this.elToolbar);
+    this.elNode.appendChild(this.elCanvas);
     this.elNode.tabIndex = 0;
     new DesginerView_Event(this);
     this.toolbar = new DesginerView_Toolbar(this);
