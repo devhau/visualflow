@@ -17,9 +17,12 @@ export class ToolboxView {
         controls[item]
       ];
     });
-    Object.keys(group).forEach((item: any) => {
+    Object.keys(group).forEach((item: any, index) => {
       let itemBox = document.createElement('div');
       itemBox.classList.add('node-box');
+      if (index == 0) {
+        itemBox.classList.add('active');
+      }
       itemBox.innerHTML = `
         <p class="node-box_title">${item}</p>
         <div class="node-box_boby"></div>
