@@ -21,7 +21,7 @@ export class ToolboxView {
       let itemBox = document.createElement('div');
       itemBox.classList.add('node-box');
       itemBox.innerHTML = `
-        <h2 class="node-box_title">${item}</h2>
+        <p class="node-box_title">${item}</p>
         <div class="node-box_boby"></div>
       `;
       itemBox.querySelector('.node-box_title')?.addEventListener('click', () => {

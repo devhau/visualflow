@@ -90,26 +90,6 @@ body {
     width: 250px;
     padding: 0;
   }
-  .vs-control,
-  .vs-project {
-    .vs-boxinfo_content {
-      padding: 0;
-      flex: 1;
-      overflow: auto;
-      .node-item {
-        padding: 5px;
-        border-bottom: 1px solid #cacaca;
-        &:hover,
-        &.active {
-          background-color: #3e88ce;
-          color: #fff;
-        }
-        &:hover {
-          cursor: pointer;
-        }
-      }
-    }
-  }
   .vs-tab {
     float: left;
     .node-item {
@@ -394,7 +374,9 @@ body {
     margin: 2px 0px 0px 0px;
     cursor: pointer;
     text-transform: capitalize;
+    font-weight: 600;
     background: #eee;
+
     &:hover {
       background: #bbb;
     }
@@ -403,6 +385,18 @@ body {
     padding-left: 20px;
     padding-right: 5px;
     display: none;
+    .node-item {
+      padding: 5px;
+      border-bottom: 1px solid #cacaca;
+      &:hover,
+      &.active {
+        background-color: #3e88ce;
+        color: #fff;
+      }
+      &:hover {
+        cursor: pointer;
+      }
+    }
   }
   &.active {
     .node-box_boby {

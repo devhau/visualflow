@@ -94,27 +94,6 @@ body {
   width: 250px;
   padding: 0;
 }
-.vs-container .vs-control .vs-boxinfo_content,
-.vs-container .vs-project .vs-boxinfo_content {
-  padding: 0;
-  flex: 1;
-  overflow: auto;
-}
-.vs-container .vs-control .vs-boxinfo_content .node-item,
-.vs-container .vs-project .vs-boxinfo_content .node-item {
-  padding: 5px;
-  border-bottom: 1px solid #cacaca;
-}
-.vs-container .vs-control .vs-boxinfo_content .node-item:hover, .vs-container .vs-control .vs-boxinfo_content .node-item.active,
-.vs-container .vs-project .vs-boxinfo_content .node-item:hover,
-.vs-container .vs-project .vs-boxinfo_content .node-item.active {
-  background-color: #3e88ce;
-  color: #fff;
-}
-.vs-container .vs-control .vs-boxinfo_content .node-item:hover,
-.vs-container .vs-project .vs-boxinfo_content .node-item:hover {
-  cursor: pointer;
-}
 .vs-container .vs-tab {
   float: left;
 }
@@ -402,6 +381,7 @@ body {
   margin: 2px 0px 0px 0px;
   cursor: pointer;
   text-transform: capitalize;
+  font-weight: 600;
   background: #eee;
 }
 .node-box .node-box_title:hover {
@@ -411,6 +391,17 @@ body {
   padding-left: 20px;
   padding-right: 5px;
   display: none;
+}
+.node-box .node-box_boby .node-item {
+  padding: 5px;
+  border-bottom: 1px solid #cacaca;
+}
+.node-box .node-box_boby .node-item:hover, .node-box .node-box_boby .node-item.active {
+  background-color: #3e88ce;
+  color: #fff;
+}
+.node-box .node-box_boby .node-item:hover {
+  cursor: pointer;
 }
 .node-box.active .node-box_boby {
   display: block;
