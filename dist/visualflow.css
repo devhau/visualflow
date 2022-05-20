@@ -94,6 +94,9 @@ body {
   width: 250px;
   padding: 0;
 }
+.vs-container .vs-control {
+  width: 200px;
+}
 .vs-container .vs-tab {
   float: left;
 }
@@ -389,7 +392,7 @@ body {
   background: #bbb;
 }
 .node-box .node-box_boby {
-  padding-left: 20px;
+  padding-left: 15px;
   padding-right: 5px;
   display: none;
 }
