@@ -8,9 +8,9 @@ export const Control = {
     html: '',
     dot: {
       top: 0,
-      right: 0,
+      right: 1,
       left: 0,
-      bottom: 1,
+      bottom: 0,
     },
     onlyNode: true
   },
@@ -21,8 +21,8 @@ export const Control = {
     group: 'common',
     html: '',
     dot: {
-      left: 0,
-      top: 1,
+      left: 1,
+      top: 0,
       right: 0,
       bottom: 0,
     },
@@ -33,7 +33,11 @@ export const Control = {
     sort: 0,
     name: 'If',
     group: 'common',
-    html: '<div>condition:<br/><input class="node-form-control" node:model="condition"/></div>',
+    html: `<div>
+              <div class="node-content-row"><span style="text-align:right">Then</span><span><span class="node-dot" node="50001"></span></span></div>
+              <div class="node-content-row"><span style="text-align:right">Else</span><span><span class="node-dot" node="50002"></span></span></div>
+            </div>
+      `,
     script: ``,
     properties: {
       condition: {
@@ -42,7 +46,12 @@ export const Control = {
         default: ''
       }
     },
-    output: 2
+    dot: {
+      left: 1,
+      top: 0,
+      right: 0,
+      bottom: 0,
+    },
   },
   node_group: {
     icon: '<i class="fas fa-object-group"></i>',

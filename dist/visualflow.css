@@ -225,6 +225,7 @@ body {
 }
 .vs-node .node-container .node-content .node-content-row :last-child:not(.node-dot) .node-dot {
   margin-left: 3px;
+  margin-top: 3px;
 }
 .vs-node .node-right,
 .vs-node .node-left {
