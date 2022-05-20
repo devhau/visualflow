@@ -153,13 +153,14 @@ export class SystemBase implements IMain {
     let controlTemp: any = {};
     Object.keys(this.$control).map((key) => ({ ...this.$control[key], key, sort: (this.$control[key].sort === undefined ? 99999 : this.$control[key].sort) })).sort(compareSort).forEach((item: any) => {
       controlTemp[item.key] = {
+        ...item,
         dot: {
           left: 1,
           top: 1,
           right: 1,
           bottom: 1,
-        },
-        ...item
+          ...item?.dot
+        }
       };
       this.$properties[`${item.key}`] = {
         ...(item.properties || {}),
