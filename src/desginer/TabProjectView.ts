@@ -13,21 +13,22 @@ export class TabProjectView {
     this.Render();
   }
   public Render() {
+    let scrollLeftCache = this.$elWarp?.scrollLeft ?? 0;
     this.elNode.innerHTML = `
     <div class="tab-project__search"></div>
     <div class="tab-project__list">
       <div class="tab-project_button">
-        <button class="btn-back"><<</button>
+        <button class="btn-back"><i class="fas fa-angle-left"></i></button>
       </div>
       <div class="tab-project_warp">
         <div class="tab-project__body">
         </div>
       </div>
       <div class="tab-project_button">
-        <button class="btn-next">>></button>
+        <button class="btn-next"><i class="fas fa-angle-right"></i></button>
       </div>
       <div class="tab-project_button">
-        <button class="btn-add">+</button>
+        <button class="btn-add"><i class="fas fa-plus"></i></button>
       </div>
     </div>
     `;
@@ -71,21 +72,45 @@ export class TabProjectView {
       this.main.newProject("");
     });
     let projects = this.main.getProjectAll();
+    let itemActive: any = undefined;
     for (let project of projects) {
       let projectItem = document.createElement('div');
-      project.onSafe(EventEnum.dataChange + '_name', () => {
-        projectItem.innerHTML = project.Get('name');
-      })
+      let projectName = document.createElement('span');
+      let projectButton = document.createElement('div');
+      let projectButtonRemove = document.createElement('button');
       projectItem.setAttribute('data-project-id', project.Get('id'));
-      projectItem.innerHTML = project.Get('name');
+      projectName.innerHTML = project.Get('name');
+      projectName.classList.add('pro-name');
+      projectButton.classList.add('pro-button');
+      projectButtonRemove.innerHTML = `<i class="fas fa-minus"></i>`;
+      projectButton.appendChild(projectButtonRemove);
+      projectItem.appendChild(projectName);
+      projectItem.appendChild(projectButton);
+
       projectItem.classList.add('project-item');
       if (this.main.checkProjectOpen(project)) {
         projectItem.classList.add('active');
+        itemActive = projectItem;
       }
-      projectItem.addEventListener('click', () => {
-        this.main.setProjectOpen(project);
+      projectItem.addEventListener('click', (e) => {
+        if (!projectButtonRemove.contains(e.target as Node) && e.target != projectButtonRemove) {
+          this.main.setProjectOpen(project);
+        }
+      });
+      projectButtonRemove.addEventListener('click', (e) => {
+        this.main.removeProject(project);
       });
       this.$elBoby?.appendChild(projectItem);
+      project.onSafe(EventEnum.dataChange + '_name', () => {
+        projectName.innerHTML = project.Get('name');
+      })
+    }
+    if (this.$elWarp) {
+      if (itemActive != undefined) {
+        this.$elWarp.scrollLeft = itemActive.offsetLeft - 20;
+      } else {
+        this.$elWarp.scrollLeft = scrollLeftCache;
+      }
     }
   }
 }

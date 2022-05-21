@@ -75,11 +75,36 @@ body {
   padding: 7px 5px;
   flex: none;
 }
-.vs-container .vs-boxinfo .vs-boxinfo_content {
-  flex: auto;
-  padding: 7px 5px;
+.vs-container .vs-boxinfo .vs-boxinfo_warp {
+  position: relative;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 0;
+  min-height: 150px;
+  /* width */
+  /* Track */
+  /* Handle */
+  /* Handle on hover */
+}
+.vs-container .vs-boxinfo .vs-boxinfo_warp::-webkit-scrollbar {
+  width: 6px;
+}
+.vs-container .vs-boxinfo .vs-boxinfo_warp::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+.vs-container .vs-boxinfo .vs-boxinfo_warp::-webkit-scrollbar-thumb {
+  background: #888;
+}
+.vs-container .vs-boxinfo .vs-boxinfo_warp::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+.vs-container .vs-boxinfo .vs-boxinfo_warp .vs-boxinfo_content {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  padding: 0;
   min-height: 100px;
-  border-bottom: 2px solid var(--border-color);
 }
 .vs-container .vs-dock {
   display: flex;
@@ -364,11 +389,30 @@ body {
   cursor: pointer;
   text-align: center;
   min-width: 120px;
-  display: inline-block;
+  display: inline-flex;
   padding: 5px;
   margin: 1px;
   background: #ccc;
   border: 1px solid #cacaca;
+}
+.vs-tab-project .tab-project__list .tab-project_warp .tab-project__body .project-item .pro-name {
+  flex: auto;
+}
+.vs-tab-project .tab-project__list .tab-project_warp .tab-project__body .project-item .pro-button {
+  flex: none;
+}
+.vs-tab-project .tab-project__list .tab-project_warp .tab-project__body .project-item .pro-button button {
+  display: none;
+  background: transparent;
+  border: none;
+  padding: 5px;
+}
+.vs-tab-project .tab-project__list .tab-project_warp .tab-project__body .project-item .pro-button button:hover {
+  background: #ccc;
+  cursor: pointer;
+  border: 1px solid #aaa;
+  border-radius: 5px;
+  padding: 4px;
 }
 .vs-tab-project .tab-project__list .tab-project_warp .tab-project__body .project-item:hover {
   background: #bbb;
@@ -378,6 +422,9 @@ body {
   background: #fff;
   margin: 1px 1px 0px 1px;
   height: 40px;
+}
+.vs-tab-project .tab-project__list .tab-project_warp .tab-project__body .project-item:hover .pro-button button, .vs-tab-project .tab-project__list .tab-project_warp .tab-project__body .project-item.active .pro-button button {
+  display: block;
 }
 
 .node-box .node-box_title {

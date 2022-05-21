@@ -70,11 +70,39 @@ body {
         flex: none;
       }
     }
-    .vs-boxinfo_content {
-      flex: auto;
-      padding: 7px 5px;
-      min-height: 100px;
-      border-bottom: 2px solid var(--border-color);
+    .vs-boxinfo_warp {
+      position: relative;
+      overflow-y: auto;
+      overflow-x: hidden;
+      padding: 0;
+      min-height: 150px;
+      /* width */
+      &::-webkit-scrollbar {
+        width: 6px;
+      }
+
+      /* Track */
+      &::-webkit-scrollbar-track {
+        background: #f1f1f1;
+      }
+
+      /* Handle */
+      &::-webkit-scrollbar-thumb {
+        background: #888;
+      }
+
+      /* Handle on hover */
+      &::-webkit-scrollbar-thumb:hover {
+        background: #555;
+      }
+      .vs-boxinfo_content {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        padding: 0;
+        min-height: 100px;
+      }
     }
   }
   .vs-dock {
@@ -353,11 +381,30 @@ body {
           cursor: pointer;
           text-align: center;
           min-width: 120px;
-          display: inline-block;
+          display: inline-flex;
           padding: 5px;
           margin: 1px;
           background: #ccc;
           border: 1px solid #cacaca;
+          .pro-name {
+            flex: auto;
+          }
+          .pro-button {
+            flex: none;
+            button {
+              display: none;
+              background: transparent;
+              border: none;
+              padding: 5px;
+              &:hover {
+                background: #ccc;
+                cursor: pointer;
+                border: 1px solid #aaa;
+                border-radius: 5px;
+                padding: 4px;
+              }
+            }
+          }
           &:hover {
             background: #bbb;
           }
@@ -366,6 +413,14 @@ body {
             background: #fff;
             margin: 1px 1px 0px 1px;
             height: 40px;
+          }
+          &:hover,
+          &.active {
+            .pro-button {
+              button {
+                display: block;
+              }
+            }
           }
         }
       }

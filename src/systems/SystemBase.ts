@@ -255,6 +255,31 @@ export class SystemBase implements IMain {
     }
     this.setProjectOpen($project);
   }
+  public removeProject($data: any) {
+    let projectData = $data;
+    if ($data instanceof DataFlow) {
+      projectData = this.getProjectById($data.Get('id'));
+    } else {
+      projectData = this.getProjectById($data.Get('id'));
+    }
+    this.$data.Remove('projects', projectData);
+    if (this.checkProjectOpen(projectData)) {
+      this.$projectOpen = this.$data.Get('projects')?.[0];
+      if (!this.$projectOpen) {
+        this.newProject();
+        return;
+      }
+    }
+    this.dispatch(EventEnum.change, {
+      data: this.$projectOpen
+    });
+    this.dispatch(EventEnum.showProperty, {
+      data: this.$projectOpen
+    });
+    this.dispatch(EventEnum.openProject, {
+      data: this.$projectOpen
+    });
+  }
   public getProjectById($id: any) {
     return this.$data.Get('projects').filter((item: DataFlow) => item.Get('id') === $id)?.[0];
   }

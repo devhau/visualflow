@@ -21,6 +21,7 @@ export interface IMain extends IControlNode, IEvent {
   openProject($name: string): void;
   getProjectAll(): any[];
   setProjectOpen($data: any): void;
+  removeProject($data: any): void;
   checkProjectOpen($data: any): boolean;
   getControlAll(): any;
   setControlChoose(key: string | null): void;
