@@ -147,6 +147,7 @@ export class DesginerView_Event {
           let y = this.av_y + this.parent.CalcY(-(this.pos_y - e_pos_y))
           this.parent.setX(x);
           this.parent.setY(y);
+          this.parent.UpdateUI();
           break;
         }
       case MoveType.Node:

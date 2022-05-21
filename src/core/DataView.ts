@@ -62,7 +62,12 @@ export class DataView {
       let elUl = document.createElement('ul');
       for (let item of arr) {
         let elLi = document.createElement('li');
-        elLi.innerHTML = item.Get('name');
+        let elLink = document.createElement('a');
+        elLi.appendChild(elLink);
+        elLink.innerHTML = item.Get('name');
+        elLink.addEventListener('click', () => {
+          alert(elLink.innerHTML);
+        });
         elUl.appendChild(elLi);
       }
       this.elSuggestionsContent.appendChild(elUl);
@@ -96,8 +101,10 @@ export class DataView {
           this.elNode?.parentElement?.appendChild(this.elSuggestions);
       });
       this.elNode.addEventListener('blur', () => {
-        if (this.elSuggestions)
-          this.elNode?.parentElement?.removeChild(this.elSuggestions);
+        setTimeout(() => {
+          if (this.elSuggestions)
+            this.elNode?.parentElement?.removeChild(this.elSuggestions);
+        });
       });
       this.elNode.addEventListener("select", () => {
         this.checkShowSuggestions();

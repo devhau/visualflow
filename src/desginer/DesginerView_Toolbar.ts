@@ -5,7 +5,7 @@ export class DesginerView_Toolbar {
   private elPathGroup: HTMLElement = document.createElement('div');
   private btnBack = document.createElement('button');
   public constructor(private parent: DesginerView) {
-    this.elNode = parent.elToolbar;
+    //  this.elNode = parent.elToolbar;
     this.elPathGroup.classList.add('toolbar-group');
     this.renderUI();
     this.renderPathGroup();
