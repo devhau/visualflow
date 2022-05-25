@@ -164,7 +164,7 @@ export class DesginerView_Event {
           if (this.tempLine) {
             let x = this.parent.CalcX(this.parent.elCanvas.getBoundingClientRect().x - e_pos_x);
             let y = this.parent.CalcY(this.parent.elCanvas.getBoundingClientRect().y - e_pos_y);
-            this.tempLine.updateTo(this.parent.elCanvas.offsetLeft - x, this.parent.elCanvas.offsetTop - y - 20);
+            this.tempLine.updateTo(this.parent.elCanvas.offsetLeft - x, this.parent.elCanvas.offsetTop - y);
             let nodeEl = ev.target.closest('[node-id]');
             let nodeId = nodeEl?.getAttribute('node-id');
             let nodeTo = nodeId ? this.parent.GetNodeById(nodeId) : undefined;
