@@ -5,6 +5,7 @@ import { ProjectDock } from "./ProjectDock";
 import { PropertyDock } from "./PropertyDock";
 import { ViewDock } from "./ViewDock";
 import { TabDock } from "./TabDock";
+import { BreadcrumbGroupDock } from "./BreadcrumbGroupDock";
 
 export class DockManager {
   private $dockManager: any = {};
@@ -14,9 +15,11 @@ export class DockManager {
     this.addDock(DockEnum.left, ControlDock);
     //this.addDock(DockEnum.left, ProjectDock);
     this.addDock(DockEnum.right, PropertyDock);
-    this.addDock(DockEnum.view, ViewDock);
     this.addDock(DockEnum.top, TabDock);
+    this.addDock(DockEnum.bottom, BreadcrumbGroupDock);
     this.addDock(DockEnum.bottom, VariableDock);
+    this.addDock(DockEnum.view, ViewDock);
+
     this.RenderUI();
   }
   public addDock($key: string, $view: any) {

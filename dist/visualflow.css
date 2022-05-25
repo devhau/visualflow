@@ -324,6 +324,20 @@ body {
   padding: 3px;
 }
 
+.vs-breadcrumb-group ul {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+.vs-breadcrumb-group ul li {
+  padding: 5px;
+  float: left;
+}
+.vs-breadcrumb-group ul li:hover {
+  cursor: pointer;
+  background: #eee;
+}
+
 .vs-variable {
   max-height: 300px;
   overflow: auto;

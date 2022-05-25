@@ -5,3 +5,4 @@ export { VariableView } from './VariableView';
 export { ToolboxView } from './ToolboxView';
 export { ProjectView } from './ProjectView';
 export { TabProjectView } from './TabProjectView';
+export { BreadcrumbGroupView } from './BreadcrumbGroupView';
