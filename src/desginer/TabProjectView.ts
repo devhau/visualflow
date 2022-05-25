@@ -7,6 +7,9 @@ export class TabProjectView {
   private $btnNext: Element | undefined | null;
   private $btnBack: Element | undefined | null;
   private $btnAdd: Element | undefined | null;
+  private $btnZoomIn: Element | undefined | null;
+  private $btnZoomOut: Element | undefined | null;
+  private $btnZoomReset: Element | undefined | null;
   public constructor(public elNode: HTMLElement, public main: IMain) {
     this.elNode.classList.add('vs-tab-project');
     this.main.on(EventEnum.openProject, this.Render.bind(this));
@@ -30,6 +33,15 @@ export class TabProjectView {
       <div class="tab-project_button">
         <button class="btn-add"><i class="fas fa-plus"></i></button>
       </div>
+      <div class="tab-project_button">
+        <button class="btn-zoom-in"><i class="fas fa-search-minus"></i></button>
+      </div>
+      <div class="tab-project_button">
+        <button class="btn-zoom-out"><i class="fas fa-search-plus"></i></button>
+      </div>
+      <div class="tab-project_button">
+        <button class="btn-zoom-reset"><i class="fas fa-redo"></i></button>
+      </div>
     </div>
     `;
     this.$elWarp = this.elNode.querySelector('.tab-project_warp');
@@ -37,6 +49,9 @@ export class TabProjectView {
     this.$btnBack = this.elNode.querySelector('.btn-back');
     this.$btnNext = this.elNode.querySelector('.btn-next');
     this.$btnAdd = this.elNode.querySelector('.btn-add');
+    this.$btnZoomIn = this.elNode.querySelector('.btn-zoom-in');
+    this.$btnZoomOut = this.elNode.querySelector('.btn-zoom-out');
+    this.$btnZoomReset = this.elNode.querySelector('.btn-zoom-reset');
     const fnUpdateScroll = () => {
       if (this.$elWarp) {
         // let scrollLeft = this.$elWarp.scrollLeft;
@@ -70,6 +85,15 @@ export class TabProjectView {
     });
     this.$btnAdd?.addEventListener('click', () => {
       this.main.newProject("");
+    });
+    this.$btnZoomIn?.addEventListener('click', () => {
+      this.main.dispatch(EventEnum.zoom, { zoom: -1 });
+    });
+    this.$btnZoomOut?.addEventListener('click', () => {
+      this.main.dispatch(EventEnum.zoom, { zoom: 1 });
+    });
+    this.$btnZoomReset?.addEventListener('click', () => {
+      this.main.dispatch(EventEnum.zoom, { zoom: 0 });
     });
     let projects = this.main.getProjectAll();
     let itemActive: any = undefined;

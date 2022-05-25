@@ -8,6 +8,7 @@ export const EventEnum = {
   change: "change",
   dispose: "dispose",
   groupChange: "groupChange",
+  zoom: "zoom"
 }
 
 export const DockEnum = {

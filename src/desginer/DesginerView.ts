@@ -1,6 +1,5 @@
 import { DataFlow, FlowCore, IMain, EventEnum, PropertyEnum, ScopeRoot } from "../core/index";
 import { DesginerView_Event } from "./DesginerView_Event";
-import { DesginerView_Toolbar } from "./DesginerView_Toolbar";
 import { Line } from "./Line";
 import { NodeItem } from "./NodeItem";
 
@@ -54,7 +53,6 @@ export class DesginerView extends FlowCore {
     if (dataGroup) {
       dataGroup.onSafe(EventEnum.dataChange, () => {
         this.UpdateUI.bind(this);
-        //  this.toolbar.renderPathGroup();
         this.changeGroup();
       });
     }
@@ -94,7 +92,6 @@ export class DesginerView extends FlowCore {
         group: this.GetGroupName()
       });
     });
-    // this.toolbar.renderPathGroup();
   }
   public openGroup(id: any) {
     this.group = [id, ...this.group];
@@ -161,8 +158,6 @@ export class DesginerView extends FlowCore {
    * Varibute
   */
   public elCanvas: HTMLElement = document.createElement('div');
-  //  public elToolbar: HTMLElement = document.createElement('div');
-  //public toolbar: DesginerView_Toolbar;
   public $lock: boolean = true;
   private zoom_last_value: any = 1;
   public constructor(elNode: HTMLElement, public main: IMain) {
@@ -175,16 +170,23 @@ export class DesginerView extends FlowCore {
     this.elCanvas.classList.remove("desginer-canvas");
     this.elNode.classList.add('desginer-view')
     this.elCanvas.classList.add("desginer-canvas");
-    // this.elToolbar.classList.add("desginer-toolbar");
-    // this.elNode.appendChild(this.elToolbar);
     this.elNode.appendChild(this.elCanvas);
     this.elNode.tabIndex = 0;
     new DesginerView_Event(this);
-    // this.toolbar = new DesginerView_Toolbar(this);
     this.on(EventEnum.dataChange, this.RenderUI.bind(this));
     this.on(EventEnum.showProperty, (data: any) => { main.dispatch(EventEnum.showProperty, data); });
     this.main.on(EventEnum.openProject, (item: any) => {
       this.Open(item.data);
+    });
+    this.main.on(EventEnum.zoom, ({ zoom }: any) => {
+      if (zoom == 0) {
+        this.zoom_reset();
+      } else if (zoom == 1) {
+        this.zoom_out();
+      } else if (zoom == -1) {
+        this.zoom_in();
+      }
+      this.UpdateUI();
     });
     this.changeGroup();
   }
