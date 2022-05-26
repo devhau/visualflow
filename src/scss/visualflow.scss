@@ -321,16 +321,37 @@ body {
   padding: 3px;
 }
 .vs-breadcrumb-group {
-  ul {
-    padding: 0;
-    margin: 0;
-    list-style: none;
-    li {
-      padding: 5px;
-      float: left;
-      &:hover {
-        cursor: pointer;
-        background: #eee;
+  display: flex;
+  .group-button {
+    flex: none;
+    height: 100%;
+    button {
+      height: 98%;
+    }
+    margin: 0px 1px;
+  }
+  .group-warp {
+    flex: auto;
+    position: relative;
+    margin-left: 5px;
+    height: 35px;
+    .group-body {
+      height: 100%;
+      position: absolute;
+      width: 100%;
+      ul {
+        height: 100%;
+        padding: 0;
+        margin: 0;
+        list-style: none;
+        li {
+          padding: 8px 4px;
+          float: left;
+          &.group-item:hover {
+            cursor: pointer;
+            background: #eee;
+          }
+        }
       }
     }
   }

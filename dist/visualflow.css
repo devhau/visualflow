@@ -324,16 +324,39 @@ body {
   padding: 3px;
 }
 
-.vs-breadcrumb-group ul {
+.vs-breadcrumb-group {
+  display: flex;
+}
+.vs-breadcrumb-group .group-button {
+  flex: none;
+  height: 100%;
+  margin: 0px 1px;
+}
+.vs-breadcrumb-group .group-button button {
+  height: 98%;
+}
+.vs-breadcrumb-group .group-warp {
+  flex: auto;
+  position: relative;
+  margin-left: 5px;
+  height: 35px;
+}
+.vs-breadcrumb-group .group-warp .group-body {
+  height: 100%;
+  position: absolute;
+  width: 100%;
+}
+.vs-breadcrumb-group .group-warp .group-body ul {
+  height: 100%;
   padding: 0;
   margin: 0;
   list-style: none;
 }
-.vs-breadcrumb-group ul li {
-  padding: 5px;
+.vs-breadcrumb-group .group-warp .group-body ul li {
+  padding: 8px 4px;
   float: left;
 }
-.vs-breadcrumb-group ul li:hover {
+.vs-breadcrumb-group .group-warp .group-body ul li.group-item:hover {
   cursor: pointer;
   background: #eee;
 }

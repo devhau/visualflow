@@ -51,8 +51,7 @@ export class DesginerView extends FlowCore {
     }
     let dataGroup = this.GetDataById(this.lastGroupName);
     if (dataGroup) {
-      dataGroup.onSafe(EventEnum.dataChange, () => {
-        this.UpdateUI.bind(this);
+      dataGroup.onSafe(`${EventEnum.dataChange}_name`, () => {
         this.changeGroup();
       });
     }
@@ -187,6 +186,9 @@ export class DesginerView extends FlowCore {
         this.zoom_in();
       }
       this.UpdateUI();
+    });
+    this.main.on(EventEnum.setGroup, ({ groupId }: any) => {
+      this.BackGroup(groupId);
     });
     this.changeGroup();
   }
