@@ -57,4 +57,10 @@ export class VisualFlow {
   exportJson(): any {
     return this.getMain()?.exportJson();
   }
+  callbackRunProject(callbackRun: any) {
+    this.getMain()?.callbackRunProject(callbackRun);
+  }
+  callbackStopProject(callbackRun: any) {
+    this.getMain()?.callbackStopProject(callbackRun);
+  }
 }

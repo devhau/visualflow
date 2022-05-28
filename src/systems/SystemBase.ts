@@ -1,4 +1,4 @@
-import { DataFlow, IMain, compareSort, EventEnum, PropertyEnum, EventFlow, getTime, ScopeRoot } from "../core/index";
+import { DataFlow, IMain, compareSort, EventEnum, PropertyEnum, EventFlow, getTime, ScopeRoot, isFunction } from "../core/index";
 import { NodeItem } from "../desginer/index";
 import { Control } from "./control";
 
@@ -24,6 +24,9 @@ export class SystemBase implements IMain {
       name: {
         default: () => `solution-${getTime()}`,
         edit: true,
+      },
+      project: {
+        default: () => ``,
       },
       projects: {
         default: []
@@ -192,8 +195,12 @@ export class SystemBase implements IMain {
     });
     this.$control = controlTemp;
   }
-  renderHtml(node: NodeItem, elParent: Element) {
-    elParent.innerHTML = node.getOption()?.html;
+  renderHtml({ elNode, main, node }: any) {
+    if (isFunction(node.getOption()?.html)) {
+      elNode.innerHTML = node.getOption()?.html?.({ elNode, main, node });
+    } else {
+      elNode.innerHTML = node.getOption()?.html
+    }
   }
   onSafe(event: string, callback: any) {
     this.events.onSafe(event, callback);
@@ -222,6 +229,7 @@ export class SystemBase implements IMain {
   setProjectOpen($data: any): void {
     if (this.$projectOpen != $data) {
       this.$projectOpen = $data;
+      this.$data.Set('project', this.$projectOpen?.Get('id'))
       this.dispatch(EventEnum.change, {
         data: $data
       });
@@ -300,5 +308,26 @@ export class SystemBase implements IMain {
   }
   getPropertyByKey(key: string) {
     return this.$properties[key];
+  }
+  private $running = false;
+  running(): boolean {
+    return this.$running;
+  }
+  callbackRunProject(callbackRun: any) {
+    this.on(EventEnum.runProject, ({ data, callback }: any) => {
+      callbackRun?.(data, callback);
+    });
+  }
+  callbackStopProject(callbackRun: any) {
+    this.dispatch(EventEnum.stopProject, ({ callback }: any) => {
+      callbackRun?.(callback);
+    });
+  }
+  runProject(): void {
+    this.$running = true;
+    this.dispatch(EventEnum.runProject, { data: this.exportJson(), callback: () => this.$running = false });
+  }
+  stopProject(): void {
+    this.dispatch(EventEnum.stopProject, { callback: () => this.$running = false });
   }
 }

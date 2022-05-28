@@ -9,7 +9,9 @@ export const EventEnum = {
   dispose: "dispose",
   groupChange: "groupChange",
   setGroup: "setGroup",
-  zoom: "zoom"
+  zoom: "zoom",
+  runProject: "runProject",
+  stopProject: "stopProject",
 }
 
 export const DockEnum = {

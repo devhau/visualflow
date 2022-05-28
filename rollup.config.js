@@ -134,6 +134,7 @@ export default [
       pluginNodeResolve({
         browser: false,
       }),
+
     ],
   },
 ];

@@ -27,7 +27,7 @@ export interface IMain extends IControlNode, IEvent {
   setControlChoose(key: string | null): void;
   getControlChoose(): string | null;
   getControlByKey(key: string): any;
-  renderHtml(node: NodeItem, elParent: Element): void;
+  renderHtml(detail: any): void;
   initOption(option: any, isDefault: boolean): void;
   checkInitOption(): boolean;
   importJson(data: any): void;
@@ -37,4 +37,9 @@ export interface IMain extends IControlNode, IEvent {
   newVariable(): DataFlow;
   removeVariable(varibale: DataFlow): void;
   getGroupCurrent(): any;
+  running(): boolean;
+  runProject(): void;
+  stopProject(): void;
+  callbackRunProject(callback: any): void;
+  callbackStopProject(callback: any): void;
 }

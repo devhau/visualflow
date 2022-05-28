@@ -75,7 +75,8 @@ export class NodeItem extends BaseFlow<DesginerView> {
       });
       return;
     }
-    if (this.elNode.contains(document.activeElement)) return;
+    if (document.activeElement && this.elNode.contains(document.activeElement) && !['BUTTON', 'A'].includes(document.activeElement.tagName)) return;
+    console.log(document.activeElement?.tagName);
     this.elNode.setAttribute('style', `display:none;`);
     if (this.getOption()?.hideTitle === true) {
       this.elNode.innerHTML = `
@@ -124,19 +125,14 @@ export class NodeItem extends BaseFlow<DesginerView> {
     addNodeDot(this.option?.dot?.right, 4000, '.node-right');
 
     this.elContent = this.elNode.querySelector('.node-content .body') || document.createElement('div');
-    this.parent.main.renderHtml(this, this.elContent);
+    this.parent.main.renderHtml({ node: this, elNode: this.elContent, main: this.parent.main });
     this.UpdateUI();
     this.arrDataView.forEach((item) => item.Delete());
     if (isFunction(this.option.script)) {
-      this.option.script({ node: this, elNode: this.elNode, main: this.parent.main });
+      this.option.script({ node: this, elNode: this.elContent, main: this.parent.main });
     }
     if (this.elContent)
       this.arrDataView = DataView.BindElement(this.elContent, this.data, this.parent.main);
-  }
-  public openGroup() {
-    if (this.CheckKey('node_group')) {
-      this.parent.openGroup(this.GetId());
-    }
   }
   public updatePosition(x: any, y: any, iCheck = false) {
     if (this.elNode) {

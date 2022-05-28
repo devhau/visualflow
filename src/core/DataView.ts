@@ -123,7 +123,7 @@ export class DataView {
       if (this.property && isFunction(this.property.script)) {
         this.property.script({ elNode: this.elNode, main: this.main, key: this.keyName });
       }
-      this.setNodeValue(this.data.Get(this.keyName));
+      this.setNodeValue(this.data.Get(this.keyName) ?? "");
     }
   }
   private setNodeValue(value: any) {
@@ -136,16 +136,14 @@ export class DataView {
     }
   }
   private bindInput({ value, sender }: any) {
-    if (sender !== this && this.elNode && sender.elNode !== this.elNode) {
-      this.setNodeValue(value);
+    if (sender !== this && this.elNode && sender?.elNode !== this.elNode) {
+      this.setNodeValue(value ?? "");
     }
   }
   private bindEvent() {
     setTimeout(() => {
       if (this.keyName && this.elNode) {
         this.data.Set(this.keyName, (this.elNode as any).value, this);
-
-
         this.checkShowSuggestions();
       }
     });

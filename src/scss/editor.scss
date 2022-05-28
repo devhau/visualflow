@@ -1,0 +1,25 @@
+.node-editor {
+  position: relative;
+  .node-editor_suggestions {
+    position: relative;
+    width: 100%;
+    .suggestions_content {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      background-color: #eee;
+      border: 1px solid #000;
+      z-index: 999;
+      border-radius: 2px;
+      ul,
+      li {
+        margin: 0;
+        padding: 0;
+      }
+      ul {
+        list-style: none;
+      }
+    }
+  }
+}

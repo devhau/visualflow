@@ -1,6 +1,7 @@
 import { IProperty } from "./IFlow";
 import { EventEnum } from "./Constant";
 import { EventFlow } from "./EventFlow";
+import { isFunction } from "./Utils";
 
 export class DataFlow {
   private data: any = {};
@@ -122,6 +123,12 @@ export class DataFlow {
   public Get(key: string) {
     return this.data[key];
   }
+  public Increase(key: string) {
+    this.Set(key, ++this.data[key]);
+  }
+  public Decrease(key: string) {
+    this.Set(key, --this.data[key]);
+  }
   public Append(key: string, value: any) {
     if (!this.data[key]) this.data[key] = [];
     this.data[key] = [...this.data[key], value];
@@ -141,21 +148,35 @@ export class DataFlow {
       this.properties = this.property?.getPropertyByKey(data.key);
     }
     if (this.properties) {
-      for (let key of Object.keys(this.properties)) {
-        this.data[key] = (data?.[key] ?? ((typeof this.properties[key]?.default === "function" ? this.properties[key]?.default() : this.properties[key]?.default) ?? ""));
-        if (!(this.data[key] instanceof DataFlow) && this.data[key].key) {
-          this.data[key] = new DataFlow(this.property, this.data[key]);
+      const funcSetValue = (key: string, value: any) => {
+        let valueSet = value;
+        if (isFunction(value)) {
+          valueSet = value();
         }
-        if (Array.isArray(this.data[key]) && this.property && !(this.data[key][0] instanceof DataFlow)) {
-          this.data[key] = this.data[key].map((item: any) => {
-            if (!(item instanceof DataFlow) && item.key) {
+        if (Array.isArray(valueSet)) {
+          valueSet = valueSet.map((item: any) => {
+            if (item.key) {
               return new DataFlow(this.property, item);
-            } else {
-              return item;
             }
+            return item;
           });
+        } else if (valueSet?.key) {
+          valueSet = new DataFlow(this.property, valueSet);
         }
+        this.data[key] = valueSet;
         this.BindEvent(this.data[key], key);
+      }
+      for (let key of Object.keys(this.properties)) {
+        const property = this.properties[key];
+        if (property.sub && data) {
+          for (let field of Object.keys(data)) {
+            if (field.startsWith(key)) {
+              funcSetValue(field, data?.[field] ?? this.properties[key]?.default);
+            }
+          }
+        } else {
+          funcSetValue(key, data?.[key] ?? this.properties[key]?.default);
+        }
       }
     }
   }
@@ -167,12 +188,31 @@ export class DataFlow {
     if (!this.properties) {
       this.properties = this.property?.getPropertyByKey(this.data.key);
     }
+    const setRS = (key: string) => {
+      let valueRS = this.Get(key);
+      if (valueRS instanceof DataFlow) {
+        rs[key] = valueRS.toJson();
+      } else if (Array.isArray(valueRS)) {
+        rs[key] = valueRS.map((item: any) => {
+          if (item instanceof DataFlow) {
+            return item.toJson();
+          }
+          return item;
+        })
+      } else {
+        rs[key] = valueRS;
+      }
+    }
     for (let key of Object.keys(this.properties)) {
-      rs[key] = this.Get(key);
-      if (rs[key] instanceof DataFlow) {
-        rs[key] = rs[key].toJson();
-      } else if (Array.isArray(rs[key]) && (rs[key] as []).length > 0 && rs[key][0] instanceof DataFlow) {
-        rs[key] = rs[key].map((item: DataFlow) => item.toJson());
+      const property = this.properties[key];
+      if (property.sub) {
+        for (let field of Object.keys(this.data)) {
+          if (field.startsWith(key)) {
+            setRS(field);
+          }
+        }
+      } else {
+        setRS(key);
       }
     }
     return rs;

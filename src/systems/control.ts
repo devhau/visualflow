@@ -33,9 +33,16 @@ export const Control = {
     sort: 0,
     name: 'If',
     group: 'common',
+    class: 'vs-content-flex',
     html: `<div>
               <div class="node-content-row"><span style="text-align:right">Then</span><span><span class="node-dot" node="50001"></span></span></div>
-              <div class="node-content-row"><span style="text-align:right">Else</span><span><span class="node-dot" node="50002"></span></span></div>
+              <div class="node-content-row"><span style="text-align:right">Then</span><span><span class="node-dot" node="50002"></span></span></div>
+              <div class="node-content-row"><span style="text-align:right">Then</span><span><span class="node-dot" node="50003"></span></span></div>
+              <div class="node-content-row"><span style="text-align:right">Then</span><span><span class="node-dot" node="50004"></span></span></div>
+              <div class="node-content-row"><span style="text-align:right">Then</span><span><span class="node-dot" node="50005"></span></span></div>
+              <div class="node-content-row"><span style="text-align:right">Then</span><span><span class="node-dot" node="50006"></span></span></div>
+              <div class="node-content-row"><span style="text-align:right">Then</span><span><span class="node-dot" node="50007"></span></span></div>
+              <div class="node-content-row"><span style="text-align:right">Else</span><span><span class="node-dot" node="50008"></span></span></div>
             </div>
       `,
     script: ``,

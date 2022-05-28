@@ -9,6 +9,7 @@
 
   <link rel="stylesheet" href="./dist/visualflow.css" />
   <script src="./dist/visualflow.min.js"></script>
+  <script src="./packages/core/dist/visualflow-core.min.js"></script>
 </head>
 
 <body>
@@ -26,23 +27,24 @@
       },
     },
     control: {
-      node_note: {
-        icon: '<i class="fas fa-comment-alt"></i>',
-        name: 'Note',
-        html: '<div><textarea node:model="note"></textarea></div>',
-        properties: {
-          note: {
-            key: "note",
-            default: ""
-          }
-        }
-      }
+
     }
   }
+  visualflow_core.workerManager.getControlNodes().forEach((item) => {
+    optionFlow.control[item.key] = item;
+  })
   let flow = (new visualflow.VisualFlow(document.getElementById("flow")));
-  flow.setOption(optionFlow);
+  flow.setOption(optionFlow, false);
   flow.newSolution();
-
+  flow.callbackRunProject((data, callbackEnd) => {
+    setTimeout(()=>{
+      visualflow_core.workerManager.LoadData(data).excute();
+      callbackEnd?.();
+    });
+  })
+  const runProject = () => {
+    visualflow_core.workerManager.LoadData(flow.exportJson()).excute();
+  }
 </script>
 
 </html>

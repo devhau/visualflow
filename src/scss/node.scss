@@ -1,0 +1,138 @@
+.desginer-view {
+  height: 100%;
+  background: var(--background-color);
+
+  overflow: hidden;
+  position: relative;
+  &:focus-visible {
+    outline: none;
+  }
+  .desginer-canvas {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    user-select: none;
+    .connection {
+      position: absolute;
+      pointer-events: none;
+      .main-path {
+        fill: none;
+        stroke: #4ea9ff;
+        stroke-width: 3px;
+        pointer-events: all;
+        &.active {
+          stroke-width: 5px;
+          stroke: #3e88ce;
+        }
+      }
+    }
+    svg {
+      position: absolute;
+      overflow: visible !important;
+    }
+  }
+  .desginer-toolbar {
+    width: 100%;
+    display: flex;
+    .toolbar-group {
+      flex: auto;
+    }
+    .toolbar-button {
+      flex: none;
+    }
+  }
+}
+.vs-node {
+  display: flex;
+  align-items: stretch;
+  position: absolute;
+  min-height: 40px;
+  border-radius: 4px;
+  background: var(--background-color);
+  border: 1px solid var(--border-color);
+  -webkit-box-shadow: 0 2px 15px 2px var(--border-color);
+  box-shadow: 0 2px 15px 2px var(--border-color);
+  padding: 0px;
+  min-width: 150px;
+  max-width: 300px;
+  color: #000;
+
+  z-index: 2;
+  &.active {
+    border: 2px solid var(--border-color);
+  }
+
+  .node-dot {
+    display: inline-block;
+    position: relative;
+    height: 12px;
+    width: 12px;
+    background: #fff;
+    border-radius: 50%;
+    border: 2px solid var(--border-color);
+    cursor: crosshair;
+    z-index: 99;
+  }
+  .node-container {
+    flex: auto;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    .node-top,
+    .node-bottom {
+      height: 0;
+      padding: 0;
+      flex: none;
+      text-align: center;
+      top: -1px;
+      .node-dot {
+        bottom: 6px;
+      }
+    }
+    .node-content {
+      flex: auto;
+      position: relative;
+      .title {
+        padding: 10px;
+      }
+      .body {
+        position: relative;
+        width: 100%;
+        .node-content-row {
+          width: 100%;
+          display: flex;
+          flex-direction: row;
+          padding: 2px 0px 2px 10px;
+          * {
+            flex: auto;
+            padding: 2px;
+          }
+          & > :last-child:not(.node-dot) {
+            width: 0;
+            flex: none;
+            .node-dot {
+              margin-left: 0px;
+              margin-top: 3px;
+            }
+          }
+        }
+      }
+    }
+  }
+  .node-right,
+  .node-left {
+    width: 0;
+    padding: 0;
+    flex: none;
+    left: -1px;
+    align-self: center;
+    .node-dot {
+      right: 6px;
+    }
+  }
+  &.vs-content-flex {
+    .node-content {
+      display: flex;
+    }
+  }
+}
