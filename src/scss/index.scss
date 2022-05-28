@@ -38,15 +38,41 @@ body {
 .text-center {
   text-align: center;
 }
-@for $i from 1 through 20 {
+@for $i from 0 through 20 {
   .p#{$i} {
     padding: #{$i}px;
+  }
+  .pt#{$i} {
+    padding-top: #{$i}px;
+  }
+  .pb#{$i} {
+    padding-bottom: #{$i}px;
+  }
+  .pl#{$i} {
+    padding-left: #{$i}px;
+  }
+  .pr#{$i} {
+    padding-right: #{$i}px;
   }
   .m#{$i} {
     margin: #{$i}px;
   }
+  .mt#{$i} {
+    padding-top: #{$i}px;
+  }
+  .mb#{$i} {
+    padding-bottom: #{$i}px;
+  }
+  .ml#{$i} {
+    padding-left: #{$i}px;
+  }
+  .mr#{$i} {
+    padding-right: #{$i}px;
+  }
 }
-
+.flex-none {
+  flex: none !important;
+}
 @import "./editor.scss";
 @import "./dock.scss";
 @import "./node.scss";

@@ -37,14 +37,20 @@ export class CoreIfNode extends WorkerNode {
     }
   }
   html({ elNode, main, node }: any): string {
-    console.log(node.data.Get('condition'));
     let condition = node.data.Get('condition');
     let html = '';
     for (let index = 0; index < condition; index++) {
-      html = `${html}<div class="node-content-row"><input type="text" class="node-form-control" node:model="cond${50001 + index}"/> <span style="text-align:right">Then</span><span><span class="node-dot" node="${50001 + index}"></span></span></div>`
+      html = `${html}<div class="node-content-row">
+      <div class="pl10 pr1 pt2 pb2"><input type="text" class="node-form-control" node:model="cond${50001 + index}"/></div>
+      <div style="text-align:right" class="p2">Then</div>
+      <div><span class="node-dot" node="${50001 + index}"></span></div>
+      </div>`;
     }
-    html = `${html}<div class="node-content-row"><span style="text-align:right">Else</span><span><span class="node-dot" node="50000"></span></span></div>`
-    html = `${html}<div><button class="btnAddCondition">Add</div></div>`;
+    html = `${html}<div class="node-content-row">
+    <div class="pl10 pr1 pt2 pb2"><button class="btnAddCondition">Add</button></div>
+    <div style="text-align:right" class="p2">Else</div>
+    <div><span class="node-dot" node="50000"></span></div>
+    </div>`;
     return html;
   }
   script({ elNode, main, node }: any): void {

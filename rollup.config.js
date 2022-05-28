@@ -21,7 +21,7 @@ const banner = `
 
 export default [
   {
-    input: "src/scss/visualflow.scss",
+    input: "src/scss/index.scss",
     plugins: [
       scss({
         output: "dist/visualflow.css",
@@ -31,7 +31,7 @@ export default [
 
   },
   {
-    input: "src/scss/visualflow.scss",
+    input: "src/scss/index.scss",
     plugins: [
       scss({
         output: "dist/visualflow.mini.css",
