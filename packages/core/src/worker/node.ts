@@ -1,5 +1,14 @@
 import { WorkerManager } from "./manager";
 
+export enum EnvNode {
+  All = 0,
+  Web = 1,
+  PC = 2,
+  Cloud = 3,
+  Mobile = 4,
+  IOS = 5,
+  Android = 6
+}
 export type OptionNode = void & {
   key: "",
   name: "",
@@ -16,6 +25,12 @@ export type OptionNode = void & {
   }
 }
 export class WorkerNode {
+  env(): any[] {
+    return [EnvNode.All, EnvNode.Cloud, EnvNode.PC, EnvNode.Web, EnvNode.Mobile, EnvNode.IOS, EnvNode.Android];
+  }
+  public CheckEnv(env: any) {
+    return this.env().includes(env);
+  }
   key(): any {
     return this.constructor.name;
   }
