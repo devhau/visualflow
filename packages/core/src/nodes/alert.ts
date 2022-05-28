@@ -23,8 +23,8 @@ export class CoreAlertNode extends WorkerNode {
       }
     }
   }
-  execute(nodeId: any, data: any, manager: WorkerManager, next: any) {
+  async execute(nodeId: any, data: any, manager: WorkerManager, next: any) {
     alert(data?.message);
-    this.nextNode(data, next, nodeId);
+    await this.nextNode(data, next, nodeId);
   }
 }

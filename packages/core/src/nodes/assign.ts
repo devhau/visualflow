@@ -12,7 +12,7 @@ export class CoreAssignNode extends WorkerNode {
     return '<i class="fas fa-bolt"></i>';
   }
 
-  execute(nodeId: any, data: any, manager: WorkerManager, next: any) {
-    this.nextNode(data, next, nodeId);
+  async execute(nodeId: any, data: any, manager: WorkerManager, next: any) {
+    await this.nextNode(data, next, nodeId);
   }
 }

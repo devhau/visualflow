@@ -8,8 +8,11 @@ export class CoreForNode extends WorkerNode {
   name() {
     return "For";
   }
+  icon() {
+    return '<i class="fas fa-long-arrow-alt-right"></i>';
+  }
 
-  execute(nodeId: any, data: any, manager: WorkerManager, next: any) {
-    this.nextNode(data, next, nodeId);
+  async execute(nodeId: any, data: any, manager: WorkerManager, next: any) {
+    await this.nextNode(data, next, nodeId);
   }
 }

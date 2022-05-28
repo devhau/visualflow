@@ -313,21 +313,25 @@ export class SystemBase implements IMain {
   running(): boolean {
     return this.$running;
   }
+  setRunning(flg: any): void {
+    this.$running = flg;
+    this.dispatch(EventEnum.statusBot, flg);
+  }
   callbackRunProject(callbackRun: any) {
-    this.on(EventEnum.runProject, ({ data, callback }: any) => {
-      callbackRun?.(data, callback);
+    this.on(EventEnum.runProject, ({ data }: any) => {
+      callbackRun?.(data);
     });
   }
   callbackStopProject(callbackRun: any) {
-    this.dispatch(EventEnum.stopProject, ({ callback }: any) => {
-      callbackRun?.(callback);
+    this.on(EventEnum.stopProject, () => {
+      callbackRun();
     });
   }
   runProject(): void {
-    this.$running = true;
-    this.dispatch(EventEnum.runProject, { data: this.exportJson(), callback: () => this.$running = false });
+    this.setRunning(true);
+    this.dispatch(EventEnum.runProject, { data: this.exportJson() });
   }
   stopProject(): void {
-    this.dispatch(EventEnum.stopProject, { callback: () => this.$running = false });
+    this.dispatch(EventEnum.stopProject, {});
   }
 }

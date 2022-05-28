@@ -12,6 +12,7 @@ export const EventEnum = {
   zoom: "zoom",
   runProject: "runProject",
   stopProject: "stopProject",
+  statusBot: "statusBot",
 }
 
 export const DockEnum = {

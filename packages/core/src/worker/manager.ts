@@ -11,10 +11,57 @@ export const PropertyEnum = {
   groupCavas: "main_groupCavas",
 };
 export class WorkerManager {
+  private events: any = {};
+  public onSafe(event: string, callback: any) {
+    this.removeListener(event, callback);
+    this.on(event, callback);
+  }
+  /* Events */
+  public on(event: string, callback: any) {
+    // Check if the callback is not a function
+    if (typeof callback !== 'function') {
+      console.error(`The listener callback must be a function, the given type is ${typeof callback}`);
+      return false;
+    }
+    // Check if the event is not a string
+    if (typeof event !== 'string') {
+      console.error(`The event name must be a string, the given type is ${typeof event}`);
+      return false;
+    }
+    // Check if this event not exists
+    if (this.events[event] === undefined) {
+      this.events[event] = {
+        listeners: []
+      }
+    }
+    this.events[event].listeners.push(callback);
+  }
+
+  public removeListener(event: string, callback: any) {
+    // Check if this event not exists
+
+    if (!this.events[event]) return false
+
+    const listeners = this.events[event].listeners
+    const listenerIndex = listeners.indexOf(callback)
+    const hasListener = listenerIndex > -1
+    if (hasListener) listeners.splice(listenerIndex, 1)
+  }
+
+  public dispatch(event: string, details: any) {
+    // Check if this event not exists
+    if (this.events[event] === undefined) {
+      return false;
+    }
+    this.events[event].listeners.forEach((listener: any) => {
+      listener(details);
+    });
+  }
   private $data: any;
   private $nodes: WorkerNode[] = [];
   private $project: any;
   private $group: any = "root";
+  private delay_time: number = 100;
   public constructor(data: any = null) {
     this.LoadData(data);
   }
@@ -102,20 +149,48 @@ export class WorkerManager {
   private getWorkerNode(_key: string): WorkerNode | null {
     return this.$nodes?.filter((item) => item.checkKey(_key))?.[0];
   }
-  private excuteNode($id: any) {
+  private async excuteNode($id: any) {
     const dataNode = this.getNodeById($id);
-    this.excuteDataNode(dataNode);
+    await this.excuteDataNode(dataNode);
   }
-  private excuteDataNode(dataNode: any) {
+  delay(time: number = 100) {
+    return new Promise(resolve => setTimeout(resolve, time));
+  }
+  private async excuteDataNode(dataNode: any) {
+    if (this.flgStopping) {
+      this.dispatch('worker_stopping', {});
+      return;
+    }
+    await this.delay(this.delay_time);
     if (dataNode) {
-      console.log(dataNode);
+      this.dispatch('node_start', { node: dataNode });
       const workerNode = this.getWorkerNode(dataNode.key);
-      workerNode?.execute(dataNode.id, dataNode, this, this.excuteNode.bind(this));
+      await workerNode?.execute(dataNode.id, dataNode, this, this.excuteNode.bind(this));
+      this.dispatch('node_end', { node: dataNode });
     }
   }
-  public excute() {
+  public async excuteAsync() {
     const dataNode = this.getNodeByKey(`${NodeBegin}`);
-    this.excuteDataNode(dataNode);
+    await this.excuteDataNode(dataNode);
+  }
+  public excute() {
+    setTimeout(async () => {
+      this.dispatch('worker_start', {});
+      try {
+        this.flgStopping = false;
+        await this.excuteAsync();
+        this.flgStopping = false;
+        this.dispatch('worker_end', {});
+      } catch (ex) {
+        console.log(ex);
+        this.dispatch('worker_end', {});
+      }
+      this.flgStopping = false;
+    });
+  }
+  flgStopping: any = null;
+  public stop() {
+    this.flgStopping = true;
   }
 }
 export const workerManager = new WorkerManager();

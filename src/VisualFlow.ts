@@ -63,4 +63,7 @@ export class VisualFlow {
   callbackStopProject(callbackRun: any) {
     this.getMain()?.callbackStopProject(callbackRun);
   }
+  setRunning(flg: any){
+    this.getMain()?.setRunning(flg);
+  }
 }

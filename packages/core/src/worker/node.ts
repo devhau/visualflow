@@ -27,20 +27,20 @@ export class WorkerNode {
   group(): any {
     return "Common";
   }
-  html(node: any, elParent: any) {
+  html({ elNode, main, node }: any) {
     return ``;
   }
   script({ elNode, main, node }: any) { }
   properties(): any { }
   option(): any { }
-  execute(nodeId: any, data: any, manager: WorkerManager, next: any) {
+  async execute(nodeId: any, data: any, manager: WorkerManager, next: any) {
 
   }
-  protected nextNode(data: any, next: any, nodeId: any, index: any = null) {
+  protected async nextNode(data: any, next: any, nodeId: any, index: any = null) {
     if (data?.lines) {
       for (let item of data.lines) {
         if (item.from == nodeId && (index == null || item.fromIndex == index)) {
-          next(item.to);
+          await next(item.to);
         }
       }
     }

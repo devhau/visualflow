@@ -37,11 +37,18 @@
   flow.setOption(optionFlow, false);
   flow.newSolution();
   flow.callbackRunProject((data, callbackEnd) => {
-    setTimeout(()=>{
+    setTimeout(() => {
       visualflow_core.workerManager.LoadData(data).excute();
       callbackEnd?.();
     });
   })
+  flow.callbackStopProject(() => {
+
+    visualflow_core.workerManager.stop();
+  })
+  visualflow_core.workerManager.on('worker_end', () => {
+    flow.setRunning(false);
+  });
   const runProject = () => {
     visualflow_core.workerManager.LoadData(flow.exportJson()).excute();
   }

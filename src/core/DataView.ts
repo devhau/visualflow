@@ -103,7 +103,7 @@ export class DataView {
       this.elNode.addEventListener('blur', () => {
         setTimeout(() => {
           if (this.elSuggestions)
-            this.elNode?.parentElement?.removeChild(this.elSuggestions);
+            this.elNode?.parentElement?.removeChild?.(this.elSuggestions);
         });
       });
       this.elNode.addEventListener("select", () => {

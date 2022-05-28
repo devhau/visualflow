@@ -100,8 +100,23 @@ export class TabProjectView {
     this.$btnZoomReset?.addEventListener('click', () => {
       this.main.dispatch(EventEnum.zoom, { zoom: 0 });
     });
+    this.main.on(EventEnum.statusBot, (flg: any) => {
+      if (this.$btnRunProject) {
+        if (flg) {
+          this.$btnRunProject.innerHTML = `<i class="fas fa-stop"></i> Stop`;
+        } else {
+          this.$btnRunProject.innerHTML = `<i class="fas fa-play"></i> Run`;
+        }
+      }
+    });
     this.$btnRunProject?.addEventListener('click', () => {
-      this.main.runProject();
+      if (this.main.running()) {
+        console.log('stop');
+        this.main.stopProject();
+      } else {
+        console.log('run');
+        this.main.runProject();
+      }
     })
     let projects = this.main.getProjectAll();
     let itemActive: any = undefined;

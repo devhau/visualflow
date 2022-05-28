@@ -23,8 +23,8 @@ export class CoreConsoleNode extends WorkerNode {
       }
     }
   }
-  execute(nodeId: any, data: any, manager: WorkerManager, next: any) {
+  async execute(nodeId: any, data: any, manager: WorkerManager, next: any) {
     console.log(data?.message);
-    this.nextNode(data, next, nodeId);
+    await this.nextNode(data, next, nodeId);
   }
 }

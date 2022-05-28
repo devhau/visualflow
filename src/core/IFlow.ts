@@ -38,6 +38,7 @@ export interface IMain extends IControlNode, IEvent {
   removeVariable(varibale: DataFlow): void;
   getGroupCurrent(): any;
   running(): boolean;
+  setRunning(flg: any): void;
   runProject(): void;
   stopProject(): void;
   callbackRunProject(callback: any): void;

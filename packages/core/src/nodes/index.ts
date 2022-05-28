@@ -4,6 +4,7 @@ import { CoreAssignNode } from "./assign";
 import { CoreBeginNode } from "./begin";
 import { CoreConsoleNode } from "./console";
 import { CoreEndNode } from "./end";
+import { CoreForNode } from "./for";
 import { CoreGroupNode } from "./group";
 import { CoreIfNode } from "./if";
 import { CoreProjectNode } from "./project";
@@ -17,6 +18,7 @@ export class CoreSetup extends WorkerSetup {
       CoreAssignNode,
       CoreIfNode,
       CoreSwitchNode,
+      CoreForNode,
       CoreAlertNode,
       CoreConsoleNode,
       CoreProjectNode,
