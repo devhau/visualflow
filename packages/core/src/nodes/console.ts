@@ -24,7 +24,7 @@ export class CoreConsoleNode extends WorkerNode {
     }
   }
   async execute(nodeId: any, data: any, manager: WorkerManager, next: any) {
-    console.log(manager.Val(data?.message));
+    console.log(manager.getText(data?.message,nodeId));
     await this.nextNode(data, next, nodeId);
   }
 }

@@ -21,7 +21,7 @@ export class CoreForNode extends WorkerNode {
       number_end: {
         key: "number_end",
         edit: true,
-        default: 1
+        default: 10
       },
       number_step: {
         key: "number_step",
@@ -67,7 +67,12 @@ export class CoreForNode extends WorkerNode {
   async execute(nodeId: any, data: any, manager: WorkerManager, next: any) {
     const group = manager.getGroupCurrent();
     manager.setGroup(data.id);
-    for (let loop_index = data.number_start; loop_index < data.number_end && !manager.flgStopping; loop_index = loop_index + data.number_step) {
+    const number_start = +manager.getText(data.number_start, nodeId);
+    const number_end = +manager.getText(data.number_end, nodeId);
+    const number_step = +manager.getText(data.number_step, nodeId);
+
+    for (let loop_index = number_start; loop_index <= number_end && !manager.flgStopping; loop_index = loop_index + number_step) {
+      manager.setVariableObject(data.env_name, loop_index, nodeId);
       await manager.excuteAsync();
     }
     manager.setGroup(group);

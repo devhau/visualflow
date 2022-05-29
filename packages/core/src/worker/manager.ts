@@ -1,8 +1,7 @@
 import { NodeBegin } from "../nodes/begin";
 import { WorkerNode } from "./node";
+import { WorkerScript } from "./script";
 import { WorkerSetup } from "./setup";
-
-const gEval = eval;
 export const PropertyEnum = {
   main: "main_project",
   solution: 'main_solution',
@@ -12,6 +11,8 @@ export const PropertyEnum = {
 };
 export class WorkerManager {
   private events: any = {};
+  public scriptCode: WorkerScript = new WorkerScript();
+  private variableValue: any = {};
   public onSafe(event: string, callback: any) {
     this.removeListener(event, callback);
     this.on(event, callback);
@@ -68,10 +69,22 @@ export class WorkerManager {
   public setProject(project: any) {
     this.$project = project;
     this.$group = "root";
+    if (this.variableValue[this.$project] === undefined) {
+      let prj = this.getProjectById(this.$project);
+      this.variableValue[this.$project] = prj.variable.map((item: any) => {
+        return {
+          ...item,
+          value: item.initalValue
+        }
+      });
+    }
+  }
+  public getProjectById(id: any) {
+    return this.$data?.projects?.find((item: any) => item.id == id);
   }
   public getProject() {
     if (this.$data.key === PropertyEnum.solution) {
-      return this.$data?.projects?.find((item: any) => item.id == this.$project);
+      return this.getProjectById(this.$project);
     }
     if (this.$data.key === PropertyEnum.main) {
       return this.$data;
@@ -99,6 +112,7 @@ export class WorkerManager {
   }
   public LoadData(data: any): WorkerManager {
     if (!data) return this;
+    this.variableValue = {}
     if (typeof data === 'string') {
       this.$data = JSON.parse(data);
     } else {
@@ -110,8 +124,10 @@ export class WorkerManager {
     if (!this.$project) {
       this.$project = this.$data.projects?.[0]?.id;
     }
+    this.setProject(this.$project);
     return this;
   }
+
   public newSetup(setup: any) {
     this.Setup(new setup());
   }
@@ -192,15 +208,57 @@ export class WorkerManager {
   public stop() {
     this.flgStopping = true;
   }
-  public Val($scrpit: any): any {
-    let rs = $scrpit;
-    while ((`${rs}`.indexOf('\${')) >= 0) {
-      rs = gEval(rs);
-      console.log(rs);;
+  public setVariableObject(name: string, value: any, nodeId: any, project: any = null) {
+    let treeScope = [nodeId];
+    while (nodeId != 'root') {
+      let node = this.getNodeById(nodeId);
+      if (node) {
+        nodeId = node.group
+        treeScope = [...treeScope, nodeId];
+      } else {
+        nodeId = 'root'
+        treeScope = [...treeScope, nodeId];
+      }
     }
-    rs = gEval(`${rs}`);
-    console.log($scrpit, rs);
-    return rs;
+    let $variable = this.variableValue[project ?? this.$project];
+    const treeLenght = treeScope.length - 1;
+    for (let i = 0; i <= treeLenght; i++) {
+      let item = $variable.filter((item: any) => item.scope === treeScope[i] && item.name == name)?.[0];
+      if (item) {
+        item.value = value;
+        return;
+      }
+    }
+  }
+  public getVariableObject(nodeId: any, project: any = null) {
+    const variableObj: any = {};
+    let treeScope = [nodeId];
+    while (nodeId != 'root') {
+      let node = this.getNodeById(nodeId);
+      if (node) {
+        nodeId = node.group
+        treeScope = [...treeScope, nodeId];
+      } else {
+        nodeId = 'root'
+        treeScope = [...treeScope, nodeId];
+      }
+    }
+    let $variable = this.variableValue[project ?? this.$project];
+    const treeLenght = treeScope.length - 1;
+    for (let i = treeLenght; i >= 0; i--) {
+      $variable.filter((item: any) => item.scope === treeScope[i])?.forEach((item: any) => {
+        variableObj[item.name] = item.value;
+      })
+    }
+    return variableObj;
+  }
+  public runCode($scrpit: any, nodeId: any): any {
+    const variableObj = this.getVariableObject(nodeId);
+    return this.scriptCode.runCode($scrpit, variableObj);
+  }
+  public getText($scrpit: any, nodeId: any): any {
+    const variableObj = this.getVariableObject(nodeId);
+    return this.scriptCode.getText($scrpit, variableObj);
   }
 }
 export const workerManager = new WorkerManager();

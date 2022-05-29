@@ -24,7 +24,7 @@ export class CoreDelayNode extends WorkerNode {
     }
   }
   async execute(nodeId: any, data: any, manager: WorkerManager, next: any) {
-    await manager.delay(manager.Val(data?.number_delay));
+    await manager.delay(manager.runCode(data?.number_delay,nodeId));
     await this.nextNode(data, next, nodeId);
   }
 }

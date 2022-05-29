@@ -19,12 +19,12 @@ export class CoreAlertNode extends WorkerNode {
       message: {
         key: "message",
         edit: true,
-        default: ""
+        default: "${Date()}"
       }
     }
   }
   async execute(nodeId: any, data: any, manager: WorkerManager, next: any) {
-    alert(manager.Val(data?.message));
+    alert(manager.getText(data?.message, nodeId));
     await this.nextNode(data, next, nodeId);
   }
 }

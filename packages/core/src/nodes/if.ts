@@ -65,7 +65,7 @@ export class CoreIfNode extends WorkerNode {
     for (let index = 0; index < condition && !manager.flgStopping; index++) {
       let node = 50001 + index;
       const condition_node = data[`cond${node}`];
-      if (manager.Val(condition_node) == true) {
+      if (manager.runCode(condition_node, nodeId) == true) {
         await this.nextNode(data, next, nodeId, node);
         return;
       }

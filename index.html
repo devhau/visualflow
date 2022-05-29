@@ -37,6 +37,7 @@
   flow.setOption(optionFlow, false);
   flow.newSolution();
   flow.callbackRunProject((data, callbackEnd) => {
+    console.log(data);
     setTimeout(() => {
       visualflow_core.workerManager.LoadData(data).excute();
       callbackEnd?.();

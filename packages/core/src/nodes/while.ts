@@ -23,7 +23,7 @@ export class CoreWhileNode extends WorkerNode {
     const group = manager.getGroupCurrent();
     manager.setGroup(data.id);
     const condition = data.condition;
-    while (manager.Val(condition) == true && !manager.flgStopping) {
+    while (manager.runCode(condition, nodeId) == true && !manager.flgStopping) {
       await manager.excuteAsync();
     }
     manager.setGroup(group);

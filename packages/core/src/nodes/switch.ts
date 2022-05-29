@@ -71,11 +71,11 @@ export class CoreSwitchNode extends WorkerNode {
   }
   async execute(nodeId: any, data: any, manager: WorkerManager, next: any) {
     const condition = data.condition;
-    const case_input = manager.Val(data.case_input);
+    const case_input = manager.getText(data.case_input,nodeId);
     for (let index = 0; index < condition && !manager.flgStopping; index++) {
       let node = 50001 + index;
       const condition_node = data[`case${node}`];
-      if (manager.Val(condition_node) == case_input) {
+      if (manager.getText(condition_node,nodeId) == case_input) {
         await this.nextNode(data, next, nodeId, node);
         return;
       }

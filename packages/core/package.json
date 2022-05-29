@@ -68,5 +68,8 @@
     "testMatch": [
       "**/test/**/*.test.ts"
     ]
+  },
+  "dependencies": {
+    "vm2": "^3.9.9"
   }
 }
