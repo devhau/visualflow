@@ -882,6 +882,10 @@ body {
   padding-right: 20px;
 }
 
+.display-flex {
+  display: flex;
+}
+
 .flex-none {
   flex: none !important;
 }
@@ -1321,7 +1325,6 @@ body {
   padding: 10px;
 }
 .vs-node .node-container .node-content .body {
-  position: relative;
   width: 100%;
 }
 .vs-node .node-container .node-content .body .node-content-row {

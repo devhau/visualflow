@@ -70,6 +70,9 @@ body {
     padding-right: #{$i}px;
   }
 }
+.display-flex {
+  display: flex;
+}
 .flex-none {
   flex: none !important;
 }

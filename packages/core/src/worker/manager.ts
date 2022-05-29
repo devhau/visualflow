@@ -2,7 +2,7 @@ import { NodeBegin } from "../nodes/begin";
 import { WorkerNode } from "./node";
 import { WorkerSetup } from "./setup";
 
-
+const gEval = eval;
 export const PropertyEnum = {
   main: "main_project",
   solution: 'main_solution',
@@ -191,6 +191,16 @@ export class WorkerManager {
   flgStopping: any = null;
   public stop() {
     this.flgStopping = true;
+  }
+  public Val($scrpit: any): any {
+    let rs = $scrpit;
+    while ((`${rs}`.indexOf('\${')) >= 0) {
+      rs = gEval(rs);
+      console.log(rs);;
+    }
+    rs = gEval(`${rs}`);
+    console.log($scrpit, rs);
+    return rs;
   }
 }
 export const workerManager = new WorkerManager();

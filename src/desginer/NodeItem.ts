@@ -39,6 +39,7 @@ export class NodeItem extends BaseFlow<DesginerView> {
     }).length > 0;
   }
   public elContent: Element | null | undefined;
+  public temp: DataFlow = new DataFlow();
   public arrLine: Line[] = [];
   private option: any = {};
   private arrDataView: DataView[] = [];
@@ -76,7 +77,7 @@ export class NodeItem extends BaseFlow<DesginerView> {
       return;
     }
     if (document.activeElement && this.elNode.contains(document.activeElement) && !['BUTTON', 'A'].includes(document.activeElement.tagName)) return;
-    console.log(document.activeElement?.tagName);
+
     this.elNode.setAttribute('style', `display:none;`);
     if (this.getOption()?.hideTitle === true) {
       this.elNode.innerHTML = `

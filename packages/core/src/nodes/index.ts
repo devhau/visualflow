@@ -3,6 +3,7 @@ import { CoreAlertNode } from "./alert";
 import { CoreAssignNode } from "./assign";
 import { CoreBeginNode } from "./begin";
 import { CoreConsoleNode } from "./console";
+import { CoreDelayNode } from "./delay";
 import { CoreEndNode } from "./end";
 import { CoreForNode } from "./for";
 import { CoreGroupNode } from "./group";
@@ -16,6 +17,7 @@ export class CoreSetup extends WorkerSetup {
       CoreBeginNode,
       CoreEndNode,
       CoreAssignNode,
+      CoreDelayNode,
       CoreIfNode,
       CoreSwitchNode,
       CoreForNode,

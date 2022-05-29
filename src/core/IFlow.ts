@@ -33,8 +33,9 @@ export interface IMain extends IControlNode, IEvent {
   importJson(data: any): void;
   exportJson(): any;
   getVariable(): DataFlow[];
-  addVariable(): DataFlow;
-  newVariable(): DataFlow;
+  addVariable(name: any, scope: any, initalValue: any): DataFlow;
+  newVariable(name: any, scope: any, initalValue: any): DataFlow;
+  changeVariableName(old_name: any, new_name: any, scope: any): void;
   removeVariable(varibale: DataFlow): void;
   getGroupCurrent(): any;
   running(): boolean;

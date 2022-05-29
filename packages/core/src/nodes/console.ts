@@ -9,10 +9,10 @@ export class CoreConsoleNode extends WorkerNode {
     return "Console";
   }
   icon() {
-    return '<i class="fas fa-bell"></i>';
+    return '<i class="fas fa-terminal"></i>';
   }
   html({ elNode, main, node }: any): string {
-    return '<div class="p10"><input type="text" class="node-form-control" node:model="message"/></div>';
+    return '<div class="pr10 pl10 pb4"><input type="text" class="node-form-control" node:model="message"/></div>';
   }
   properties(): any {
     return {
@@ -24,7 +24,7 @@ export class CoreConsoleNode extends WorkerNode {
     }
   }
   async execute(nodeId: any, data: any, manager: WorkerManager, next: any) {
-    console.log(data?.message);
+    console.log(manager.Val(data?.message));
     await this.nextNode(data, next, nodeId);
   }
 }

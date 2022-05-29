@@ -4,6 +4,7 @@ import { Control } from "./control";
 
 export class SystemBase implements IMain {
   private $data: DataFlow = new DataFlow(this);
+  public temp: DataFlow = new DataFlow();
   private $projectOpen: DataFlow | undefined;
   private $properties: any = {};
   private $control: any = {};
@@ -121,15 +122,26 @@ export class SystemBase implements IMain {
     this.$projectOpen?.Remove('variable', varibale);
     this.dispatch(EventEnum.changeVariable, { data: varibale });
   }
-  addVariable(): DataFlow {
-    let varibale = new DataFlow(this, { key: PropertyEnum.variable, scope: this.getGroupCurrent()?.[0]?.id });
+  addVariable(name: any = undefined, scope: any = null, initalValue: any = null): DataFlow {
+    let varibale = new DataFlow(this, { name, initalValue, key: PropertyEnum.variable, scope: scope ?? this.getGroupCurrent()?.[0]?.id });
     this.$projectOpen?.Append('variable', varibale);
     return varibale;
   }
-  newVariable(): DataFlow {
-    let varibale = this.addVariable();
+  newVariable(name: any = undefined, scope: any = null, initalValue: any = null): DataFlow {
+    let varibale = this.addVariable(name, scope, initalValue);
     this.dispatch(EventEnum.changeVariable, { data: varibale });
     return varibale;
+  }
+  changeVariableName(old_name: any, new_name: any, scope: any): void {
+    let variable = this.$projectOpen?.Get('variable');
+    if (variable) {
+      for (let item of variable) {
+        if (item.Get('name') == old_name && item.Get('scope') == scope) {
+          item.Set('name', new_name);
+          this.dispatch(EventEnum.changeVariable, { data: item });
+        }
+      }
+    }
   }
   getVariable(): DataFlow[] {
     let arr: any = [];

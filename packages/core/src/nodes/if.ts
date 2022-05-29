@@ -1,3 +1,4 @@
+import { WorkerManager } from "../worker/manager";
 import { WorkerNode } from "../worker/node";
 
 export class CoreIfNode extends WorkerNode {
@@ -37,18 +38,18 @@ export class CoreIfNode extends WorkerNode {
     }
   }
   html({ elNode, main, node }: any): string {
-    let condition = node.data.Get('condition');
+    const condition = node.data.Get('condition');
     let html = '';
     for (let index = 0; index < condition; index++) {
       html = `${html}<div class="node-content-row">
       <div class="pl10 pr1 pt2 pb2"><input type="text" class="node-form-control" node:model="cond${50001 + index}"/></div>
-      <div style="text-align:right" class="p2">Then</div>
+      <div style="text-align:right" class="pl1 pr10 pt2 pb2">Then</div>
       <div><span class="node-dot" node="${50001 + index}"></span></div>
       </div>`;
     }
     html = `${html}<div class="node-content-row">
     <div class="pl10 pr1 pt2 pb2"><button class="btnAddCondition">Add</button></div>
-    <div style="text-align:right" class="p2">Else</div>
+    <div style="text-align:right" class="pl1 pr10 pt2 pb2">Else</div>
     <div><span class="node-dot" node="50000"></span></div>
     </div>`;
     return html;
@@ -57,5 +58,18 @@ export class CoreIfNode extends WorkerNode {
     elNode.querySelector('.btnAddCondition')?.addEventListener('click', () => {
       node.data.Increase('condition');
     })
+  }
+  async execute(nodeId: any, data: any, manager: WorkerManager, next: any) {
+
+    const condition = data.condition;
+    for (let index = 0; index < condition && !manager.flgStopping; index++) {
+      let node = 50001 + index;
+      const condition_node = data[`cond${node}`];
+      if (manager.Val(condition_node) == true) {
+        await this.nextNode(data, next, nodeId, node);
+        return;
+      }
+    }
+    await this.nextNode(data, next, nodeId, 50000);
   }
 }
