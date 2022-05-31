@@ -19,7 +19,7 @@ export class CoreAlertNode extends WorkerNode {
       message: {
         key: "message",
         edit: true,
-        default: "${Date()}"
+        default: ""
       }
     }
   }

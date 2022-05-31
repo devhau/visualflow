@@ -26,9 +26,7 @@
         default: ""
       },
     },
-    control: {
-
-    }
+    control: {}
   }
   visualflow_core.workerManager.getControlNodes().forEach((item) => {
     optionFlow.control[item.key] = item;
@@ -44,15 +42,11 @@
     });
   })
   flow.callbackStopProject(() => {
-
     visualflow_core.workerManager.stop();
   })
   visualflow_core.workerManager.on('worker_end', () => {
     flow.setRunning(false);
   });
-  const runProject = () => {
-    visualflow_core.workerManager.LoadData(flow.exportJson()).excute();
-  }
 </script>
 
 </html>

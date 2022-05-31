@@ -16,10 +16,12 @@ export class CoreIfNode extends WorkerNode {
       condition: {
         key: "condition",
         edit: true,
+        hide: true,
         default: 1
       },
       cond: {
         key: "cond",
+        hide: true,
         edit: true,
         sub: true,
         default: 1
@@ -42,14 +44,14 @@ export class CoreIfNode extends WorkerNode {
     let html = '';
     for (let index = 0; index < condition; index++) {
       html = `${html}<div class="node-content-row">
-      <div class="pl10 pr1 pt2 pb2"><input type="text" class="node-form-control" node:model="cond${50001 + index}"/></div>
-      <div style="text-align:right" class="pl1 pr10 pt2 pb2">Then</div>
+      <div class="pl12 pr1 pt2 pb2"><input type="text" class="node-form-control" node:model="cond${50001 + index}"/></div>
+      <div style="text-align:right" class="pl1 pr12 pt2 pb2">Then</div>
       <div><span class="node-dot" node="${50001 + index}"></span></div>
       </div>`;
     }
     html = `${html}<div class="node-content-row">
     <div class="pl10 pr1 pt2 pb2"><button class="btnAddCondition">Add</button></div>
-    <div style="text-align:right" class="pl1 pr10 pt2 pb2">Else</div>
+    <div style="text-align:right" class="pl1 pr12 pt2 pb2">Else</div>
     <div><span class="node-dot" node="50000"></span></div>
     </div>`;
     return html;

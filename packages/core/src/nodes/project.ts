@@ -17,6 +17,8 @@ export class CoreProjectNode extends WorkerNode {
         key: "project",
         edit: true,
         select: true,
+        selectNone: 'Select project',
+        default: '',
         dataSelect: ({ elNode, main, node }: any) => {
           return main.getProjectAll().map((item: any) => {
             return {

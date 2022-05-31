@@ -46,7 +46,7 @@ export class CoreForNode extends WorkerNode {
         <div class="pr10 pl0 pt2 pb2" ><input type="text" class="node-form-control" node:model="number_step" /></div>
       </div>
       <div class="text-center p3">
-        <button class="btnGoGroup node-form-control">Go to Content</button>
+        <button class="btnGoGroupl">Go to Content</button>
       </div>`;
   }
   script({ elNode, main, node }: any): void {

@@ -22,12 +22,12 @@ export class PropertyView {
     this.elNode.innerHTML = '';
     let properties: any = data.getProperties();
     this.sortKeys.forEach((key: string) => {
-      if (this.hideKeys.includes(key) || !properties[key]) return;
+      if (this.hideKeys.includes(key) || !properties[key] || properties[key].hide) return;
       let propertyItem = document.createElement('div');
       propertyItem.classList.add('property-item');
       let propertyLabel = document.createElement('div');
       propertyLabel.classList.add('property-label');
-      propertyLabel.innerHTML = key;
+      propertyLabel.innerHTML = properties[key].text ?? key;
       let propertyValue = document.createElement('div');
       propertyValue.classList.add('property-value');
       DataView.BindElement(propertyValue, data, this.main, key);
@@ -36,12 +36,12 @@ export class PropertyView {
       this.elNode.appendChild(propertyItem);
     });
     Object.keys(properties).forEach((key: string) => {
-      if (this.hideKeys.includes(key) || this.sortKeys.includes(key)) return;
+      if (this.hideKeys.includes(key) || this.sortKeys.includes(key) || !properties[key] || properties[key].hide) return;
       let propertyItem = document.createElement('div');
       propertyItem.classList.add('property-item');
       let propertyLabel = document.createElement('div');
       propertyLabel.classList.add('property-label');
-      propertyLabel.innerHTML = key;
+      propertyLabel.innerHTML = properties[key].text ?? key;
       let propertyValue = document.createElement('div');
       propertyValue.classList.add('property-value');
       DataView.BindElement(propertyValue, data, this.main, key);

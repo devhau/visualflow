@@ -12,7 +12,18 @@ export class CoreWhileNode extends WorkerNode {
     return '<i class="fas fa-circle-notch"></i>';
   }
   html({ elNode, main, node }: any): string {
-    return '<div class="text-center p3"><button class="btnGoGroup node-form-control">Go to Group</button></div>';
+    return `<div class="pl12 pr12 pt2 pb2"><input type="text" class="node-form-control" node:model="condition"/></div>
+      <div class="text-center p3" > <button class="btnGoGroup" > Go to Content </button></div > `;
+  }
+  properties(): any {
+    return {
+      condition: {
+        key: "condition",
+        edit: true,
+        hide: true,
+        default: ''
+      }
+    }
   }
   script({ elNode, main, node }: any): void {
     elNode.querySelector('.btnGoGroup')?.addEventListener('click', () => {

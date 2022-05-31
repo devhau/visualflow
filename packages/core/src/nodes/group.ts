@@ -12,7 +12,7 @@ export class CoreGroupNode extends WorkerNode {
     return '<i class="far fa-object-group"></i>';
   }
   html({ elNode, main, node }: any): string {
-    return '<div class="text-center p3"><button class="btnGoGroup node-form-control">Go to Group</button></div>';
+    return '<div class="text-center p3"><button class="btnGoGroup">Go to Group</button></div>';
   }
   script({ elNode, main, node }: any): void {
     elNode.querySelector('.btnGoGroup')?.addEventListener('click', () => {

@@ -15,13 +15,33 @@ export class CoreAssignNode extends WorkerNode {
     return {
       env_name: {
         key: "env_name",
+        text: 'name',
         edit: true,
+        var: true,
         default: ""
       },
       env_value: {
         key: "env_value",
+        text: 'value',
         edit: true,
         default: ""
+      },
+
+      env_scorp: {
+        key: "env_scorp",
+        text: 'scorp',
+        edit: true,
+        select: true,
+        selectNone: 'Select scorp',
+        default: '',
+        dataSelect: ({ elNode, main, node }: any) => {
+          return main.getGroupCurrent().map((item: any) => {
+            return {
+              value: item.id,
+              text: item.text
+            };
+          })
+        },
       }
     }
   }
@@ -46,6 +66,7 @@ export class CoreAssignNode extends WorkerNode {
     </div>`;
   }
   async execute(nodeId: any, data: any, manager: WorkerManager, next: any) {
+    manager.setVariableObject(data.env_name, manager.runCode(data.env_value, nodeId), data.env_scorp ?? nodeId)
     await this.nextNode(data, next, nodeId);
   }
 }

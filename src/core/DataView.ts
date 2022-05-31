@@ -48,88 +48,120 @@ export class DataView {
     this.elSuggestionsContent.classList.add('suggestions_content');
     this.elSuggestions.appendChild(this.elSuggestionsContent);
     this.showSuggestions(false);
+    if (this.nodeEditor) {
+      this.nodeEditor.addEventListener('click', (e) => {
+        if ((e.target as HTMLElement).classList.contains('sug-variable-item')) {
+          console.log(e);
+          if (this.property.var) {
+            this.setNodeValue((e.target as any).innerText);
+          } else {
+            let startIndex = (this.elNode as any).lastIndexOf("${", (this.elNode as any).selectionStart)
+            this.setNodeValue(`${(this.elNode as any).substring(0, startIndex)}\${${(e.target as any).innerText}}`)
+          }
+          setTimeout(() => {
+            this.elNode?.focus();
+            this.showSuggestions(false);
+          });
+        }
+      });
+    }
     if (this.keyName)
       this.bindData();
   }
+
   private checkShowSuggestions() {
-    if (this.elSuggestionsContent) {
-      this.elSuggestionsContent.innerHTML = '';
-      var arr = this.main.getVariable();
-      if (!arr || arr.length == 0) {
-        this.showSuggestions(false);
-        return;
-      }
-      let elUl = document.createElement('ul');
-      for (let item of arr) {
-        let elLi = document.createElement('li');
-        let elLink = document.createElement('a');
-        elLi.appendChild(elLink);
-        elLink.innerHTML = item.Get('name');
-        elLink.addEventListener('click', () => {
-          alert(elLink.innerHTML);
-        });
-        elUl.appendChild(elLi);
-      }
-      this.elSuggestionsContent.appendChild(elUl);
+    var arr = this.main.getVariable();
+    if (!arr || arr.length == 0) {
+      this.showSuggestions(false);
+      return;
     }
     let txt: any = (this.elNode as any).value;
     let selectionStart = (this.elNode as any).selectionStart;
+    let subTxt: any = "";
+    let startIndex: number = 0;
     if (txt) {
-      let startIndex = txt.lastIndexOf("${", selectionStart);
-      let endIndex = txt.lastIndexOf("}", selectionStart);
-      if (endIndex < startIndex)
+      startIndex = this.property.var ? 0 : txt.lastIndexOf("${", selectionStart);
+      let endIndex = this.property.var ? -1 : txt.lastIndexOf("}", selectionStart);
+      if (endIndex < startIndex) {
+        if (endIndex <= 0) endIndex = selectionStart;
+        subTxt = txt.substring(startIndex + (this.property.var ? 0 : 2), endIndex - startIndex);
         this.showSuggestions(true);
-      else
+      }
+      else {
         this.showSuggestions(false);
+        return;
+      }
+    }
+    if (this.elSuggestionsContent) {
+      let elList = document.createElement('div');
+      for (let item of arr) {
+        const name = item.Get('name');
+        if (!name.startsWith(subTxt)) continue;
+        let elItem = document.createElement('button');
+        elItem.innerHTML = name;
+        elItem.classList.add('sug-variable-item');
+        elList.appendChild(elItem);
+      }
+      this.elSuggestionsContent.appendChild(elList);
     }
   }
   private showSuggestions(flg: boolean = true) {
     if (!this.elSuggestions) return;
+    if (this.elSuggestionsContent) this.elSuggestionsContent.innerHTML = '';
     if (flg) {
       this.elSuggestions.removeAttribute('style');
     } else {
-      this.elSuggestions.setAttribute('style', `display:none;`);
+      this.elSuggestions.setAttribute('style', 'display:none;');
     }
   }
+  private elFocus: boolean = false;
   private bindData() {
     if (this.keyName && this.elNode) {
       this.data.on(`${EventEnum.dataChange}_${this.keyName}`, this.bindInput.bind(this));
-      this.elNode.addEventListener('change', this.bindEvent.bind(this));
+      // this.elNode.addEventListener('change', this.bindEvent.bind(this));
       this.elNode.addEventListener('keydown', this.bindEvent.bind(this));
       this.elNode.addEventListener('focus', () => {
+        this.elFocus = true;
         if (this.elSuggestions)
           this.elNode?.parentElement?.appendChild(this.elSuggestions);
       });
+      this.elNode.setAttribute('autocomplete', 'off');
       this.elNode.addEventListener('blur', () => {
+        this.elFocus = false;
         setTimeout(() => {
-          if (this.elSuggestions)
+          if (this.elSuggestions && !this.elFocus)
             this.elNode?.parentElement?.removeChild?.(this.elSuggestions);
-        });
+        }, 500);
       });
       this.elNode.addEventListener("select", () => {
         this.checkShowSuggestions();
       })
-      if (this.property && this.property.select && isFunction(this.property.dataSelect)) {
-        const options = this.property.dataSelect({ elNode: this.elNode, main: this.main, key: this.keyName }).map(({ value, text }: any) => {
+      if (this.elNode && this.property && this.property.select && isFunction(this.property.dataSelect)) {
+        if (this.property.selectNone) {
           let option = document.createElement('option');
-          option.value = value;
-          option.text = text;
-          return option;
-        });
-        for (let option of options) {
-          this.elNode.appendChild(option);
+          option.value = '';
+          option.text = this.property.selectNone;
+          this.elNode?.appendChild(option);
+          (this.elNode as any).value = '';
         }
+
+        this.property.dataSelect({ elNode: this.elNode, main: this.main, key: this.keyName }).forEach((item: any) => {
+          let option = document.createElement('option');
+          option.value = item.value;
+          option.text = item.text;
+          this.elNode?.appendChild(option);
+        });
       }
       if (this.property && isFunction(this.property.script)) {
         this.property.script({ elNode: this.elNode, main: this.main, key: this.keyName });
       }
-      this.setNodeValue(this.data.Get(this.keyName) ?? "");
+      this.setNodeValue(this.data.Get(this.keyName) ?? '');
     }
   }
   private setNodeValue(value: any) {
     if (this.elNode) {
       if (TagView.includes(this.elNode.tagName)) {
-        (this.elNode as any).innerText = `${value}`;
+        (this.elNode as any).innerText = `${value ?? ""}`;
       } else {
         (this.elNode as any).value = value;
       }

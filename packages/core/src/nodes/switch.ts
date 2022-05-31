@@ -16,16 +16,19 @@ export class CoreSwitchNode extends WorkerNode {
       condition: {
         key: "condition",
         edit: true,
+        hide: true,
         default: 1
       },
       case: {
         key: "case",
         edit: true,
         sub: true,
+        hide: true,
         default: 1
       },
       case_input: {
         key: "case_input",
+        text: 'Switch',
         edit: true,
         default: ''
       },
@@ -46,19 +49,19 @@ export class CoreSwitchNode extends WorkerNode {
     const condition = node.data.Get('condition');
     let html = '';
     html = `${html}<div class="node-content-row">
-    <div style="text-align:right" class="pl10 pr1 pt2 pb2">Input</div>
+    <div style="text-align:right" class="pl10 pr1 pt2 pb2">Switch</div>
     <div class="pl2 pr1 pt2 pb2"><input type="text" class="node-form-control" node:model="case_input"/></div>
     <div></div>
     </div>`;
     for (let index = 0; index < condition; index++) {
       html = `${html}<div class="node-content-row">
-      <div style="text-align:right" class="pl10 pr1 pt2 pb2">Case</div>
+      <div style="text-align:right" class="pl12 pr10 pt2 pb2">Case</div>
       <div class="pl2 pr1 pt2 pb2"><input type="text" class="node-form-control" node:model="case${50001 + index}"/></div>
       <div><span class="node-dot" node="${50001 + index}"></span></div>
       </div>`;
     }
     html = `${html}<div class="node-content-row">
-    <div class="pl10 pr1 pt2 pb2"><button class="btnAddCondition">Add</button></div>
+    <div class="pl12 pr1 pt2 pb2"><button class="btnAddCondition">Add</button></div>
     <div style="text-align:right" class="pl2 pr10 pt2 pb2">Default</div>
     <div><span class="node-dot" node="50000"></span></div>
     </div>`;
@@ -71,11 +74,11 @@ export class CoreSwitchNode extends WorkerNode {
   }
   async execute(nodeId: any, data: any, manager: WorkerManager, next: any) {
     const condition = data.condition;
-    const case_input = manager.getText(data.case_input,nodeId);
+    const case_input = manager.getText(data.case_input, nodeId);
     for (let index = 0; index < condition && !manager.flgStopping; index++) {
       let node = 50001 + index;
       const condition_node = data[`case${node}`];
-      if (manager.getText(condition_node,nodeId) == case_input) {
+      if (manager.getText(condition_node, nodeId) == case_input) {
         await this.nextNode(data, next, nodeId, node);
         return;
       }

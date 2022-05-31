@@ -10,6 +10,7 @@ import { CoreGroupNode } from "./group";
 import { CoreIfNode } from "./if";
 import { CoreProjectNode } from "./project";
 import { CoreSwitchNode } from "./switch";
+import { CoreWhileNode } from "./while";
 
 export class CoreSetup extends WorkerSetup {
   nodes(): any[] {
@@ -21,6 +22,7 @@ export class CoreSetup extends WorkerSetup {
       CoreIfNode,
       CoreSwitchNode,
       CoreForNode,
+      CoreWhileNode,
       CoreAlertNode,
       CoreConsoleNode,
       CoreProjectNode,

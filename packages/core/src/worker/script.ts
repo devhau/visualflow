@@ -1,6 +1,10 @@
 export class WorkerScript {
   private runCodeInBrowser(script: string, variableObj: any) {
-    return window.eval(this.GetTextInBrowser(script, variableObj));
+    const rs = this.GetTextInBrowser(script, variableObj);
+    try {
+      return window.eval(rs);
+    } catch { }
+    return rs;
   }
   private GetTextInBrowser(script: string, variableObj: any) {
     let paramText = "";
