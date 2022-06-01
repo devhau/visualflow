@@ -2,7 +2,7 @@
   /**
    * @license
    * author:nguyenvanhaudev@gmail.com (Nguyen Van Hau)
-   * visualflow_core.js v0.0.1
+   * visualflow_core.js v0.0.1-hotfix
    * Released under the MIT license.
    */
 
