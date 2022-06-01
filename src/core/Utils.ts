@@ -1,6 +1,7 @@
 export const LOG = (message?: any, ...optionalParams: any[]) => console.log(message, optionalParams);
 export const getDate = () => (new Date());
 export const getTime = () => getDate().getTime();
+export const getNameTime = (name: string) => `${name}${getDate().getTime().toString().substring(5)}`;
 export const getUuid = () => {
   // http://www.ietf.org/rfc/rfc4122.txt
   let s: any = [];

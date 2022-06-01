@@ -49,15 +49,16 @@ export class WorkerNode {
   properties(): any { }
   option(): any { }
   async execute(nodeId: any, data: any, manager: WorkerManager, next: any) {
-
+    return this.nextNode(data, next, nodeId);
   }
   protected async nextNode(data: any, next: any, nodeId: any, index: any = null) {
     if (data?.lines) {
       for (let item of data.lines) {
         if (item.from == nodeId && (index == null || item.fromIndex == index)) {
-          await next(item.to);
+          return await next(item.to);
         }
       }
     }
+    return await next(undefined);
   }
 }

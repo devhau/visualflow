@@ -56,11 +56,11 @@ export class CoreForNode extends WorkerNode {
     const temp_env_name = `temp_${node.GetId()}_env_name`;
     const temp_value = main.temp.Get(temp_env_name);
     if (!temp_value) {
-      main.temp.Set(temp_env_name, node.data.Get('env_name'));
-      main.newVariable(node.data.Get('env_name'), node.GetId());
-    } else if (node.data.Get('env_name') != temp_value) {
-      main.changeVariableName(temp_value, node.data.Get('env_name'), node.GetId());
-      main.temp.Set(temp_env_name, node.data.Get('env_name'));
+      main.temp.Set(temp_env_name, node.getDataValue('env_name'));
+      main.newVariable(node.getDataValue('env_name'), node.GetId());
+    } else if (node.getDataValue('env_name') != temp_value) {
+      main.changeVariableName(temp_value, node.getDataValue('env_name'), node.GetId());
+      main.temp.Set(temp_env_name, node.getDataValue('env_name'));
     }
 
   }

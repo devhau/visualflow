@@ -47,6 +47,15 @@
   visualflow_core.workerManager.on('worker_end', () => {
     flow.setRunning(false);
   });
+  visualflow_core.workerManager.on('node_end', ({ node }) => {
+    console.log('node_end');
+    console.log(node);
+  });
+
+  visualflow_core.workerManager.on('node_start', ({ node }) => {
+    console.log('node_begin');
+    console.log(node);
+  });
 </script>
 
 </html>

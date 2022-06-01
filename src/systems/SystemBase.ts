@@ -1,3 +1,4 @@
+import { getNameTime } from "src/core/Utils";
 import { DataFlow, IMain, compareSort, EventEnum, PropertyEnum, EventFlow, getTime, ScopeRoot, isFunction } from "../core/index";
 import { NodeItem } from "../desginer/index";
 import { Control } from "./control";
@@ -23,7 +24,7 @@ export class SystemBase implements IMain {
         default: () => PropertyEnum.solution
       },
       name: {
-        default: () => `solution-${getTime()}`,
+        default: () => getNameTime('solution-'),
         edit: true,
       },
       project: {
@@ -94,7 +95,7 @@ export class SystemBase implements IMain {
         default: PropertyEnum.variable
       },
       name: {
-        default: () => `var${getTime()}`
+        default: () => getNameTime('var')
       },
       type: {
         default: () => 'text'

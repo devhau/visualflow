@@ -123,11 +123,13 @@ export class DataFlow {
   public Get(key: string) {
     return this.data[key];
   }
-  public Increase(key: string) {
-    this.Set(key, ++this.data[key]);
+  public Increase(key: string, max: any = undefined) {
+    if (!max || (max > this.data[key]))
+      this.Set(key, ++this.data[key]);
   }
-  public Decrease(key: string) {
-    this.Set(key, --this.data[key]);
+  public Decrease(key: string, min: any = undefined) {
+    if (!min || (min < this.data[key]))
+      this.Set(key, --this.data[key]);
   }
   public Append(key: string, value: any) {
     if (!this.data[key]) this.data[key] = [];

@@ -46,30 +46,33 @@ export class CoreSwitchNode extends WorkerNode {
     }
   }
   html({ elNode, main, node }: any): string {
-    const condition = node.data.Get('condition');
+    const condition = node.getDataValue('condition');
     let html = '';
     html = `${html}<div class="node-content-row">
-    <div style="text-align:right" class="pl10 pr1 pt2 pb2">Switch</div>
+    <div style="text-align:right" class="pl10 pr1 pt10 pb10">Switch</div>
     <div class="pl2 pr1 pt2 pb2"><input type="text" class="node-form-control" node:model="case_input"/></div>
     <div></div>
     </div>`;
     for (let index = 0; index < condition; index++) {
       html = `${html}<div class="node-content-row">
-      <div style="text-align:right" class="pl12 pr10 pt2 pb2">Case</div>
+      <div style="text-align:right" class="pl12 pr10 pt10 pb10">Case</div>
       <div class="pl2 pr1 pt2 pb2"><input type="text" class="node-form-control" node:model="case${50001 + index}"/></div>
       <div><span class="node-dot" node="${50001 + index}"></span></div>
       </div>`;
     }
     html = `${html}<div class="node-content-row">
-    <div class="pl12 pr1 pt2 pb2"><button class="btnAddCondition">Add</button></div>
-    <div style="text-align:right" class="pl2 pr10 pt2 pb2">Default</div>
+    <div class="pl12 pr1 pt10 pb10"><button class="btnAddCondition">+</button> <button class="btnExceptCondition">-</button></div>
+    <div style="text-align:right" class="pl2 pr10 pt10 pb10">Default</div>
     <div><span class="node-dot" node="50000"></span></div>
     </div>`;
     return html;
   }
   script({ elNode, main, node }: any): void {
     elNode.querySelector('.btnAddCondition')?.addEventListener('click', () => {
-      node.data.Increase('condition');
+      node.IncreaseValue('condition');
+    })
+    elNode.querySelector('.btnExceptCondition')?.addEventListener('click', () => {
+      node.DecreaseValue('condition', 1);
     })
   }
   async execute(nodeId: any, data: any, manager: WorkerManager, next: any) {

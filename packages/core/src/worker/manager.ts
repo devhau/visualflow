@@ -62,7 +62,7 @@ export class WorkerManager {
   private $nodes: WorkerNode[] = [];
   private $project: any;
   private $group: any = "root";
-  private delay_time: number = 100;
+  private delay_time: number = 10;
   public constructor(data: any = null) {
     this.LoadData(data);
   }
@@ -162,15 +162,17 @@ export class WorkerManager {
       }
     })
   }
+  delay(time: number = 100) {
+    return new Promise(resolve => setTimeout(resolve, time));
+  }
   private getWorkerNode(_key: string): WorkerNode | null {
     return this.$nodes?.filter((item) => item.checkKey(_key))?.[0];
   }
   private async excuteNode($id: any) {
-    const dataNode = this.getNodeById($id);
-    await this.excuteDataNode(dataNode);
-  }
-  delay(time: number = 100) {
-    return new Promise(resolve => setTimeout(resolve, time));
+    if ($id) {
+      const dataNode = this.getNodeById($id);
+      await this.excuteDataNode(dataNode);
+    }
   }
   private async excuteDataNode(dataNode: any) {
     if (this.flgStopping) {
@@ -181,8 +183,11 @@ export class WorkerManager {
     if (dataNode) {
       this.dispatch('node_start', { node: dataNode });
       const workerNode = this.getWorkerNode(dataNode.key);
-      await workerNode?.execute(dataNode.id, dataNode, this, this.excuteNode.bind(this));
-      this.dispatch('node_end', { node: dataNode });
+      await workerNode?.execute(dataNode.id, dataNode, this, async (nextId: any) => {
+        this.clearVariableScope(dataNode.id);
+        this.dispatch('node_end', { node: dataNode });
+        await this.excuteNode(nextId);
+      });
     }
   }
   public async excuteAsync() {
@@ -208,6 +213,15 @@ export class WorkerManager {
   public stop() {
     this.flgStopping = true;
   }
+  public clearVariableScope(scope: any, project: any = null) {
+    this.getVariable(project).forEach((item: any) => {
+      if (scope == item.scope)
+        item.value = item.initalValue;
+    });
+  }
+  public getVariable(project: any = null) {
+    return this.variableValue[project ?? this.$project]
+  }
   public setVariableObject(name: string, value: any, nodeId: any, project: any = null) {
     let treeScope = [nodeId];
     while (nodeId != 'root') {
@@ -220,7 +234,8 @@ export class WorkerManager {
         treeScope = [...treeScope, nodeId];
       }
     }
-    let $variable = this.variableValue[project ?? this.$project];
+    console.log(`${name}:${value}`);
+    let $variable = this.getVariable(project);
     const treeLenght = treeScope.length - 1;
     for (let i = 0; i <= treeLenght; i++) {
       let item = $variable.filter((item: any) => item.scope === treeScope[i] && item.name == name)?.[0];
@@ -243,7 +258,7 @@ export class WorkerManager {
         treeScope = [...treeScope, nodeId];
       }
     }
-    let $variable = this.variableValue[project ?? this.$project];
+    let $variable = this.getVariable(project);
     const treeLenght = treeScope.length - 1;
     for (let i = treeLenght; i >= 0; i--) {
       $variable.filter((item: any) => item.scope === treeScope[i])?.forEach((item: any) => {

@@ -38,10 +38,10 @@ export class TabProjectView {
         <button class="btn-run-project"><i class="fas fa-play"></i> Run</button>
       </div>
       <div class="tab-project_button">
-        <button class="btn-zoom-in"><i class="fas fa-search-minus"></i></button>
+        <button class="btn-zoom-in"><i class="fas fa-search-plus"></i></button>
       </div>
       <div class="tab-project_button">
-        <button class="btn-zoom-out"><i class="fas fa-search-plus"></i></button>
+        <button class="btn-zoom-out"><i class="fas fa-search-minus"></i></button>
       </div>
       <div class="tab-project_button">
         <button class="btn-zoom-reset"><i class="fas fa-redo"></i></button>

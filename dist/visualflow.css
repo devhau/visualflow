@@ -901,19 +901,31 @@ body {
   position: absolute;
   top: 0;
   left: 0;
-  width: 100%;
+  min-width: 100%;
   background-color: #eee;
   border: 1px solid #000;
   z-index: 999;
   border-radius: 2px;
 }
-.node-editor .node-editor_suggestions .suggestions_content ul,
-.node-editor .node-editor_suggestions .suggestions_content li {
-  margin: 0;
-  padding: 0;
+.node-editor .node-editor_suggestions .suggestions_content .sug-variable-item {
+  display: block;
+  width: 100%;
+  padding: 3px 4px;
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.5;
+  color: #212529;
+  background-color: #fff;
+  background-clip: padding-box;
+  border: 1px solid #ced4da;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  border-radius: 0.15rem;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 }
-.node-editor .node-editor_suggestions .suggestions_content ul {
-  list-style: none;
+.node-editor .node-editor_suggestions .suggestions_content .sug-variable-item:hover, .node-editor .node-editor_suggestions .suggestions_content .sug-variable-item.active {
+  background-color: beige;
 }
 
 .vs-container {
@@ -1347,7 +1359,7 @@ body {
 }
 .vs-node .node-container .node-content .body .node-content-row > :last-child:not(.node-dot) .node-dot {
   margin-left: -6px;
-  margin-top: 3px;
+  margin-top: 10px;
 }
 .vs-node .node-right,
 .vs-node .node-left {

@@ -7,18 +7,31 @@
       position: absolute;
       top: 0;
       left: 0;
-      width: 100%;
+      min-width: 100%;
       background-color: #eee;
       border: 1px solid #000;
       z-index: 999;
       border-radius: 2px;
-      ul,
-      li {
-        margin: 0;
-        padding: 0;
-      }
-      ul {
-        list-style: none;
+      .sug-variable-item {
+        display: block;
+        width: 100%;
+        padding: 3px 4px;
+        font-size: 1rem;
+        font-weight: 400;
+        line-height: 1.5;
+        color: #212529;
+        background-color: #fff;
+        background-clip: padding-box;
+        border: 1px solid #ced4da;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+        border-radius: 0.15rem;
+        transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+        &:hover,
+        &.active {
+          background-color: beige;
+        }
       }
     }
   }

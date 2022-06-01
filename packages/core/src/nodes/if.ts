@@ -40,25 +40,28 @@ export class CoreIfNode extends WorkerNode {
     }
   }
   html({ elNode, main, node }: any): string {
-    const condition = node.data.Get('condition');
+    const condition = node.getDataValue('condition');
     let html = '';
     for (let index = 0; index < condition; index++) {
       html = `${html}<div class="node-content-row">
       <div class="pl12 pr1 pt2 pb2"><input type="text" class="node-form-control" node:model="cond${50001 + index}"/></div>
-      <div style="text-align:right" class="pl1 pr12 pt2 pb2">Then</div>
+      <div style="text-align:right" class="pl1 pr12 pt10 pb10">Then</div>
       <div><span class="node-dot" node="${50001 + index}"></span></div>
       </div>`;
     }
     html = `${html}<div class="node-content-row">
-    <div class="pl10 pr1 pt2 pb2"><button class="btnAddCondition">Add</button></div>
-    <div style="text-align:right" class="pl1 pr12 pt2 pb2">Else</div>
+    <div class="pl10 pr1 pt10 pb10"><button class="btnAddCondition">+</button> <button class="btnExceptCondition">-</button></div>
+    <div style="text-align:right" class="pl1 pr12 pt10 pb10">Else</div>
     <div><span class="node-dot" node="50000"></span></div>
     </div>`;
     return html;
   }
   script({ elNode, main, node }: any): void {
     elNode.querySelector('.btnAddCondition')?.addEventListener('click', () => {
-      node.data.Increase('condition');
+      node.IncreaseValue('condition');
+    })
+    elNode.querySelector('.btnExceptCondition')?.addEventListener('click', () => {
+      node.DecreaseValue('condition',1);
     })
   }
   async execute(nodeId: any, data: any, manager: WorkerManager, next: any) {

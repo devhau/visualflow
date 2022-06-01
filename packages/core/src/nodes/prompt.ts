@@ -1,12 +1,12 @@
 import { WorkerManager } from "../worker/manager";
 import { WorkerNode } from "../worker/node";
 
-export class CoreAssignNode extends WorkerNode {
+export class CorepromptNode extends WorkerNode {
   key(): string {
-    return "core_assign";
+    return "core_prompt";
   }
   name() {
-    return "Assign";
+    return "Prompt";
   }
   icon() {
     return '<i class="fas fa-bolt"></i>';
@@ -21,9 +21,9 @@ export class CoreAssignNode extends WorkerNode {
         validate: '^([a-zA-Z0-9\u0600-\u06FF\u0660-\u0669\u06F0-\u06F9]+)$',
         default: ""
       },
-      env_value: {
-        key: "env_value",
-        text: 'value',
+      env_message: {
+        key: "env_message",
+        text: 'message',
         edit: true,
         default: ""
       },
@@ -60,14 +60,13 @@ export class CoreAssignNode extends WorkerNode {
 
   html({ elNode, main, node }: any): string {
     return `<div class="node-content-row">
-    <div class="pl10 pr0 pt1 pb7"><input type="text" class="node-form-control" node:model="env_name"/> </div>
-    <div class="flex-none pr6 pt6 pb7 text-center">=</div>
-    <div class="pr10 pl0 pt1 pb7"><input type="text" class="node-form-control" node:model="env_value"/></div>
+    <div class="pr10 pl10 pt1 pb7"><textarea type="text" class="node-form-control" node:model="env_message"></textarea></div>
     <div></div>
     </div>`;
   }
   async execute(nodeId: any, data: any, manager: WorkerManager, next: any) {
-    manager.setVariableObject(data.env_name, manager.runCode(data.env_value, nodeId), data.env_scorp ?? nodeId)
+    let rs = prompt(data.env_message)
+    manager.setVariableObject(data.env_name, rs, data.env_scorp ?? nodeId)
     await this.nextNode(data, next, nodeId);
   }
 }

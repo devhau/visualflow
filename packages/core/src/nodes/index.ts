@@ -9,6 +9,7 @@ import { CoreForNode } from "./for";
 import { CoreGroupNode } from "./group";
 import { CoreIfNode } from "./if";
 import { CoreProjectNode } from "./project";
+import { CorepromptNode } from "./prompt";
 import { CoreSwitchNode } from "./switch";
 import { CoreWhileNode } from "./while";
 
@@ -24,6 +25,7 @@ export class CoreSetup extends WorkerSetup {
       CoreForNode,
       CoreWhileNode,
       CoreAlertNode,
+      CorepromptNode,
       CoreConsoleNode,
       CoreProjectNode,
       CoreGroupNode,

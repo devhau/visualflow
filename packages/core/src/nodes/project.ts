@@ -31,7 +31,7 @@ export class CoreProjectNode extends WorkerNode {
     }
   }
   html({ elNode, main, node }: any): string {
-    return '<div class="text-center p3"><select class="node-form-control" node:model="project"></select></div>';
+    return '<div class="text-center pl12 pr0 pt2 pb2"><select class="node-form-control" node:model="project"></select></div>';
   }
   script({ elNode, main, node }: any): void {
 

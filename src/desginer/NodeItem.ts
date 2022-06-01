@@ -6,26 +6,39 @@ export class NodeItem extends BaseFlow<DesginerView> {
   /**
    * GET SET for Data
    */
+
+  public IncreaseValue(name: string, max: any = undefined) {
+    return this.data.Increase(name, max);
+  }
+  public DecreaseValue(name: string, min: any = undefined) {
+    return this.data.Decrease(name, min);
+  }
+  public getDataValue(name: string) {
+    return this.data.Get(name);
+  }
+  public setDataValue(name: string, value: any) {
+    return this.data.Set(name, value, this);
+  }
   public getName() {
-    return this.data.Get('name');
+    return this.getDataValue('name');
   }
   public getY() {
-    return +this.data.Get('y');
+    return +this.getDataValue('y');
   }
   public setY(value: any) {
-    return this.data.Set('y', value, this);
+    return this.setDataValue('y', value);
   }
   public getX() {
-    return +this.data.Get('x');
+    return +this.getDataValue('x');
   }
   public setX(value: any) {
-    return this.data.Set('x', value, this);
+    return this.setDataValue('x', value);
   }
   public CheckKey(key: string) {
-    return this.data.Get('key') == key;
+    return this.getDataValue('key') == key;
   }
   public getDataLine() {
-    return this.data.Get('lines') ?? [];
+    return this.getDataValue('lines') ?? [];
   }
   public checkLineExists(fromIndex: number, to: NodeItem, toIndex: Number) {
     return this.arrLine.filter((item: Line) => {
