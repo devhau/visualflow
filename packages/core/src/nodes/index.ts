@@ -6,6 +6,7 @@ import { CoreConsoleNode } from "./console";
 import { CoreDelayNode } from "./delay";
 import { CoreEndNode } from "./end";
 import { CoreForNode } from "./for";
+import { CoreForEachNode } from "./for-each";
 import { CoreGroupNode } from "./group";
 import { CoreIfNode } from "./if";
 import { CoreProjectNode } from "./project";
@@ -23,6 +24,7 @@ export class CoreSetup extends WorkerSetup {
       CoreIfNode,
       CoreSwitchNode,
       CoreForNode,
+      CoreForEachNode,
       CoreWhileNode,
       CoreAlertNode,
       CorepromptNode,

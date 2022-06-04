@@ -36,6 +36,7 @@ export interface IMain extends IControlNode, IEvent {
   addVariable(name: any, scope: any, initalValue: any): DataFlow;
   newVariable(name: any, scope: any, initalValue: any): DataFlow;
   changeVariableName(old_name: any, new_name: any, scope: any): void;
+  tempVariable(env_name: string, name: string, nodeId: string): void;
   removeVariable(varibale: DataFlow): void;
   getGroupCurrent(): any;
   running(): boolean;

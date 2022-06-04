@@ -61,7 +61,7 @@ export class DataView {
 
   public setVar(name: any) {
     let selectionStart = (this.elNode as any).selectionStart;
-    if (this.property.var) {
+    if (this.property?.var) {
       this.setNodeValue(name);
     } else {
       let txt: string = (this.elNode as any).value;
@@ -89,7 +89,7 @@ export class DataView {
     let subTxt: any = "";
     let startIndex: number = 0;
     if (txt) {
-      if (this.property.var) {
+      if (this.property?.var) {
         subTxt = txt;
         this.showSuggestions(true);
       } else {
@@ -154,7 +154,7 @@ export class DataView {
   }
   private bindData() {
     if (this.keyName && this.elNode) {
-      if (this.property.validate) {
+      if (this.property?.validate) {
         this.regexValidate = new RegExp(this.property.validate, 'i')
       }
       this.data.on(`${EventEnum.dataChange}_${this.keyName}`, this.bindInput.bind(this));

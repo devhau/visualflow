@@ -15,21 +15,25 @@ export class CoreForNode extends WorkerNode {
     return {
       number_start: {
         key: "number_start",
+        text: 'start',
         edit: true,
         default: 1
       },
       number_end: {
         key: "number_end",
+        text: 'end',
         edit: true,
         default: 10
       },
       number_step: {
         key: "number_step",
+        text: 'step',
         edit: true,
         default: 1
       },
       env_name: {
         key: "env_name",
+        text: 'name',
         edit: true,
         default: 'loop_index'
       }
@@ -53,16 +57,7 @@ export class CoreForNode extends WorkerNode {
     elNode.querySelector('.btnGoGroup')?.addEventListener('click', () => {
       node.parent.openGroup(node.GetId());
     })
-    const temp_env_name = `temp_${node.GetId()}_env_name`;
-    const temp_value = main.temp.Get(temp_env_name);
-    if (!temp_value) {
-      main.temp.Set(temp_env_name, node.getDataValue('env_name'));
-      main.newVariable(node.getDataValue('env_name'), node.GetId());
-    } else if (node.getDataValue('env_name') != temp_value) {
-      main.changeVariableName(temp_value, node.getDataValue('env_name'), node.GetId());
-      main.temp.Set(temp_env_name, node.getDataValue('env_name'));
-    }
-
+    main.tempVariable('env_name',node.getDataValue('env_name'),node.GetId());
   }
   async execute(nodeId: any, data: any, manager: WorkerManager, next: any) {
     const group = manager.getGroupCurrent();

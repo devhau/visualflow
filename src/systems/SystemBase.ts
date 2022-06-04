@@ -144,6 +144,17 @@ export class SystemBase implements IMain {
       }
     }
   }
+  tempVariable(env_name: string, name: string, nodeId: string): void {
+    const temp_env_name = `temp_${nodeId}_${env_name}`;
+    const temp_value = this.temp.Get(temp_env_name);
+    if (!temp_value) {
+      this.temp.Set(temp_env_name, name);
+      this.newVariable(name, nodeId);
+    } else if (name != temp_value) {
+      this.changeVariableName(temp_value, name, nodeId);
+      this.temp.Set(temp_env_name, name);
+    }
+  }
   getVariable(): DataFlow[] {
     let arr: any = [];
     if (this.$projectOpen) {
